@@ -1,3 +1,5 @@
+package Landing_Page;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -27,7 +29,7 @@ public class PLoginForm {
         roundedPanel.setLayout(null);
         
         // Icon astronaut
-        ImageIcon astronautIconImage = new ImageIcon("iconLoginU/hello_provider.png");
+        ImageIcon astronautIconImage = new ImageIcon("../asset/hello_provider.png");
         Image scaledAstronautIcon = astronautIconImage.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH); // Resize astronaut icon
         JLabel astronautIcon = new JLabel(new ImageIcon(scaledAstronautIcon));
         astronautIcon.setBounds(135, 50, 80, 80); // Posisikan lebih tengah
@@ -58,7 +60,7 @@ public class PLoginForm {
         roundedPanel.add(emailField);
 
         // Email Icon
-        ImageIcon emailIconImage = new ImageIcon("iconLoginU/email.png");
+        ImageIcon emailIconImage = new ImageIcon("../asset/email.png");
         Image scaledEmailIcon = emailIconImage.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         JLabel emailIcon = new JLabel(new ImageIcon(scaledEmailIcon));
         emailIcon.setBounds(300, 230, 20, 20); // Ikon sejajar dengan input field
@@ -81,7 +83,7 @@ public class PLoginForm {
         roundedPanel.add(passwordField);
 
         // Password Icon
-        ImageIcon passwordIconImage = new ImageIcon("iconLoginU/password.png");
+        ImageIcon passwordIconImage = new ImageIcon("../asset/password.png");
         Image scaledPasswordIcon = passwordIconImage.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         JLabel passwordIcon = new JLabel(new ImageIcon(scaledPasswordIcon));
         passwordIcon.setBounds(300, 310, 20, 20); // Ikon sejajar dengan input field

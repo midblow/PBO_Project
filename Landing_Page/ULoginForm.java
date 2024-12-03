@@ -1,16 +1,42 @@
+package Landing_Page;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
+import User.*; 
 
 public class ULoginForm {
+
+    // Verifikasi username dan password
+    private boolean verifyLogin(String username, String password) {
+        try (Connection conn = DbConnection.getConnection()) { // Menggunakan DbConnection
+            if (conn != null) {
+                String query = "SELECT * FROM user WHERE gmail = ? AND password = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                    stmt.setString(1, username);
+                    stmt.setString(2, password);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            return true; // Jika ada data yang cocok, login berhasil
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Jika login gagal
+    }
+
     public static void main(String[] args) {
-        // Create the frame
+        // Buat frame
         JFrame frame = new JFrame("Login User");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(450, 650); // Ukuran frame diperbesar
         frame.getContentPane().setBackground(new Color(12, 34, 64)); // Background warna biru gelap
         frame.setLayout(new GridBagLayout());
-        
+
         // Panel utama untuk isi konten
         JPanel roundedPanel = new JPanel() {
             @Override
@@ -25,9 +51,9 @@ public class ULoginForm {
         roundedPanel.setBackground(new Color(20, 44, 84)); // Panel dalam warna biru gelap
         roundedPanel.setPreferredSize(new Dimension(350, 500));
         roundedPanel.setLayout(null);
-        
+
         // Icon astronaut
-        ImageIcon astronautIconImage = new ImageIcon("iconLoginU/user2.png");
+        ImageIcon astronautIconImage = new ImageIcon("../asset/user2.png");
         Image scaledAstronautIcon = astronautIconImage.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH); // Resize astronaut icon
         JLabel astronautIcon = new JLabel(new ImageIcon(scaledAstronautIcon));
         astronautIcon.setBounds(135, 50, 80, 80); // Posisikan lebih tengah
@@ -57,13 +83,6 @@ public class ULoginForm {
         emailField.setCaretColor(Color.WHITE);
         roundedPanel.add(emailField);
 
-        // Email Icon
-        ImageIcon emailIconImage = new ImageIcon("iconLoginU/email.png");
-        Image scaledEmailIcon = emailIconImage.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-        JLabel emailIcon = new JLabel(new ImageIcon(scaledEmailIcon));
-        emailIcon.setBounds(300, 230, 20, 20); // Ikon sejajar dengan input field
-        roundedPanel.add(emailIcon);
-
         // Password Label
         JLabel passwordLabel = new JLabel("Password");
         passwordLabel.setBounds(70, 280, 80, 30);
@@ -80,28 +99,6 @@ public class ULoginForm {
         passwordField.setCaretColor(Color.WHITE);
         roundedPanel.add(passwordField);
 
-        // Password Icon
-        ImageIcon passwordIconImage = new ImageIcon("iconLoginU/password.png");
-        Image scaledPasswordIcon = passwordIconImage.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-        JLabel passwordIcon = new JLabel(new ImageIcon(scaledPasswordIcon));
-        passwordIcon.setBounds(300, 310, 20, 20); // Ikon sejajar dengan input field
-        roundedPanel.add(passwordIcon);
-
-        // Remember Me checkbox
-        JCheckBox rememberMe = new JCheckBox("Remember Me");
-        rememberMe.setBounds(70, 360, 120, 20);
-        rememberMe.setBackground(new Color(12, 34, 64));
-        rememberMe.setForeground(Color.WHITE);
-        roundedPanel.add(rememberMe);
-
-        // Forgot Password
-        JLabel forgotPassword = new JLabel("Forgot Password");
-        forgotPassword.setBounds(240, 360, 120, 20); // Jarak horizontal lebih baik
-        forgotPassword.setForeground(Color.WHITE);
-        forgotPassword.setFont(new Font("Poppins", Font.PLAIN, 12));
-        forgotPassword.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        roundedPanel.add(forgotPassword);
-
         // Login Button
         JButton loginButton = new JButton("Log In");
         loginButton.setBounds(110, 400, 200, 40);
@@ -109,6 +106,26 @@ public class ULoginForm {
         loginButton.setForeground(new Color(12, 34, 64));
         loginButton.setFocusPainted(false);
         loginButton.setFont(new Font("Poppins", Font.BOLD, 14));
+
+        // Action listener untuk login button
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = emailField.getText();
+                String password = new String(passwordField.getPassword());
+
+                // Verifikasi login
+                ULoginForm loginForm = new ULoginForm();
+                if (loginForm.verifyLogin(username, password)) {
+                    JOptionPane.showMessageDialog(frame, "Login Successful!");
+                    new home_user(); // Buka halaman home_user jika login berhasil
+                    frame.dispose(); // Tutup form login
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
         roundedPanel.add(loginButton);
 
         // Sign Up
@@ -129,11 +146,11 @@ public class ULoginForm {
                 frame.dispose();  // Close login form
             }
         });
-        roundedPanel.add(signUpLabel);        
+        roundedPanel.add(signUpLabel);
 
         // Add panel to frame
         frame.add(roundedPanel);
-        
+
         // Center the frame
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

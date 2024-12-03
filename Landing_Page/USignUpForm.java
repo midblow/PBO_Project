@@ -1,11 +1,13 @@
+package Landing_Page;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class PSignUpForm {
-    public PSignUpForm() {
+public class USignUpForm {
+    public USignUpForm() {
         // Create the frame
-        JFrame frame = new JFrame("Sign Up Provider");
+        JFrame frame = new JFrame("Sign Up User");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 700); // Ukuran frame yang sesuai
         frame.getContentPane().setBackground(new Color(12, 34, 64)); // Background warna biru gelap
@@ -29,7 +31,7 @@ public class PSignUpForm {
 
 
         // Astronaut Icon
-        ImageIcon astronautIconImage = new ImageIcon("iconLoginU/astroAwal.png");
+        ImageIcon astronautIconImage = new ImageIcon("../asset/hallo_user.2.png");
         Image scaledAstronautIcon = astronautIconImage.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH); // Resize astronaut icon
         JLabel astronautIcon = new JLabel(new ImageIcon(scaledAstronautIcon));
         astronautIcon.setBounds(135, 150, 80, 80); // Tempatkan ikon di atas label Sign Up
@@ -64,7 +66,7 @@ public class PSignUpForm {
         emailField.setPreferredSize(new Dimension(200, 30)); // Ukuran input field
         emailPanel.add(emailField, BorderLayout.CENTER);
 
-        ImageIcon emailIcon = new ImageIcon("iconLoginU/email.png"); // Path to email icon
+        ImageIcon emailIcon = new ImageIcon("../asset/email.png"); // Path to email icon
         JLabel emailIconLabel = new JLabel(new ImageIcon(emailIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         emailPanel.add(emailIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
 
@@ -91,7 +93,7 @@ public class PSignUpForm {
         namaField.setCaretColor(Color.WHITE);
         namaPanel.add(namaField, BorderLayout.CENTER);
 
-        ImageIcon namaIcon = new ImageIcon("iconLoginU/nama.png"); // Path to nama icon
+        ImageIcon namaIcon = new ImageIcon("../asset/nama.png"); // Path to nama icon
         JLabel namaIconLabel = new JLabel(new ImageIcon(namaIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         namaPanel.add(namaIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
 
@@ -118,7 +120,7 @@ public class PSignUpForm {
         passwordField.setCaretColor(Color.WHITE);
         passwordPanel.add(passwordField, BorderLayout.CENTER);
 
-        ImageIcon passwordIcon = new ImageIcon("iconLoginU/password.png"); // Path to password icon
+        ImageIcon passwordIcon = new ImageIcon("../asset/password.png"); // Path to password icon
         JLabel passwordIconLabel = new JLabel(new ImageIcon(passwordIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         passwordPanel.add(passwordIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
 
@@ -127,33 +129,31 @@ public class PSignUpForm {
         gbc.gridwidth = 2;
         roundedPanel.add(passwordPanel, gbc);
 
-        // Lembaga Label and Field with Icon inside
-        JLabel lembagaLabel = new JLabel("Lembaga");
-        lembagaLabel.setForeground(Color.WHITE);
-        lembagaLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
+        // Gender Label and ComboBox with Icon inside
+        JLabel genderLabel = new JLabel("Jenis Kelamin");
+        genderLabel.setForeground(Color.WHITE);
+        genderLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.gridwidth = 1;
-        roundedPanel.add(lembagaLabel, gbc);
+        roundedPanel.add(genderLabel, gbc);
 
-        JPanel lembagaPanel = new JPanel(new BorderLayout());
-        lembagaPanel.setOpaque(false); // Menonaktifkan background panel agar transparan
-        JTextField lembagaField = new JTextField();
-        lembagaField.setBackground(new Color(12, 34, 64));
-        lembagaField.setForeground(Color.WHITE);
-        lembagaField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
-        lembagaField.setCaretColor(Color.WHITE);
-        lembagaPanel.add(lembagaField, BorderLayout.CENTER); // Menambahkan lembagaField ke lembagaPanel
+        JPanel genderPanel = new JPanel(new BorderLayout());
+        genderPanel.setOpaque(false); // Menonaktifkan background panel, agar transparan
+        JComboBox<String> genderCombo = new JComboBox<>(new String[] {"Laki-Laki", "Perempuan"});
+        genderCombo.setBackground(new Color(12, 34, 64));
+        genderCombo.setForeground(Color.WHITE);
+        genderCombo.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
+        genderPanel.add(genderCombo, BorderLayout.CENTER);
 
-        // Icon untuk Lembaga
-        ImageIcon lembagaIcon = new ImageIcon("iconLoginU/lembaga.png"); // Path to lembaga icon
-        JLabel lembagaIconLabel = new JLabel(new ImageIcon(lembagaIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-        lembagaPanel.add(lembagaIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
+        ImageIcon genderIcon = new ImageIcon("../asset/gender.png"); // Path to gender icon
+        JLabel genderIconLabel = new JLabel(new ImageIcon(genderIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+        genderPanel.add(genderIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
 
         gbc.gridx = 1;
         gbc.gridy = 5;
         gbc.gridwidth = 2;
-        roundedPanel.add(lembagaPanel, gbc);
+        roundedPanel.add(genderPanel, gbc);
 
         // Phone Label and Field with Icon inside
         JLabel phoneLabel = new JLabel("Nomor Telepon");
@@ -173,7 +173,7 @@ public class PSignUpForm {
         phoneField.setCaretColor(Color.WHITE);
         phonePanel.add(phoneField, BorderLayout.CENTER);
 
-        ImageIcon phoneIcon = new ImageIcon("iconLoginU/phone.png"); // Path to phone icon
+        ImageIcon phoneIcon = new ImageIcon("../asset/phone.png"); // Path to phone icon
         JLabel phoneIconLabel = new JLabel(new ImageIcon(phoneIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         phonePanel.add(phoneIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
 
@@ -202,7 +202,7 @@ public class PSignUpForm {
         alamatField.setPreferredSize(new Dimension(200, 30)); // Ukuran input field
         alamatPanel.add(alamatField, BorderLayout.CENTER);
 
-        ImageIcon alamatIconImage = new ImageIcon("iconLoginU/location.png"); // Path ke ikon Alamat
+        ImageIcon alamatIconImage = new ImageIcon("../asset/location.png"); // Path ke ikon Alamat
         JLabel alamatIconLabel = new JLabel(new ImageIcon(alamatIconImage.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         alamatPanel.add(alamatIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
 
