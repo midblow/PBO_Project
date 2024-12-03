@@ -2,10 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ULoginForm {
+public class PLoginForm {
     public static void main(String[] args) {
         // Create the frame
-        JFrame frame = new JFrame("Login User");
+        JFrame frame = new JFrame("Login Provider");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(450, 650); // Ukuran frame diperbesar
         frame.getContentPane().setBackground(new Color(12, 34, 64)); // Background warna biru gelap
@@ -27,7 +27,7 @@ public class ULoginForm {
         roundedPanel.setLayout(null);
         
         // Icon astronaut
-        ImageIcon astronautIconImage = new ImageIcon("iconLoginU/user2.png");
+        ImageIcon astronautIconImage = new ImageIcon("iconLoginU/hello_provider.png");
         Image scaledAstronautIcon = astronautIconImage.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH); // Resize astronaut icon
         JLabel astronautIcon = new JLabel(new ImageIcon(scaledAstronautIcon));
         astronautIcon.setBounds(135, 50, 80, 80); // Posisikan lebih tengah
@@ -123,7 +123,7 @@ public class ULoginForm {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        new USignUpForm();  // Open the sign-up form
+                        new PSignUpForm();  // Open the sign-up form
                     }
                 });
                 frame.dispose();  // Close login form
