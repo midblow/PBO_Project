@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.RoundRectangle2D;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class Dashboard {
     private static JFrame frame;
@@ -42,14 +45,16 @@ public class Dashboard {
         logoPanel.setBackground(new Color(10, 30, 70)); // Warna latar panel logo sesuai header
 
         // Menambahkan logo
-        ImageIcon logoIcon = new ImageIcon("asset/logo.png"); // Ambil logo dari folder "asset"
-        Image scaledLogo = logoIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH); // Resize logo
+        ImageIcon logoIcon = new ImageIcon("aset/logo.png"); // Ambil logo dari folder "aset"
+        Image scaledLogo = logoIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH); // Resize logo lebih kecil
+
         JLabel logoLabel = new JLabel(new ImageIcon(scaledLogo)); // Tambahkan logo ke JLabel
         logoPanel.add(logoLabel); // Tambahkan logo ke panel logo
 
         // Menambahkan teks "REVENUE"
         JLabel textLabel = new JLabel("REVENUE");
-        textLabel.setFont(new Font("SansSerif", Font.BOLD, 20)); // Atur font teks
+        textLabel.setFont(new Font("SansSerif", Font.BOLD, 16)); // Ukuran font lebih kecil
+
         textLabel.setForeground(Color.WHITE); // Warna teks
         textLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0)); // Tambahkan jarak 20px dari logo
         logoPanel.add(textLabel); // Tambahkan teks ke panel logo
@@ -165,7 +170,7 @@ public class Dashboard {
         gbc.gridx = 0;
         gbc.gridy = 0;
 
-        ImageIcon originalImage = new ImageIcon("asset/banner.png");
+        ImageIcon originalImage = new ImageIcon("aset/rocketship.png");
         Image scaledImage = originalImage.getImage().getScaledInstance(450, 450, Image.SCALE_SMOOTH);
         ImageIcon resizedImage = new ImageIcon(scaledImage);
 
@@ -211,13 +216,13 @@ public class Dashboard {
         gbc.insets = new Insets(10, 20, 10, 20);
 
         JPanel userPanel = createEnhancedRolePanel(
-                "asset/hallo_user.2.png",
+                "aset/hallo_user.2.png",
                 "Revenue User",
                 "Hai, User! Kami senang melihat Anda di sini. Silakan login untuk menemukan venue yang sempurna untuk acara Anda.",
                 "I am User");
 
         JPanel providerPanel = createEnhancedRolePanel(
-                "asset/astroAwal.png",
+                "aset/astroAwal.png",
                 "Revenue Provider",
                 "Selamat datang Provider! Kami siap membantu Anda mengelola venue Anda dengan lebih baik.",
                 "I am Provider");
@@ -253,14 +258,16 @@ public class Dashboard {
         imagePanel.add(roleLabel, BorderLayout.CENTER);
 
         // Text Panel
-        JPanel textPanel = new JPanel(new BorderLayout());
+        JPanel textPanel = new JPanel();
         textPanel.setOpaque(false);
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
 
         // Title
         JLabel titleLabel = new JLabel(title, JLabel.CENTER);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
         titleLabel.setForeground(new Color(10, 30, 70));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 5, 0)); // Margin atas-bawah
 
         // Description
         JLabel roleDescription = new JLabel(
@@ -268,6 +275,8 @@ public class Dashboard {
                 JLabel.CENTER);
         roleDescription.setFont(new Font("SansSerif", Font.PLAIN, 14));
         roleDescription.setForeground(new Color(70, 70, 90));
+        roleDescription.setAlignmentX(Component.CENTER_ALIGNMENT);
+        roleDescription.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0)); // Tambahkan jarak bawah (20px)
 
         // Button
         JButton roleButton = new JButton(buttonText);
@@ -277,6 +286,17 @@ public class Dashboard {
         roleButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         roleButton.setPreferredSize(new Dimension(200, 50));
         roleButton.setFocusPainted(false);
+        roleButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        roleButton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(10, 30, 70), 1, true),
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)));
+
+        // Add elements to Text Panel with spacing
+        textPanel.add(titleLabel);
+        textPanel.add(Box.createVerticalStrut(10)); // Jarak antara Title dan Deskripsi
+        textPanel.add(roleDescription);
+        textPanel.add(Box.createVerticalStrut(30)); // Jarak antara Deskripsi dan Button
+        textPanel.add(roleButton);
 
         // Add shadow effect to button
         roleButton.setBorder(BorderFactory.createCompoundBorder(
@@ -324,7 +344,7 @@ public class Dashboard {
 
     // Create Back Button
     private static JButton createBackButton(JPanel headerPanel, JPanel previousContentPanel) {
-        ImageIcon backIcon = new ImageIcon("asset/back.png");
+        ImageIcon backIcon = new ImageIcon("aset/back.png");
         Image backImage = backIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         ImageIcon backResizedIcon = new ImageIcon(backImage);
 
@@ -358,18 +378,36 @@ public class Dashboard {
         button.setBorder(BorderFactory.createEmptyBorder()); // Hilangkan border default
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Atur efek hover pada teks
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                button.setForeground(new Color(255, 140, 0)); // Ubah warna teks ke oranye saat hover
-            }
+        // Untuk tombol "Home", set warna teks oranye secara permanen
+        if (text.equals("Home")) {
+            button.setForeground(new Color(255, 140, 0)); // Teks "Home" selalu oranye
+            button.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent e) {
+                    // Tidak ada perubahan warna pada hover
+                    button.setForeground(new Color(255, 140, 0));
+                }
 
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                button.setForeground(foreground); // Kembali ke warna teks asli
-            }
-        });
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent e) {
+                    // Tidak ada perubahan warna pada hover
+                    button.setForeground(new Color(255, 140, 0));
+                }
+            });
+        } else {
+            // Atur efek hover untuk tombol lainnya
+            button.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent e) {
+                    button.setForeground(new Color(255, 140, 0)); // Ubah warna teks ke oranye saat hover
+                }
+
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent e) {
+                    button.setForeground(foreground); // Kembali ke warna teks asli
+                }
+            });
+        }
 
         return button;
     }
@@ -378,10 +416,9 @@ public class Dashboard {
     private static JButton createGetStartedButton() {
         JButton button = new JButton("Get Started");
         Color defaultBackground = new Color(10, 30, 70); // Warna latar default
-        Color hoverBackground = Color.WHITE; // Warna latar saat hover
+        Color hoverBackground = new Color(255, 140, 0); // Warna latar saat hover (Oranye)
         Color defaultForeground = Color.WHITE; // Warna teks default
-        Color hoverForeground = new Color(10, 30, 70); // Warna teks saat hover
-        Color borderColor = new Color(10, 30, 70); // Warna border (sama dengan warna latar default)
+        Color hoverForeground = Color.WHITE; // Warna teks saat hover tetap putih
 
         button.setBackground(defaultBackground);
         button.setForeground(defaultForeground);
@@ -389,23 +426,23 @@ public class Dashboard {
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.setFocusPainted(false);
 
-        // Set border dengan warna biru tua
-        button.setBorder(BorderFactory.createLineBorder(borderColor, 2));
+        // Atur border default
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
         // Atur efek hover pada tombol
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent e) {
-                button.setBackground(hoverBackground);
-                button.setForeground(hoverForeground);
-                button.setBorder(BorderFactory.createLineBorder(borderColor, 2)); // Tetap gunakan border biru tua
+                button.setBackground(hoverBackground); // Ubah latar ke oranye saat hover
+                button.setForeground(hoverForeground); // Tetap gunakan teks putih
+                button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); // Hapus border saat hover
             }
 
             @Override
             public void mouseExited(java.awt.event.MouseEvent e) {
-                button.setBackground(defaultBackground);
-                button.setForeground(defaultForeground);
-                button.setBorder(BorderFactory.createLineBorder(borderColor, 2)); // Kembalikan ke border aslinya
+                button.setBackground(defaultBackground); // Kembalikan latar ke biru tua
+                button.setForeground(defaultForeground); // Kembalikan teks ke putih
+                button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); // Tetap tanpa border
             }
         });
 
