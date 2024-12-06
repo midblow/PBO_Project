@@ -23,23 +23,180 @@ public class UProfileViewWithHistory {
         frame.setLayout(new BorderLayout());
         frame.getContentPane().setBackground(SOFT_WHITE);
 
+        // Main Panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(SOFT_WHITE);
 
-        // Single header panel
+        // Header Panel
         JPanel headerPanel = createHeaderPanel();
-        mainPanel.add(headerPanel, BorderLayout.NORTH);
+        frame.add(headerPanel, BorderLayout.NORTH);
 
-        // Sidebar and profile content panels
+        // Navbar Panel
+        JPanel navbarPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 50, 10)); // Rata tengah dengan jarak 50px
+        navbarPanel.setBackground(SOFT_WHITE);
+
+        navbarPanel.setBorder(new EmptyBorder(10, 40, 10, 40));
+
+        JButton profileButton = createNavbarButton("Profile");
+        profileButton.addActionListener(e -> {
+            JPanel profileContent = createProfileContentPanel(frame, mainPanel);
+            mainPanel.removeAll();
+            JPanel sidebar = createSidebarPanel(frame, mainPanel);
+            mainPanel.add(sidebar, BorderLayout.WEST);
+            mainPanel.add(profileContent, BorderLayout.CENTER);
+            mainPanel.revalidate();
+            mainPanel.repaint();
+        });
+
+        JButton reservationButton = createNavbarButton("Booking Confirmation");
+        reservationButton.addActionListener(e -> {
+            JPanel historyContent = createHistoryContentPanel(frame, mainPanel);
+            mainPanel.removeAll();
+            JPanel sidebar = createSidebarPanel(frame, mainPanel);
+            mainPanel.add(sidebar, BorderLayout.WEST);
+            mainPanel.add(historyContent, BorderLayout.CENTER);
+            mainPanel.revalidate();
+            mainPanel.repaint();
+        });
+
+        JButton logoutButton = createNavbarButton("Logout");
+        logoutButton.addActionListener(e -> {
+            // Logika untuk logout
+        });
+
+        navbarPanel.add(profileButton);
+        navbarPanel.add(reservationButton);
+        navbarPanel.add(logoutButton);
+
+        // Sidebar and Default Content
         JPanel sidebar = createSidebarPanel(frame, mainPanel);
         JPanel profileContent = createProfileContentPanel(frame, mainPanel);
 
         mainPanel.add(sidebar, BorderLayout.WEST);
         mainPanel.add(profileContent, BorderLayout.CENTER);
 
-        frame.add(mainPanel);
+        // Add navbar below header
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(SOFT_WHITE);
+        topPanel.add(headerPanel, BorderLayout.NORTH);
+        topPanel.add(navbarPanel, BorderLayout.SOUTH);
+
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(mainPanel, BorderLayout.CENTER);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    private static JPanel createHeaderPanel() {
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(DEEP_NAVY);
+        headerPanel.setPreferredSize(new Dimension(1100, 50)); // Tinggi header lebih kecil
+
+        // Left side: Logo dengan ukuran lebih kecil
+        JLabel logoLabel = new JLabel();
+        try {
+            ImageIcon originalIcon = new ImageIcon("asset/logo.png");
+            Image scaledImage = originalIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH); // Ukuran logo
+                                                                                                       // lebih kecil
+            logoLabel.setIcon(new ImageIcon(scaledImage));
+        } catch (Exception e) {
+            logoLabel.setText("LOGO");
+        }
+        logoLabel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 5)); // Padding lebih kecil
+        headerPanel.add(logoLabel, BorderLayout.WEST);
+
+        // Center: Tulisan REVENUE dengan ukuran lebih kecil
+        JLabel revenueLabel = new JLabel("REVENUE", SwingConstants.LEFT);
+        revenueLabel.setForeground(Color.WHITE);
+        revenueLabel.setFont(new Font("Segoe UI", Font.BOLD, 16)); // Ukuran font lebih kecil
+        headerPanel.add(revenueLabel, BorderLayout.CENTER);
+
+        // Right side: Greeting dan gambar nama.png
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5)); // Spasi lebih kecil
+        rightPanel.setBackground(DEEP_NAVY);
+
+        JLabel greetingLabel = new JLabel("Halo, Erwin");
+        greetingLabel.setForeground(Color.WHITE);
+        greetingLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12)); // Ukuran font lebih kecil
+
+        JLabel profilePictureLabel = new JLabel();
+        try {
+            ImageIcon profilePictureIcon = new ImageIcon("asset/nama.png");
+            Image scaledImage = profilePictureIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH); // Ukuran
+                                                                                                             // gambar
+                                                                                                             // lebih
+                                                                                                             // kecil
+            profilePictureLabel.setIcon(new ImageIcon(scaledImage));
+        } catch (Exception e) {
+            profilePictureLabel.setText(""); // Fallback jika gambar gagal dimuat
+        }
+
+        rightPanel.add(greetingLabel);
+        rightPanel.add(profilePictureLabel);
+
+        headerPanel.add(rightPanel, BorderLayout.EAST);
+
+        return headerPanel;
+    }
+
+    private static JPanel createSidebarPanel(JFrame frame, JPanel mainPanel) {
+        JPanel sidebar = new JPanel();
+        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
+        sidebar.setBackground(SOFT_NAVY);
+        sidebar.setPreferredSize(new Dimension(250, 700));
+        sidebar.setBorder(new EmptyBorder(20, 10, 20, 10));
+
+        // Add profile picture and name with improved styling
+        JLabel profilePicture = new JLabel();
+        try {
+            ImageIcon originalIcon = new ImageIcon("asset/erwin.png");
+            Image scaledImage = originalIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
+            profilePicture.setIcon(new ImageIcon(scaledImage));
+        } catch (Exception e) {
+            profilePicture.setText("Profile Pic");
+        }
+        profilePicture.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel nameLabel = new JLabel("Erwin", SwingConstants.CENTER);
+        nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        nameLabel.setForeground(Color.WHITE);
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel emailLabel = new JLabel("erwin@gmail.com", SwingConstants.CENTER);
+        emailLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        emailLabel.setForeground(LIGHT_GRAY);
+        emailLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Add buttons to sidebar with improved styling
+        JButton profileButton = createSidebarButton("Profil");
+        profileButton.addActionListener(e -> {
+            JPanel profileContent = createProfileContentPanel(frame, mainPanel);
+            // Logika untuk menampilkan panel profil
+        });
+
+        JButton historyButton = createSidebarButton("Booking Confirmation");
+        historyButton.addActionListener(e -> {
+            JPanel historyContent = createHistoryContentPanel(frame, mainPanel);
+            // Logika untuk menampilkan panel riwayat reservasi
+        });
+
+        JButton logoutButton = createSidebarButton("Keluar");
+
+        sidebar.add(Box.createVerticalStrut(20));
+        sidebar.add(Box.createVerticalStrut(30));
+        sidebar.add(profilePicture);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 15)));
+        sidebar.add(Box.createRigidArea(new Dimension(0, 15)));
+        sidebar.add(nameLabel);
+        sidebar.add(emailLabel);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 30)));
+        sidebar.add(profileButton);
+        sidebar.add(historyButton);
+        sidebar.add(Box.createVerticalGlue());
+        sidebar.add(logoutButton);
+        sidebar.add(Box.createVerticalStrut(20));
+
+        return sidebar;
     }
 
     private static JPanel createProfileContentPanel(JFrame frame, JPanel mainPanel) {
@@ -98,109 +255,6 @@ public class UProfileViewWithHistory {
         return profilePanel;
     }
 
-    private static JPanel createSidebarPanel(JFrame frame, JPanel mainPanel) {
-        JPanel sidebar = new JPanel();
-        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-        sidebar.setBackground(SOFT_NAVY);
-        sidebar.setPreferredSize(new Dimension(250, 700));
-        sidebar.setBorder(new EmptyBorder(20, 10, 20, 10));
-
-        // Add profile picture and name with improved styling
-        JLabel profilePicture = new JLabel();
-        try {
-            ImageIcon originalIcon = new ImageIcon("asset/erwin.png");
-            Image scaledImage = originalIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
-            profilePicture.setIcon(new ImageIcon(scaledImage));
-        } catch (Exception e) {
-            profilePicture.setText("Profile Pic");
-        }
-        profilePicture.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel nameLabel = new JLabel("Erwin", SwingConstants.CENTER);
-        nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        nameLabel.setForeground(Color.WHITE);
-        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel emailLabel = new JLabel("erwin@gmail.com", SwingConstants.CENTER);
-        emailLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        emailLabel.setForeground(LIGHT_GRAY);
-        emailLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Add buttons to sidebar with improved styling
-        JButton profileButton = createSidebarButton("Profil");
-        profileButton.addActionListener(e -> {
-            JPanel profileContent = createProfileContentPanel(frame, mainPanel);
-            frame.getContentPane().removeAll();
-            frame.add(createHeaderPanel(), BorderLayout.NORTH);
-            frame.add(createSidebarPanel(frame, mainPanel), BorderLayout.WEST);
-            frame.add(profileContent, BorderLayout.CENTER);
-            frame.revalidate();
-            frame.repaint();
-        });
-
-        JButton historyButton = createSidebarButton("Booking Confirmation");
-        historyButton.addActionListener(e -> {
-            JPanel historyContent = createHistoryContentPanel(frame, mainPanel);
-            frame.getContentPane().removeAll();
-            frame.add(createHeaderPanel(), BorderLayout.NORTH);
-            frame.add(createSidebarPanel(frame, mainPanel), BorderLayout.WEST);
-            frame.add(historyContent, BorderLayout.CENTER);
-            frame.revalidate();
-            frame.repaint();
-        });
-
-        JButton logoutButton = createSidebarButton("Keluar");
-
-        sidebar.add(Box.createVerticalStrut(20));
-        sidebar.add(Box.createVerticalStrut(30));
-        sidebar.add(profilePicture);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 15)));
-        sidebar.add(Box.createRigidArea(new Dimension(0, 15)));
-        sidebar.add(nameLabel);
-        sidebar.add(emailLabel);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 30)));
-        sidebar.add(profileButton);
-        sidebar.add(historyButton);
-        sidebar.add(Box.createVerticalGlue());
-        sidebar.add(logoutButton);
-        sidebar.add(Box.createVerticalStrut(20));
-
-        return sidebar;
-    }
-
-    private static JPanel createHeaderPanel() {
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(DEEP_NAVY);
-        headerPanel.setPreferredSize(new Dimension(1100, 70));
-
-        // Left side: Logo with improved sizing and padding
-        JLabel logoLabel = new JLabel();
-        try {
-            ImageIcon originalIcon = new ImageIcon("asset/logo.png");
-            Image scaledImage = originalIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-            logoLabel.setIcon(new ImageIcon(scaledImage));
-        } catch (Exception e) {
-            logoLabel.setText("LOGO");
-        }
-        logoLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 10));
-        headerPanel.add(logoLabel, BorderLayout.WEST);
-
-        // Center: REVENUE text with refined styling
-        JLabel revenueLabel = new JLabel("REVENUE", SwingConstants.LEFT);
-        revenueLabel.setForeground(Color.WHITE);
-        revenueLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        headerPanel.add(revenueLabel, BorderLayout.CENTER);
-
-        // Right side: Greeting with improved spacing
-        JLabel greetingLabel = new JLabel("Halo, Erwin", SwingConstants.RIGHT);
-        greetingLabel.setForeground(Color.WHITE);
-        greetingLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        greetingLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
-        headerPanel.add(greetingLabel, BorderLayout.EAST);
-
-        return headerPanel;
-    }
-
     private static JPanel createHistoryContentPanel(JFrame frame, JPanel mainPanel) {
         JPanel historyPanel = new JPanel(new BorderLayout());
         historyPanel.setBackground(SOFT_WHITE);
@@ -236,6 +290,29 @@ public class UProfileViewWithHistory {
 
         historyPanel.add(scrollPane, BorderLayout.CENTER);
         return historyPanel;
+    }
+
+    private static JButton createNavbarButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        button.setForeground(ACCENT_ORANGE);
+        button.setBackground(SOFT_WHITE);
+        button.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0)); // Bottom space for underline
+        button.setFocusPainted(false);
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setForeground(DEEP_NAVY);
+                button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); // Underline effect
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setForeground(ACCENT_ORANGE);
+                button.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+            }
+        });
+
+        return button;
     }
 
     private static JButton createSidebarButton(String text) {

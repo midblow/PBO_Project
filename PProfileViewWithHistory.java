@@ -23,79 +23,120 @@ public class PProfileViewWithHistory {
         frame.setLayout(new BorderLayout());
         frame.getContentPane().setBackground(SOFT_WHITE);
 
+        // Main Panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(SOFT_WHITE);
 
-        // Single header panel
+        // Header Panel
         JPanel headerPanel = createHeaderPanel();
-        mainPanel.add(headerPanel, BorderLayout.NORTH);
+        frame.add(headerPanel, BorderLayout.NORTH);
 
-        // Sidebar and profile content panels
+        // Navbar Panel
+        JPanel navbarPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 50, 10)); // Rata tengah dengan jarak 50px
+        navbarPanel.setBackground(SOFT_WHITE);
+
+        navbarPanel.setBorder(new EmptyBorder(10, 40, 10, 40));
+
+        JButton profileButton = createNavbarButton("Profile");
+        profileButton.addActionListener(e -> {
+            JPanel profileContent = createProfileContentPanel(frame, mainPanel);
+            mainPanel.removeAll();
+            JPanel sidebar = createSidebarPanel(frame, mainPanel);
+            mainPanel.add(sidebar, BorderLayout.WEST);
+            mainPanel.add(profileContent, BorderLayout.CENTER);
+            mainPanel.revalidate();
+            mainPanel.repaint();
+        });
+
+        JButton reservationButton = createNavbarButton("Booking Confirmation");
+        reservationButton.addActionListener(e -> {
+            JPanel historyContent = createHistoryContentPanel(frame, mainPanel);
+            mainPanel.removeAll();
+            JPanel sidebar = createSidebarPanel(frame, mainPanel);
+            mainPanel.add(sidebar, BorderLayout.WEST);
+            mainPanel.add(historyContent, BorderLayout.CENTER);
+            mainPanel.revalidate();
+            mainPanel.repaint();
+        });
+
+        JButton logoutButton = createNavbarButton("Logout");
+        logoutButton.addActionListener(e -> {
+            // Logika untuk logout
+        });
+
+        navbarPanel.add(profileButton);
+        navbarPanel.add(reservationButton);
+        navbarPanel.add(logoutButton);
+
+        // Sidebar and Default Content
         JPanel sidebar = createSidebarPanel(frame, mainPanel);
         JPanel profileContent = createProfileContentPanel(frame, mainPanel);
 
         mainPanel.add(sidebar, BorderLayout.WEST);
         mainPanel.add(profileContent, BorderLayout.CENTER);
 
-        frame.add(mainPanel);
+        // Add navbar below header
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(SOFT_WHITE);
+        topPanel.add(headerPanel, BorderLayout.NORTH);
+        topPanel.add(navbarPanel, BorderLayout.SOUTH);
+
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(mainPanel, BorderLayout.CENTER);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
-    private static JPanel createProfileContentPanel(JFrame frame, JPanel mainPanel) {
-        JPanel profilePanel = new JPanel(new BorderLayout());
-        profilePanel.setBackground(SOFT_WHITE);
+    private static JPanel createHeaderPanel() {
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(DEEP_NAVY);
+        headerPanel.setPreferredSize(new Dimension(1100, 50)); // Tinggi header lebih kecil
 
-        // Content panel
-        JPanel contentPanel = new JPanel();
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setBackground(SOFT_WHITE);
-        contentPanel.setBorder(new EmptyBorder(20, 40, 20, 40));
+        // Left side: Logo dengan ukuran lebih kecil
+        JLabel logoLabel = new JLabel();
+        try {
+            ImageIcon originalIcon = new ImageIcon("asset/logo.png");
+            Image scaledImage = originalIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH); // Ukuran logo
+                                                                                                       // lebih kecil
+            logoLabel.setIcon(new ImageIcon(scaledImage));
+        } catch (Exception e) {
+            logoLabel.setText("LOGO");
+        }
+        logoLabel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 5)); // Padding lebih kecil
+        headerPanel.add(logoLabel, BorderLayout.WEST);
 
-        // Title label with improved styling
-        JLabel titleLabel = new JLabel("Profile Provider", SwingConstants.LEFT);
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        titleLabel.setForeground(DEEP_NAVY);
-        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        contentPanel.add(titleLabel);
+        // Center: Tulisan REVENUE dengan ukuran lebih kecil
+        JLabel revenueLabel = new JLabel("REVENUE", SwingConstants.LEFT);
+        revenueLabel.setForeground(Color.WHITE);
+        revenueLabel.setFont(new Font("Segoe UI", Font.BOLD, 16)); // Ukuran font lebih kecil
+        headerPanel.add(revenueLabel, BorderLayout.CENTER);
 
-        contentPanel.add(Box.createVerticalStrut(20));
+        // Right side: Greeting dan gambar nama.png
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5)); // Spasi lebih kecil
+        rightPanel.setBackground(DEEP_NAVY);
 
-        // Form panel with improved layout
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(SOFT_WHITE);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JLabel greetingLabel = new JLabel("Halo, Erwin");
+        greetingLabel.setForeground(Color.WHITE);
+        greetingLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12)); // Ukuran font lebih kecil
 
-        // Labels and text fields
-        String[] labels = { "Username:", "Email:", "Lembaga:", "Nomor Telepon:", "Alamat:" };
-        String[] values = { "Rewind", "erwin@gmail.com", "PT. Makmur Jaya Sentosa", "99999", "Rembigan" };
-
-        for (int i = 0; i < labels.length; i++) {
-            gbc.gridx = 0;
-            gbc.gridy = i;
-            gbc.weightx = 0.3;
-            JLabel label = new JLabel(labels[i]);
-            label.setFont(new Font("Segoe UI", Font.BOLD, 16));
-            label.setForeground(TEXT_DARK);
-            formPanel.add(label, gbc);
-
-            gbc.gridx = 1;
-            gbc.weightx = 0.7;
-            JTextField textField = createTextField(values[i]);
-            formPanel.add(textField, gbc);
+        JLabel profilePictureLabel = new JLabel();
+        try {
+            ImageIcon profilePictureIcon = new ImageIcon("asset/nama.png");
+            Image scaledImage = profilePictureIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH); // Ukuran
+                                                                                                             // gambar
+                                                                                                             // lebih
+                                                                                                             // kecil
+            profilePictureLabel.setIcon(new ImageIcon(scaledImage));
+        } catch (Exception e) {
+            profilePictureLabel.setText(""); // Fallback jika gambar gagal dimuat
         }
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(SOFT_WHITE);
+        rightPanel.add(greetingLabel);
+        rightPanel.add(profilePictureLabel);
 
-        contentPanel.add(formPanel);
-        contentPanel.add(Box.createVerticalStrut(20));
-        contentPanel.add(buttonPanel);
+        headerPanel.add(rightPanel, BorderLayout.EAST);
 
-        profilePanel.add(contentPanel, BorderLayout.CENTER);
-        return profilePanel;
+        return headerPanel;
     }
 
     private static JPanel createSidebarPanel(JFrame frame, JPanel mainPanel) {
@@ -130,23 +171,13 @@ public class PProfileViewWithHistory {
         JButton profileButton = createSidebarButton("Profil");
         profileButton.addActionListener(e -> {
             JPanel profileContent = createProfileContentPanel(frame, mainPanel);
-            frame.getContentPane().removeAll();
-            frame.add(createHeaderPanel(), BorderLayout.NORTH);
-            frame.add(createSidebarPanel(frame, mainPanel), BorderLayout.WEST);
-            frame.add(profileContent, BorderLayout.CENTER);
-            frame.revalidate();
-            frame.repaint();
+            // Logika untuk menampilkan panel profil
         });
 
         JButton historyButton = createSidebarButton("Booking Confirmation");
         historyButton.addActionListener(e -> {
             JPanel historyContent = createHistoryContentPanel(frame, mainPanel);
-            frame.getContentPane().removeAll();
-            frame.add(createHeaderPanel(), BorderLayout.NORTH);
-            frame.add(createSidebarPanel(frame, mainPanel), BorderLayout.WEST);
-            frame.add(historyContent, BorderLayout.CENTER);
-            frame.revalidate();
-            frame.repaint();
+            // Logika untuk menampilkan panel riwayat reservasi
         });
 
         JButton logoutButton = createSidebarButton("Keluar");
@@ -168,37 +199,61 @@ public class PProfileViewWithHistory {
         return sidebar;
     }
 
-    private static JPanel createHeaderPanel() {
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(DEEP_NAVY);
-        headerPanel.setPreferredSize(new Dimension(1100, 70));
+    private static JPanel createProfileContentPanel(JFrame frame, JPanel mainPanel) {
+        JPanel profilePanel = new JPanel(new BorderLayout());
+        profilePanel.setBackground(SOFT_WHITE);
 
-        // Left side: Logo with improved sizing and padding
-        JLabel logoLabel = new JLabel();
-        try {
-            ImageIcon originalIcon = new ImageIcon("asset/logo.png");
-            Image scaledImage = originalIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-            logoLabel.setIcon(new ImageIcon(scaledImage));
-        } catch (Exception e) {
-            logoLabel.setText("LOGO");
+        // Content panel
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBackground(SOFT_WHITE);
+        contentPanel.setBorder(new EmptyBorder(20, 40, 20, 40));
+
+        // Title label with improved styling
+        JLabel titleLabel = new JLabel("Profile Provider", SwingConstants.LEFT);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setForeground(DEEP_NAVY);
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        contentPanel.add(titleLabel);
+
+        contentPanel.add(Box.createVerticalStrut(20));
+
+        // Form panel with improved layout
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBackground(SOFT_WHITE);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Labels and text fields
+        String[] labels = { "Nama:", "Email:", "Lembaga:", "Nomor Telepon:", "Alamat:" };
+        String[] values = { "PT. Makmur Jaya Sentosa", "erwin@gmail.com", "PT. Makmur Jaya Sentosa", "99999",
+                "Rembigan" };
+
+        for (int i = 0; i < labels.length; i++) {
+            gbc.gridx = 0;
+            gbc.gridy = i;
+            gbc.weightx = 0.3;
+            JLabel label = new JLabel(labels[i]);
+            label.setFont(new Font("Segoe UI", Font.BOLD, 16));
+            label.setForeground(TEXT_DARK);
+            formPanel.add(label, gbc);
+
+            gbc.gridx = 1;
+            gbc.weightx = 0.7;
+            JTextField textField = createTextField(values[i]);
+            formPanel.add(textField, gbc);
         }
-        logoLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 10));
-        headerPanel.add(logoLabel, BorderLayout.WEST);
 
-        // Center: REVENUE text with refined styling
-        JLabel revenueLabel = new JLabel("REVENUE", SwingConstants.LEFT);
-        revenueLabel.setForeground(Color.WHITE);
-        revenueLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        headerPanel.add(revenueLabel, BorderLayout.CENTER);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(SOFT_WHITE);
 
-        // Right side: Greeting with improved spacing
-        JLabel greetingLabel = new JLabel("Halo, Erwin", SwingConstants.RIGHT);
-        greetingLabel.setForeground(Color.WHITE);
-        greetingLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        greetingLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
-        headerPanel.add(greetingLabel, BorderLayout.EAST);
+        contentPanel.add(formPanel);
+        contentPanel.add(Box.createVerticalStrut(20));
+        contentPanel.add(buttonPanel);
 
-        return headerPanel;
+        profilePanel.add(contentPanel, BorderLayout.CENTER);
+        return profilePanel;
     }
 
     private static JPanel createHistoryContentPanel(JFrame frame, JPanel mainPanel) {
@@ -236,6 +291,29 @@ public class PProfileViewWithHistory {
 
         historyPanel.add(scrollPane, BorderLayout.CENTER);
         return historyPanel;
+    }
+
+    private static JButton createNavbarButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        button.setForeground(ACCENT_ORANGE);
+        button.setBackground(SOFT_WHITE);
+        button.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0)); // Bottom space for underline
+        button.setFocusPainted(false);
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setForeground(DEEP_NAVY);
+                button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); // Underline effect
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setForeground(ACCENT_ORANGE);
+                button.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+            }
+        });
+
+        return button;
     }
 
     private static JButton createSidebarButton(String text) {
