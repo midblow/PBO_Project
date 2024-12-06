@@ -45,7 +45,7 @@ public class Dashboard {
         logoPanel.setBackground(new Color(10, 30, 70)); // Warna latar panel logo sesuai header
 
         // Menambahkan logo
-        ImageIcon logoIcon = new ImageIcon("aset/logo.png"); // Ambil logo dari folder "aset"
+        ImageIcon logoIcon = new ImageIcon("asset/logo.png"); // Ambil logo dari folder "aset"
         Image scaledLogo = logoIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH); // Resize logo lebih kecil
 
         JLabel logoLabel = new JLabel(new ImageIcon(scaledLogo)); // Tambahkan logo ke JLabel
@@ -170,7 +170,7 @@ public class Dashboard {
         gbc.gridx = 0;
         gbc.gridy = 0;
 
-        ImageIcon originalImage = new ImageIcon("aset/rocketship.png");
+        ImageIcon originalImage = new ImageIcon("asset/banner.png");
         Image scaledImage = originalImage.getImage().getScaledInstance(450, 450, Image.SCALE_SMOOTH);
         ImageIcon resizedImage = new ImageIcon(scaledImage);
 
@@ -216,13 +216,13 @@ public class Dashboard {
         gbc.insets = new Insets(10, 20, 10, 20);
 
         JPanel userPanel = createEnhancedRolePanel(
-                "aset/hallo_user.2.png",
+                "asset/hallo_user.2.png",
                 "Revenue User",
                 "Hai, User! Kami senang melihat Anda di sini. Silakan login untuk menemukan venue yang sempurna untuk acara Anda.",
                 "I am User");
 
         JPanel providerPanel = createEnhancedRolePanel(
-                "aset/astroAwal.png",
+                "asset/astroAwal.png",
                 "Revenue Provider",
                 "Selamat datang Provider! Kami siap membantu Anda mengelola venue Anda dengan lebih baik.",
                 "I am Provider");
@@ -344,7 +344,7 @@ public class Dashboard {
 
     // Create Back Button
     private static JButton createBackButton(JPanel headerPanel, JPanel previousContentPanel) {
-        ImageIcon backIcon = new ImageIcon("aset/back.png");
+        ImageIcon backIcon = new ImageIcon("asset/back.png");
         Image backImage = backIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         ImageIcon backResizedIcon = new ImageIcon(backImage);
 
