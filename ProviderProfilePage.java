@@ -1,11 +1,11 @@
-package User;
+
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-public class PProfileViewWithHistory {
+public class ProviderProfilePage {
     // Refined Color Palette
     private static final Color DEEP_NAVY = new Color(17, 29, 48);
     private static final Color SOFT_NAVY = new Color(36, 65, 97);
@@ -13,9 +13,9 @@ public class PProfileViewWithHistory {
     private static final Color ACCENT_ORANGE = new Color(255, 127, 39);
     private static final Color SOFT_WHITE = new Color(252, 253, 255);
     private static final Color TEXT_DARK = new Color(27, 47, 71);
-
+    
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(PProfileViewWithHistory::createAndShowGUI);
+        SwingUtilities.invokeLater(ProviderProfilePage::createAndShowGUI);
     }
 
     private static void createAndShowGUI() {

@@ -1,12 +1,12 @@
+package User;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class VenuePage {
-    public static void showVenuePage() {
-        SwingUtilities.invokeLater(() -> new VenuePage());
-    }
-    public VenuePage() {
+public class HomeUser {
+    
+    public static void main(String[] args) {
         // Frame utama
         JFrame frame = new JFrame("Revenue");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,28 +57,40 @@ public class VenuePage {
         navPanel.setOpaque(false); // Transparan
         navPanel.setPreferredSize(new Dimension(1200, 50)); // Ukuran tetap
 
-        // Tombol Beranda tanpa garis bawah
+        // Tombol navigasi
         JButton berandaButton = new JButton("Beranda");
-        styleNavigationButton(berandaButton, new Color(255, 140, 0));  // Updated color
-        navPanel.add(berandaButton);
+        styleNavigationButton(berandaButton, new Color(12, 34, 64));  // Updated color
 
-        // Tombol Venue dengan garis bawah
+        // Membuat panel untuk menambahkan garis bawah pada "Beranda"
+        JPanel berandaPanel = new JPanel(new BorderLayout());
+        berandaPanel.setOpaque(false); // Panel transparan
+        berandaPanel.add(berandaButton, BorderLayout.CENTER);
+        berandaPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(12, 34, 64))); // Garis bawah
+        navPanel.add(berandaPanel);
+
         JButton venueButton = new JButton("Venue");
-        styleNavigationButton(venueButton, new Color(12, 34, 64));  // Updated color
+        styleNavigationButton(venueButton, new Color(255, 140, 0));  // Updated color
+        navPanel.add(venueButton);
 
-        // Membuat panel untuk menambahkan garis bawah pada "Venue"
-        JPanel venuePanel = new JPanel(new BorderLayout());
-        venuePanel.setOpaque(false); // Panel transparan
-        venuePanel.add(venueButton, BorderLayout.CENTER);
-        venuePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(12, 34, 64))); // Garis bawah
+        // Tambahkan ActionListener untuk venueButton
+        venueButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose(); // Tutup HomeUser
+                VenuePage.showVenuePage(); // Buka VenuePage
+            }
+        });
 
-        navPanel.add(venuePanel);
-
-
-        // Tombol Profile
         JButton profileButton = new JButton("Profile");
         styleNavigationButton(profileButton, new Color(255, 140, 0));  // Updated color
         navPanel.add(profileButton);
+        profileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose(); // Tutup HomeUser
+                UProfilePage.main(new String[]{}); // Buka VenuePage
+            }
+        });
 
         mainPanel.add(navPanel);
 
@@ -86,32 +98,61 @@ public class VenuePage {
         JPanel venueTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Menggunakan FlowLayout LEFT
         venueTitlePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Tambahkan margin
 
-        JLabel venueTitle = new JLabel("Temukan venue terbaik untuk event anda");
-        venueTitle.setFont(new Font("Poppins", Font.BOLD, 25));
+        JLabel venueTitle = new JLabel("Rekomendasi Venue");
+        venueTitle.setFont(new Font("Poppins", Font.BOLD, 23));
         venueTitle.setHorizontalAlignment(SwingConstants.LEFT); // Ratakan ke kiri
         venueTitlePanel.add(venueTitle);
         mainPanel.add(venueTitlePanel);
 
-        // Menggunakan GridLayout 2 baris dan 4 kolom untuk lebih baik dalam penataan horizontal
-        JPanel venueGridPanel = new JPanel(new GridLayout(0, 4, 20, 20)); // 0 baris berarti jumlah baris akan disesuaikan otomatis
-        venueGridPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margin
+        JPanel venuePanel = new JPanel(new GridLayout(1, 4, 20, 20));
+        venuePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margin
 
         // Tambahkan venue card
-        venueGridPanel.add(createVenueCard("Taman Sangkareang", "Mataram", "asset/Sangkareang.jpg"));
-        venueGridPanel.add(createVenueCard("Pantai Senggigi", "Mataram", "asset/Pantai_Senggigi.jpg"));
-        venueGridPanel.add(createVenueCard("Grand Imperial", "Mataram", "asset/Grand_Imperial.jpg"));
-        venueGridPanel.add(createVenueCard("Hotel Lombok Raya", "Mataram", "asset/Hotel_Lombok_Raya.jpg"));
-        venueGridPanel.add(createVenueCard("Islamic Center", "Mataram", "asset/Islamic_Center.jpg"));
-        venueGridPanel.add(createVenueCard("Senggigi Hotel", "Mataram", "asset/Senggigi_Hotel.jpg"));
-        venueGridPanel.add(createVenueCard("Prime Park", "Mataram", "asset/Prime_Park.jpg"));
-        venueGridPanel.add(createVenueCard("Narmada Convention Hall", "Mataram", "asset/Narmada_Convention_Hall.jpg"));
-        venueGridPanel.add(createVenueCard("Gelanggang Pemuda", "Mataram", "asset/Gelanggang_Pemuda.png"));
-        mainPanel.add(venueGridPanel);
+        venuePanel.add(createVenueCard("Taman Sangkareang", "Mataram", "asset/Sangkareang.jpg"));
+        venuePanel.add(createVenueCard("Pantai Senggigi", "Mataram", "asset/Pantai_Senggigi.jpg"));
+        venuePanel.add(createVenueCard("Grand Imperial", "Mataram", "asset/Grand_Imperial.jpg"));
+        venuePanel.add(createVenueCard("Hotel Lombok Raya", "Mataram", "asset/Hotel_Lombok_Raya.jpg"));
+        mainPanel.add(venuePanel);
+
+        // Section Tata Cara Reservasi
+        JPanel tataCaraTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Menggunakan FlowLayout LEFT
+        tataCaraTitlePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Tambahkan margin
+
+        JLabel tataCaraTitle = new JLabel("Tata Cara Reservasi Venue");
+        tataCaraTitle.setFont(new Font("Poppins", Font.BOLD, 23));
+        tataCaraTitle.setHorizontalAlignment(SwingConstants.LEFT); // Ratakan ke kiri
+        tataCaraTitlePanel.add(tataCaraTitle);
+        mainPanel.add(tataCaraTitlePanel);
+
+        JPanel tataCaraPanel = new JPanel(new GridLayout(2, 2, 20, 20));
+        tataCaraPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margin
+
+        tataCaraPanel.add(createDetailedStepCard(
+            "1. Pilih Venue",
+            "Mulailah perayaan yang tak terlupakan Anda dengan memilih venue sempurna untuk merayakan momen spesial Anda.",
+            "asset/1cara.jpg"
+        ));
+        tataCaraPanel.add(createDetailedStepCard(
+            "2. Mengisi Identitas",
+            "Kami ingin tahu lebih banyak tentang acara Anda. Mohon berikan kami informasi yang diperlukan untuk memastikan semuanya berjalan dengan lancar.",
+            "asset/2cara.jpg"
+        ));
+        tataCaraPanel.add(createDetailedStepCard(
+            "3. Melengkapi form SOP",
+            "Kenyamanan Anda adalah prioritas kami. Mohon pastikan semuanya tersusun rapi sesuai kebutuhan Anda.",
+            "asset/3cara.jpg"
+        ));
+        tataCaraPanel.add(createDetailedStepCard(
+            "4. Melakukan Pembayaran",
+            "Dengan persiapan yang teliti, saatnya membayar dan memastikan semuanya siap untuk perayaan yang tak terlupakan.",
+            "asset/4cara.jpg"
+        ));
+        mainPanel.add(tataCaraPanel);
 
         // JScrollPane untuk scrolling
         JScrollPane scrollPane = new JScrollPane(mainPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);  // Scroll vertikal
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Nonaktifkan scroll horizontal
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         frame.add(scrollPane, BorderLayout.CENTER);
 
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Frame otomatis diperbesar
@@ -152,7 +193,31 @@ public class VenuePage {
         card.add(bottomPanel, BorderLayout.SOUTH); // Menambahkan lokasi di bawah nama venue
     
         return card;
-    }    
+    }
+    
+    private static JPanel createDetailedStepCard(String title, String description, String imagePath) {
+        JPanel card = new JPanel(new BorderLayout());
+        card.setBackground(new Color(255, 231, 207)); // #ffe7cf
+        card.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+
+        JLabel image = new JLabel(new ImageIcon(imagePath));
+        card.add(image, BorderLayout.WEST);
+
+        JPanel detailPanel = new JPanel(new BorderLayout());
+        detailPanel.setBackground(new Color(255, 231, 207));
+
+        JLabel titleLabel = new JLabel(title, SwingConstants.LEFT);
+        titleLabel.setFont(new Font("Poppins", Font.BOLD, 16));
+        detailPanel.add(titleLabel, BorderLayout.NORTH);
+
+        JLabel descriptionLabel = new JLabel("<html><p style='width:250px;'>" + description + "</p></html>");
+        descriptionLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
+        detailPanel.add(descriptionLabel, BorderLayout.CENTER);
+
+        card.add(detailPanel, BorderLayout.CENTER);
+
+        return card;
+    }
 
     private static void styleNavigationButton(JButton button, Color color) {
         button.setFont(new Font("Poppins", Font.PLAIN, 16));
@@ -166,71 +231,5 @@ public class VenuePage {
         Image img = icon.getImage();
         Image resizedImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         return new ImageIcon(resizedImg);
-    }
-}
-
-class ProfileView extends JFrame {
-
-    public ProfileView() {
-        // Set up the Profile View Frame
-        setTitle("Profile");
-        setSize(500, 500);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
-        JPanel profilePanel = new JPanel();
-        profilePanel.setBackground(new Color(12, 34, 64));
-        profilePanel.setLayout(new BorderLayout());
-
-        // Create a top panel to hold the back button aligned to the left
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        topPanel.setBackground(new Color(12, 34, 64));
-        JLabel backButton = new JLabel(new ImageIcon(new ImageIcon("asset/backProfile.png").getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
-        backButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                dispose(); // Close the profile view
-            }
-        });
-        topPanel.add(backButton);
-
-        // Add the top panel to the profile panel
-        profilePanel.add(topPanel, BorderLayout.NORTH);
-
-        // Center Panel for Profile Image and Info
-        JPanel centerPanel = new JPanel();
-        centerPanel.setBackground(new Color(12, 34, 64));
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        // centerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-
-        // Profile picture
-        JLabel profilePic = new JLabel(new ImageIcon(new ImageIcon("asset/Zoro.jpg").getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
-        profilePic.setAlignmentX(Component.CENTER_ALIGNMENT);
-        centerPanel.add(profilePic);
-        centerPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-
-        // Name label
-        JLabel nameLabel = new JLabel("Zoro");
-        nameLabel.setForeground(Color.WHITE);
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        centerPanel.add(nameLabel);
-
-        // Add the center panel to the profile panel
-        profilePanel.add(centerPanel, BorderLayout.CENTER);
-
-        // Add the profile panel to the frame
-        add(profilePanel);
-        setVisible(true);
-    }
-
-    // Method to show the Profile view when the profile icon is clicked
-    public static void showProfileView() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new ProfileView();
-            }
-        });
     }
 }

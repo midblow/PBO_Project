@@ -6,7 +6,7 @@ import java.awt.event.*;
 import java.sql.*;
 import User.*; 
 
-public class ULoginForm {
+public class ULoginForm extends JFrame{
 
     // Verifikasi username dan password
     private boolean verifyLogin(String username, String password) {
@@ -53,7 +53,7 @@ public class ULoginForm {
         roundedPanel.setLayout(null);
 
         // Icon astronaut
-        ImageIcon astronautIconImage = new ImageIcon("../asset/user2.png");
+        ImageIcon astronautIconImage = new ImageIcon("asset/user2.png");
         Image scaledAstronautIcon = astronautIconImage.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH); // Resize astronaut icon
         JLabel astronautIcon = new JLabel(new ImageIcon(scaledAstronautIcon));
         astronautIcon.setBounds(135, 50, 80, 80); // Posisikan lebih tengah
@@ -83,6 +83,12 @@ public class ULoginForm {
         emailField.setCaretColor(Color.WHITE);
         roundedPanel.add(emailField);
 
+        ImageIcon emailIconImage = new ImageIcon("asset/email.png");
+        Image scaledEmailIcon = emailIconImage.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        JLabel emailIcon = new JLabel(new ImageIcon(scaledEmailIcon));
+        emailIcon.setBounds(300, 230, 20, 20); // Ikon sejajar dengan input field
+        roundedPanel.add(emailIcon);
+
         // Password Label
         JLabel passwordLabel = new JLabel("Password");
         passwordLabel.setBounds(70, 280, 80, 30);
@@ -99,9 +105,15 @@ public class ULoginForm {
         passwordField.setCaretColor(Color.WHITE);
         roundedPanel.add(passwordField);
 
+        ImageIcon passwordIconImage = new ImageIcon("asset/password.png");
+        Image scaledPasswordIcon = passwordIconImage.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        JLabel passwordIcon = new JLabel(new ImageIcon(scaledPasswordIcon));
+        passwordIcon.setBounds(300, 310, 20, 20); // Ikon sejajar dengan input field
+        roundedPanel.add(passwordIcon);
+
         // Login Button
         JButton loginButton = new JButton("Log In");
-        loginButton.setBounds(110, 400, 200, 40);
+        loginButton.setBounds(1000, 400, 200, 40);
         loginButton.setBackground(Color.WHITE);
         loginButton.setForeground(new Color(12, 34, 64));
         loginButton.setFocusPainted(false);
@@ -118,7 +130,7 @@ public class ULoginForm {
                 ULoginForm loginForm = new ULoginForm();
                 if (loginForm.verifyLogin(username, password)) {
                     JOptionPane.showMessageDialog(frame, "Login Successful!");
-                    new home_user(); // Buka halaman home_user jika login berhasil
+                    new HomeUser(); // Buka halaman home_user jika login berhasil
                     frame.dispose(); // Tutup form login
                 } else {
                     JOptionPane.showMessageDialog(frame, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);

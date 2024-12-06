@@ -31,7 +31,7 @@ public class USignUpForm {
 
 
         // Astronaut Icon
-        ImageIcon astronautIconImage = new ImageIcon("../asset/hallo_user.2.png");
+        ImageIcon astronautIconImage = new ImageIcon("asset/hallo_user.2.png");
         Image scaledAstronautIcon = astronautIconImage.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH); // Resize astronaut icon
         JLabel astronautIcon = new JLabel(new ImageIcon(scaledAstronautIcon));
         astronautIcon.setBounds(135, 150, 80, 80); // Tempatkan ikon di atas label Sign Up
@@ -66,7 +66,7 @@ public class USignUpForm {
         emailField.setPreferredSize(new Dimension(200, 30)); // Ukuran input field
         emailPanel.add(emailField, BorderLayout.CENTER);
 
-        ImageIcon emailIcon = new ImageIcon("../asset/email.png"); // Path to email icon
+        ImageIcon emailIcon = new ImageIcon("asset/email.png"); // Path to email icon
         JLabel emailIconLabel = new JLabel(new ImageIcon(emailIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         emailPanel.add(emailIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
 
@@ -93,7 +93,7 @@ public class USignUpForm {
         namaField.setCaretColor(Color.WHITE);
         namaPanel.add(namaField, BorderLayout.CENTER);
 
-        ImageIcon namaIcon = new ImageIcon("../asset/nama.png"); // Path to nama icon
+        ImageIcon namaIcon = new ImageIcon("asset/nama.png"); // Path to nama icon
         JLabel namaIconLabel = new JLabel(new ImageIcon(namaIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         namaPanel.add(namaIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
 
@@ -120,7 +120,7 @@ public class USignUpForm {
         passwordField.setCaretColor(Color.WHITE);
         passwordPanel.add(passwordField, BorderLayout.CENTER);
 
-        ImageIcon passwordIcon = new ImageIcon("../asset/password.png"); // Path to password icon
+        ImageIcon passwordIcon = new ImageIcon("asset/password.png"); // Path to password icon
         JLabel passwordIconLabel = new JLabel(new ImageIcon(passwordIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         passwordPanel.add(passwordIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
 
@@ -146,7 +146,7 @@ public class USignUpForm {
         genderCombo.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
         genderPanel.add(genderCombo, BorderLayout.CENTER);
 
-        ImageIcon genderIcon = new ImageIcon("../asset/gender.png"); // Path to gender icon
+        ImageIcon genderIcon = new ImageIcon("asset/gender.png"); // Path to gender icon
         JLabel genderIconLabel = new JLabel(new ImageIcon(genderIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         genderPanel.add(genderIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
 
@@ -173,7 +173,7 @@ public class USignUpForm {
         phoneField.setCaretColor(Color.WHITE);
         phonePanel.add(phoneField, BorderLayout.CENTER);
 
-        ImageIcon phoneIcon = new ImageIcon("../asset/phone.png"); // Path to phone icon
+        ImageIcon phoneIcon = new ImageIcon("asset/phone.png"); // Path to phone icon
         JLabel phoneIconLabel = new JLabel(new ImageIcon(phoneIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         phonePanel.add(phoneIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
 
@@ -202,7 +202,7 @@ public class USignUpForm {
         alamatField.setPreferredSize(new Dimension(200, 30)); // Ukuran input field
         alamatPanel.add(alamatField, BorderLayout.CENTER);
 
-        ImageIcon alamatIconImage = new ImageIcon("../asset/location.png"); // Path ke ikon Alamat
+        ImageIcon alamatIconImage = new ImageIcon("asset/location.png"); // Path ke ikon Alamat
         JLabel alamatIconLabel = new JLabel(new ImageIcon(alamatIconImage.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         alamatPanel.add(alamatIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
 
@@ -243,7 +243,7 @@ public class USignUpForm {
             public void mouseClicked(MouseEvent e) {
                 // Close current frame and show login form
                 frame.dispose();
-                new ULoginForm(); // Assuming ULoginForm is your login form class
+                ULoginForm.main(new String[]{}); // Assuming ULoginForm is your login form class
             }
         });
         gbc.gridx = 0;

@@ -4,9 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.RoundRectangle2D;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 public class Dashboard {
     private static JFrame frame;
@@ -16,7 +13,7 @@ public class Dashboard {
             frame = new JFrame("Revenue");
 
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(1200, 700);
+            frame.setSize(1440, 700);
             frame.setLayout(new BorderLayout());
             frame.setBackground(Color.WHITE);
 
@@ -45,7 +42,7 @@ public class Dashboard {
         logoPanel.setBackground(new Color(10, 30, 70)); // Warna latar panel logo sesuai header
 
         // Menambahkan logo
-        ImageIcon logoIcon = new ImageIcon("aset/logo.png"); // Ambil logo dari folder "aset"
+        ImageIcon logoIcon = new ImageIcon("asset/logo.png"); // Ambil logo dari folder "aset"
         Image scaledLogo = logoIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH); // Resize logo lebih kecil
 
         JLabel logoLabel = new JLabel(new ImageIcon(scaledLogo)); // Tambahkan logo ke JLabel
@@ -170,7 +167,7 @@ public class Dashboard {
         gbc.gridx = 0;
         gbc.gridy = 0;
 
-        ImageIcon originalImage = new ImageIcon("aset/rocketship.png");
+        ImageIcon originalImage = new ImageIcon("asset/banner.png");
         Image scaledImage = originalImage.getImage().getScaledInstance(450, 450, Image.SCALE_SMOOTH);
         ImageIcon resizedImage = new ImageIcon(scaledImage);
 
@@ -216,13 +213,13 @@ public class Dashboard {
         gbc.insets = new Insets(10, 20, 10, 20);
 
         JPanel userPanel = createEnhancedRolePanel(
-                "aset/hallo_user.2.png",
+                "asset/hallo_user.2.png",
                 "Revenue User",
                 "Hai, User! Kami senang melihat Anda di sini. Silakan login untuk menemukan venue yang sempurna untuk acara Anda.",
                 "I am User");
 
         JPanel providerPanel = createEnhancedRolePanel(
-                "aset/astroAwal.png",
+                "asset/astroAwal.png",
                 "Revenue Provider",
                 "Selamat datang Provider! Kami siap membantu Anda mengelola venue Anda dengan lebih baik.",
                 "I am Provider");
@@ -239,15 +236,13 @@ public class Dashboard {
         return rolePanel;
     }
 
-    // Enhanced Role Panel Creation Method
-    private static JPanel createEnhancedRolePanel(String imagePath, String title, String description,
-            String buttonText) {
+    private static JPanel createEnhancedRolePanel(String imagePath, String title, String description, String buttonText) {
         JPanel rolePanel = new JPanel(new BorderLayout(10, 10));
         rolePanel.setBackground(Color.WHITE);
         rolePanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(200, 210, 230), 1, true),
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)));
-
+    
         // Image Panel
         JPanel imagePanel = new JPanel(new BorderLayout());
         imagePanel.setOpaque(false);
@@ -256,19 +251,19 @@ public class Dashboard {
         ImageIcon resizedRoleIcon = new ImageIcon(roleImage);
         JLabel roleLabel = new JLabel(resizedRoleIcon, JLabel.CENTER);
         imagePanel.add(roleLabel, BorderLayout.CENTER);
-
+    
         // Text Panel
         JPanel textPanel = new JPanel();
         textPanel.setOpaque(false);
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-
+    
         // Title
         JLabel titleLabel = new JLabel(title, JLabel.CENTER);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
         titleLabel.setForeground(new Color(10, 30, 70));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 5, 0)); // Margin atas-bawah
-
+    
         // Description
         JLabel roleDescription = new JLabel(
                 "<html><div style='text-align: center; width: 300px;'>" + description + "</div></html>",
@@ -277,7 +272,7 @@ public class Dashboard {
         roleDescription.setForeground(new Color(70, 70, 90));
         roleDescription.setAlignmentX(Component.CENTER_ALIGNMENT);
         roleDescription.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0)); // Tambahkan jarak bawah (20px)
-
+    
         // Button
         JButton roleButton = new JButton(buttonText);
         roleButton.setBackground(new Color(10, 30, 70));
@@ -290,37 +285,40 @@ public class Dashboard {
         roleButton.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(10, 30, 70), 1, true),
                 BorderFactory.createEmptyBorder(10, 20, 10, 20)));
-
+    
         // Add elements to Text Panel with spacing
         textPanel.add(titleLabel);
         textPanel.add(Box.createVerticalStrut(10)); // Jarak antara Title dan Deskripsi
         textPanel.add(roleDescription);
         textPanel.add(Box.createVerticalStrut(30)); // Jarak antara Deskripsi dan Button
         textPanel.add(roleButton);
-
-        // Add shadow effect to button
-        roleButton.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(10, 30, 70), 1, true),
-                BorderFactory.createEmptyBorder(10, 20, 10, 20)));
-
-        textPanel.add(titleLabel, BorderLayout.NORTH);
-        textPanel.add(roleDescription, BorderLayout.CENTER);
-        textPanel.add(roleButton, BorderLayout.SOUTH);
-
-        rolePanel.add(imagePanel, BorderLayout.NORTH);
-        rolePanel.add(textPanel, BorderLayout.CENTER);
-
+    
         // Add hover effect
         roleButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 roleButton.setBackground(new Color(30, 50, 90));
             }
-
+    
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 roleButton.setBackground(new Color(10, 30, 70));
             }
         });
-
+    
+        // Button action
+        roleButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (buttonText.equals("I am User")) {
+                    ULoginForm.main(new String[]{}); // Open User Login Form
+                } else if (buttonText.equals("I am Provider")) {
+                    PLoginForm.main(new String[]{}); // Open Provider Login Form
+                }
+            }
+        });
+    
+        rolePanel.add(imagePanel, BorderLayout.NORTH);
+        rolePanel.add(textPanel, BorderLayout.CENTER);
+    
         return rolePanel;
     }
 
@@ -344,7 +342,7 @@ public class Dashboard {
 
     // Create Back Button
     private static JButton createBackButton(JPanel headerPanel, JPanel previousContentPanel) {
-        ImageIcon backIcon = new ImageIcon("aset/back.png");
+        ImageIcon backIcon = new ImageIcon("asset/back.png");
         Image backImage = backIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         ImageIcon backResizedIcon = new ImageIcon(backImage);
 

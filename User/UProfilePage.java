@@ -1,11 +1,10 @@
 package User;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-public class UProfileViewWithHistory {
+public class UProfilePage {
     // Refined Color Palette
     private static final Color DEEP_NAVY = new Color(17, 29, 48);
     private static final Color SOFT_NAVY = new Color(36, 65, 97);
@@ -15,7 +14,7 @@ public class UProfileViewWithHistory {
     private static final Color TEXT_DARK = new Color(27, 47, 71);
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(UProfileViewWithHistory::createAndShowGUI);
+        SwingUtilities.invokeLater(UProfilePage::createAndShowGUI);
     }
 
     private static void createAndShowGUI() {
