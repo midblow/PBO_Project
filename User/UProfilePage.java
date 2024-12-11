@@ -3,9 +3,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
-import org.w3c.dom.events.MouseEvent;
 
 public class UProfilePage {
     // Refined Color Palette
@@ -27,87 +24,8 @@ public class UProfilePage {
         frame.setLayout(new BorderLayout());
         frame.getContentPane().setBackground(SOFT_WHITE);
 
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(new Color(12, 34, 64)); // #0c2240
-        header.setPreferredSize(new Dimension(1200, 100)); // Tinggi header tetap
-
-        // Panel Kiri: Logo dan Judul
-        JPanel leftHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        leftHeader.setOpaque(false);
-
-        // Logo
-        JLabel logo = new JLabel(resizeIcon(new ImageIcon("asset/logo.png"), 50, 50));
-        leftHeader.add(logo);
-
-        // Teks "REVENUE"
-        JLabel revenueLabel = new JLabel("REVENUE", SwingConstants.LEFT);
-        revenueLabel.setForeground(Color.WHITE);
-        revenueLabel.setFont(new Font("Poppins", Font.BOLD, 24));
-        leftHeader.add(revenueLabel);
-
-        header.add(leftHeader, BorderLayout.WEST);
-
-        // Ikon Profil di Sebelah Kanan
-        JLabel profile = new JLabel(resizeIcon(new ImageIcon("asset/profil.png"), 50, 50));
-        profile.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                // Open the Profile View when the icon is clicked
-                ProfileView.showProfileView();
-            }
-        });
-        
-        header.add(profile, BorderLayout.EAST);
-
-        frame.add(header, BorderLayout.NORTH);
-
-        // Panel utama untuk konten
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS)); // Elemen disusun vertikal
-        mainPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        // Panel Navigasi Menu
-        JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 10));
-        navPanel.setOpaque(false); // Transparan
-        navPanel.setPreferredSize(new Dimension(1200, 50)); // Ukuran tetap
-
-        // Tombol navigasi
-        JButton berandaButton = new JButton("Beranda");
-        styleNavigationButton(berandaButton, new Color(12, 34, 64));  // Updated color
-
-        // Membuat panel untuk menambahkan garis bawah pada "Beranda"
-        JPanel berandaPanel = new JPanel(new BorderLayout());
-        berandaPanel.setOpaque(false); // Panel transparan
-        berandaPanel.add(berandaButton, BorderLayout.CENTER);
-        berandaPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(12, 34, 64))); // Garis bawah
-        navPanel.add(berandaPanel);
-
-        JButton venueButton = new JButton("Venue");
-        styleNavigationButton(venueButton, new Color(255, 140, 0));  // Updated color
-        navPanel.add(venueButton);
-
-        // Tambahkan ActionListener untuk venueButton
-        venueButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose(); // Tutup HomeUser
-                VenuePage.showVenuePage(); // Buka VenuePage
-            }
-        });
-
-        JButton profileButton = new JButton("Profile");
-        styleNavigationButton(profileButton, new Color(255, 140, 0));  // Updated color
-        navPanel.add(profileButton);
-        profileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose(); // Tutup HomeUser
-                UProfilePage.main(new String[]{}); // Buka VenuePage
-            }
-        });
-
-        mainPanel.add(navPanel);
-
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(SOFT_WHITE);
 
         // Single header panel
         JPanel headerPanel = createHeaderPanel();
@@ -351,19 +269,5 @@ public class UProfilePage {
                 BorderFactory.createLineBorder(TEXT_DARK, 1, true),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         return textField;
-    }
-
-    private static ImageIcon resizeIcon(ImageIcon icon, int width, int height) {
-        Image img = icon.getImage();
-        Image resizedImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        return new ImageIcon(resizedImg);
-    }
-
-    private static void styleNavigationButton(JButton button, Color color) {
-        button.setFont(new Font("Poppins", Font.PLAIN, 16));
-        button.setForeground(color);
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setContentAreaFilled(false);
     }
 }
