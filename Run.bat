@@ -4,10 +4,10 @@
 javac -d bin Landing_Page/*.java
 
 :: Run the main class from the Landing_Page package (replace 'MainClass' with the actual class you want to run)
-java -cp bin Landing_Page.Dashboard
+@REM java -cp bin Landing_Page.Dashboard
 
 :: If you want to use MySQL Connector, uncomment and use the following line instead:
-:: java -cp bin;lib/mysql-connector-j-9.1.0.jar User.MainClass
+java -cp bin;lib/mysql-connector-j-9.1.0.jar Landing_Page.Dashboard
 
 :: Change to the 'bin' directory (optional)
 cd bin

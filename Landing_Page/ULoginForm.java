@@ -1,6 +1,9 @@
 package Landing_Page;
 
 import javax.swing.*;
+
+import DB.DbConnection;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
@@ -113,7 +116,7 @@ public class ULoginForm extends JFrame{
 
         // Login Button
         JButton loginButton = new JButton("Log In");
-        loginButton.setBounds(1000, 400, 200, 40);
+        loginButton.setBounds(70, 370, 220, 40);  // Sesuaikan posisi dan ukuran tombol
         loginButton.setBackground(Color.WHITE);
         loginButton.setForeground(new Color(12, 34, 64));
         loginButton.setFocusPainted(false);
@@ -130,7 +133,8 @@ public class ULoginForm extends JFrame{
                 ULoginForm loginForm = new ULoginForm();
                 if (loginForm.verifyLogin(username, password)) {
                     JOptionPane.showMessageDialog(frame, "Login Successful!");
-                    new HomeUser(); // Buka halaman home_user jika login berhasil
+                    frame.dispose();
+                    HomeUser.main(new String[]{}); // Buka halaman home_user jika login berhasil
                     frame.dispose(); // Tutup form login
                 } else {
                     JOptionPane.showMessageDialog(frame, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);
