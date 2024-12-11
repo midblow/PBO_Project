@@ -1,43 +1,27 @@
 package User;
 
+import DB.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.util.List;
 
 public class VenuePage {
-    
-    private static final String[] VENUE_NAMES = {
-        "Taman Sangkareang", "Pantai Senggigi", "Grand Imperial", "Hotel Lombok Raya",
-        "Islamic Center", "Senggigi Hotel", "Prime Park", "Narmada Convention Hall",
-        "Gelanggang Pemuda"
-    };
-    
-    private static final String[] VENUE_LOCATIONS = {
-        "Mataram", "Mataram", "Mataram", "Mataram", "Mataram", "Mataram",
-        "Mataram", "Mataram", "Mataram"
-    };
-    
-    private static final String[] VENUE_IMAGES = {
-        "asset/Sangkareang.jpg", "asset/Pantai_Senggigi.jpg", "asset/Grand_Imperial.jpg", 
-        "asset/Hotel_Lombok_Raya.jpg", "asset/Islamic_Center.jpg", "asset/Senggigi_Hotel.jpg",
-        "asset/Prime_Park.jpg", "asset/Narmada_Convention_Hall.jpg", "asset/Gelanggang_Pemuda.png"
-    };
-    
+
     public static void showVenuePage() {
         SwingUtilities.invokeLater(() -> new VenuePage());
     }
 
-    private JFrame frame;  // Declare the frame as an instance variable
+    private JFrame frame;
 
     public VenuePage() {
-        frame = createMainFrame();  // Initialize the frame here
-        
+        frame = createMainFrame();
+
         JPanel header = createHeader();
         frame.add(header, BorderLayout.NORTH);
-        
+
         JScrollPane scrollPane = createMainPanel();
         frame.add(scrollPane, BorderLayout.CENTER);
-        
+
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
     }
@@ -55,16 +39,6 @@ public class VenuePage {
         header.setBackground(new Color(12, 34, 64));
         header.setPreferredSize(new Dimension(1200, 100));
 
-        JPanel leftHeader = createLeftHeader();
-        header.add(leftHeader, BorderLayout.WEST);
-
-        JLabel profileIcon = createProfileIcon();
-        header.add(profileIcon, BorderLayout.EAST);
-
-        return header;
-    }
-
-    private JPanel createLeftHeader() {
         JPanel leftHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         leftHeader.setOpaque(false);
 
@@ -76,18 +50,19 @@ public class VenuePage {
         revenueLabel.setFont(new Font("Poppins", Font.BOLD, 24));
         leftHeader.add(revenueLabel);
 
-        return leftHeader;
-    }
+        header.add(leftHeader, BorderLayout.WEST);
 
-    private JLabel createProfileIcon() {
         JLabel profile = new JLabel(resizeIcon(new ImageIcon("asset/profil.png"), 50, 50));
-        profile.addMouseListener(new MouseAdapter() {
+        profile.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                ProfileView.showProfileView();
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Ganti dengan halaman Profile View
+                JOptionPane.showMessageDialog(frame, "Profile View");
             }
         });
-        return profile;
+        header.add(profile, BorderLayout.EAST);
+
+        return header;
     }
 
     private JScrollPane createMainPanel() {
@@ -115,12 +90,9 @@ public class VenuePage {
 
         JButton berandaButton = createNavButton("Beranda", new Color(255, 140, 0));
         navPanel.add(berandaButton);
-        berandaButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose(); // Menutup halaman VenuePage
-                HomeUser.main(new String[]{}); // Memanggil fungsi main dari HomeUser untuk membuka HomeUser
-            }
+        berandaButton.addActionListener(e -> {
+            frame.dispose();
+            HomeUser.main(new String[]{});
         });
 
         JButton venueButton = createNavButton("Venue", new Color(12, 34, 64));
@@ -132,12 +104,9 @@ public class VenuePage {
 
         JButton profileButton = createNavButton("Profile", new Color(255, 140, 0));
         navPanel.add(profileButton);
-        profileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose(); // Close VenuePage
-                UProfilePage.main(new String[]{}); // Open ProfilePage
-            }
+        profileButton.addActionListener(e -> {
+            frame.dispose();
+            UProfilePage.main(new String[]{}); 
         });
 
         return navPanel;
@@ -169,53 +138,47 @@ public class VenuePage {
         JPanel venueGridPanel = new JPanel(new GridLayout(0, 4, 20, 20));
         venueGridPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        for (int i = 0; i < VENUE_NAMES.length; i++) {
-            venueGridPanel.add(createVenueCard(VENUE_NAMES[i], VENUE_LOCATIONS[i], VENUE_IMAGES[i]));
+        List<Venue> venues = VenueDB.getAllVenues(); // Ambil data venue dari database
+        for (Venue venue : venues) {
+            venueGridPanel.add(createVenueCard(venue));
         }
 
         return venueGridPanel;
     }
 
-    private JPanel createVenueCard(String name, String location, String imagePath) {
+    private JPanel createVenueCard(Venue venue) {
         JPanel card = new JPanel(new BorderLayout());
         card.setPreferredSize(new Dimension(300, 400));
         card.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
-        JLabel image = new JLabel(new ImageIcon(imagePath));
+        // Gambar venue
+        JLabel image = new JLabel();
+        try {
+            ImageIcon icon = new ImageIcon(venue.getGambar());
+            image.setIcon(resizeIcon(icon, 300, 200));
+        } catch (Exception e) {
+            image.setText("Gambar Tidak Tersedia");
+            image.setHorizontalAlignment(SwingConstants.CENTER);
+        }
         card.add(image, BorderLayout.CENTER);
 
-        JPanel namePanel = createNamePanel(name);
-        card.add(namePanel, BorderLayout.NORTH);
-
-        JPanel locationPanel = createLocationPanel(location);
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.add(locationPanel, BorderLayout.WEST);
-        card.add(bottomPanel, BorderLayout.SOUTH);
-
-        return card;
-    }
-
-    private JPanel createNamePanel(String name) {
+        // Nama venue
         JPanel namePanel = new JPanel();
         namePanel.setBackground(Color.WHITE);
         namePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JLabel nameLabel = new JLabel("<html><center>" + name + "</center></html>", SwingConstants.CENTER);
+        JLabel nameLabel = new JLabel("<html><center>" + venue.getNamaVenue() + "</center></html>", SwingConstants.CENTER);
         nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        nameLabel.setPreferredSize(new Dimension(300, 50));
         namePanel.add(nameLabel);
-        return namePanel;
-    }
+        card.add(namePanel, BorderLayout.NORTH);
 
-    private JPanel createLocationPanel(String location) {
+        // Lokasi venue
         JPanel locationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel locationIcon = new JLabel(resizeIcon(new ImageIcon("asset/location_vanue.png"), 20, 20));
-        locationPanel.add(locationIcon);
-
-        JLabel locationLabel = new JLabel(location, SwingConstants.LEFT);
+        JLabel locationLabel = new JLabel(venue.getKota(), SwingConstants.LEFT);
         locationLabel.setFont(new Font("Poppins", Font.PLAIN, 12));
         locationPanel.add(locationLabel);
+        card.add(locationPanel, BorderLayout.SOUTH);
 
-        return locationPanel;
+        return card;
     }
 
     private ImageIcon resizeIcon(ImageIcon icon, int width, int height) {
@@ -224,4 +187,3 @@ public class VenuePage {
         return new ImageIcon(resizedImg);
     }
 }
-

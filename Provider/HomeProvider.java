@@ -1,11 +1,12 @@
+package Provider;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 public class HomeProvider {
-    public static void showHomeProvider() {
-        SwingUtilities.invokeLater(() -> new HomeProvider());
-    }
+    // public static void showHomeProvider() {
+    //     SwingUtilities.invokeLater(() -> new HomeProvider());
+    // }
     public static void main(String[] args) {
         // Frame utama
         JFrame frame = new JFrame("Revenue");

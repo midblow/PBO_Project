@@ -1,3 +1,4 @@
+package Provider;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -64,13 +65,13 @@ public class Booking {
         navPanel.add(homeButton);
 
         // Tambahkan ActionListener untuk Home
-        homeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose(); 
-                HomeProvider.showHomeProvider(); 
-            }
-        });
+        // homeButton.addActionListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         frame.dispose(); 
+        //         HomeProvider.showHomeProvider(); 
+        //     }
+        // });
 
         // Tombol navigasi Booking
         JButton bookingButton = new JButton("Booking Confirmation");
