@@ -108,7 +108,6 @@ public class HomeUser {
 
         // Ambil data venue dari database
         List<Venue> venues = VenueDB.getAllVenues();
-        System.out.println("Jumlah venue yang didapat: " + venues.size());
 
         // Batasi jumlah maksimal venue yang ditampilkan
         int maxVenues = Math.min(6, venues.size()); // Hanya tampilkan maksimal 6 venue
