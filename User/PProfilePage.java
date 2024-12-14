@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
 
-public class UProfilePage {
+public class PProfilePage {
     // Refined Color Palette
     private static final Color DEEP_NAVY = new Color(17, 29, 48);
     private static final Color SOFT_NAVY = new Color(36, 65, 97);
@@ -17,7 +17,7 @@ public class UProfilePage {
     private static final Color TEXT_DARK = new Color(27, 47, 71);
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(UProfilePage::createAndShowGUI);
+        SwingUtilities.invokeLater(PProfilePage::createAndShowGUI);
     }
 
     private static void createAndShowGUI() {
@@ -176,7 +176,7 @@ public class UProfilePage {
         }
         profilePicture.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel nameLabel = new JLabel("Erwin", SwingConstants.CENTER);
+        JLabel nameLabel = new JLabel("PT. Makmur Jaya Sentosa", SwingConstants.CENTER);
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
         nameLabel.setForeground(Color.WHITE);
         nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -242,7 +242,7 @@ public class UProfilePage {
         contentPanel.setBorder(new EmptyBorder(20, 40, 20, 40));
 
         // Title label with improved styling
-        JLabel titleLabel = new JLabel("Profile User", SwingConstants.LEFT);
+        JLabel titleLabel = new JLabel("Profile Provider", SwingConstants.LEFT);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titleLabel.setForeground(DEEP_NAVY);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -258,8 +258,9 @@ public class UProfilePage {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Labels and text fields
-        String[] labels = { "Nama:", "Email:", "Jenis Kelamin:", "Nomor Telepon:", "Alamat:" };
-        String[] values = { "Erwin", "erwin@gmail.com", "Laki-laki", "99999", "Rembigan" };
+        String[] labels = { "Nama:", "Email:", "Lembaga:", "Nomor Telepon:", "Alamat:" };
+        String[] values = { "Rewind", "erwin@gmail.com", "PT. Makmur Jaya Sentosa", "99999",
+                "Rembigan" };
 
         for (int i = 0; i < labels.length; i++) {
             gbc.gridx = 0;
@@ -312,15 +313,13 @@ public class UProfilePage {
                 "Taman Sangkareang",
                 "2024-11-29 - 2024-11-30",
                 "PT. Makmur Jaya Sentosa",
-                "erwin@gmail.com",
-                "Pending"));
+                "erwin@gmail.com"));
         reservationContainer.add(Box.createVerticalStrut(20));
         reservationContainer.add(createEnhancedReservationCard(
                 "Taman Sangkareang",
                 "2024-12-02 - 2024-12-04",
                 "PT. Makmur Jaya Sentosa",
-                "erwin@gmail.com",
-                "Confirmed"));
+                "erwin@gmail.com"));
 
         // Scrollpane with clean look
         JScrollPane scrollPane = new JScrollPane(reservationContainer);
@@ -335,8 +334,7 @@ public class UProfilePage {
         return bookingPanel;
     }
 
-    private static JPanel createEnhancedReservationCard(String name, String date, String organization, String email,
-            String status) {
+    private static JPanel createEnhancedReservationCard(String name, String date, String organization, String email) {
         JPanel cardPanel = new JPanel(new BorderLayout(10, 10));
         cardPanel.setBackground(DEEP_NAVY); // Kembali ke warna biru tua
         cardPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
@@ -375,24 +373,15 @@ public class UProfilePage {
         emailLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         emailLabel.setForeground(LIGHT_GRAY);
 
-        // Status Label
-        JLabel statusLabel = new JLabel("Status: " + status);
-        statusLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        statusLabel.setForeground(status.equals("Confirmed") ? new Color(0, 255, 0) : // Hijau cerah untuk konfirmasi
-                ACCENT_ORANGE // Warna oranye untuk status lainnya
-        );
-
         detailPanel.add(organizationLabel);
         detailPanel.add(Box.createVerticalStrut(5));
         detailPanel.add(emailLabel);
-        detailPanel.add(Box.createVerticalStrut(10));
-        detailPanel.add(statusLabel);
 
         // Action Panel
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         actionPanel.setOpaque(false);
 
-        JButton invoiceButton = new JButton("Lihat Invoice");
+        JButton invoiceButton = new JButton("SUCCESS!!!");
         invoiceButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
         invoiceButton.setBackground(new Color(34, 177, 76)); // Hijau terang
         invoiceButton.setForeground(Color.WHITE);
@@ -412,7 +401,7 @@ public class UProfilePage {
         return cardPanel;
     }
 
-    // [Previous code remains the same]
+    // [Previous code remains the same
 
     private static void showInvoiceDialog() {
         // Create JFrame with more modern styling
@@ -424,7 +413,7 @@ public class UProfilePage {
         // Main container panel
         JPanel mainContainer = new JPanel();
         mainContainer.setLayout(new BoxLayout(mainContainer, BoxLayout.Y_AXIS));
-        mainContainer.setBorder(new EmptyBorder(30, 40, 50, 40)); // Increased bottom padding to 50
+        mainContainer.setBorder(new EmptyBorder(30, 40, 10, 40)); // Reduced bottom padding to 10
 
         // Invoice Header
         JPanel headerPanel = new JPanel(new BorderLayout());
@@ -434,12 +423,7 @@ public class UProfilePage {
         invoiceTitleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         invoiceTitleLabel.setForeground(new Color(36, 65, 97));
 
-        JLabel invoiceStatusLabel = new JLabel("LUNAS");
-        invoiceStatusLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        invoiceStatusLabel.setForeground(new Color(0, 153, 51));
-
         headerPanel.add(invoiceTitleLabel, BorderLayout.WEST);
-        headerPanel.add(invoiceStatusLabel, BorderLayout.EAST);
         mainContainer.add(headerPanel);
 
         // Customer Information Panel
@@ -486,7 +470,7 @@ public class UProfilePage {
 
         // Cost Summary Panel
         JPanel costSummaryPanel = new JPanel(new GridLayout(0, 2, 10, 10));
-        costSummaryPanel.setBorder(new EmptyBorder(0, 0, 30, 0)); // Increased bottom padding
+        costSummaryPanel.setBorder(new EmptyBorder(10, 0, 10, 0)); // Reduced top and bottom padding
 
         addCostRow(costSummaryPanel, "Biaya Sewa", "Rp 2.000.000", labelFont, valueFont);
         addCostRow(costSummaryPanel, "Biaya Layanan", "Rp 50.000", labelFont, valueFont);
@@ -497,19 +481,19 @@ public class UProfilePage {
         mainContainer.add(costSummaryPanel);
 
         // Button Panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10)); // Added vertical padding
-        buttonPanel.setBorder(new EmptyBorder(0, 0, 20, 0)); // Added extra bottom padding
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10)); // Added consistent padding
+        buttonPanel.setBorder(new EmptyBorder(10, 0, 10, 0)); // Reduced bottom padding to 10
 
-        JButton downloadButton = createStyledButton("Unduh Invoice", new Color(0, 153, 51));
+        JButton viewInvoiceButton = createStyledButton("SUCCESS!!!", new Color(0, 153, 51));
         JButton closeButton = createStyledButton("Tutup", new Color(220, 53, 69));
 
         closeButton.addActionListener(e -> invoiceFrame.dispose());
 
-        buttonPanel.add(downloadButton);
+        buttonPanel.add(viewInvoiceButton);
         buttonPanel.add(closeButton);
         mainContainer.add(buttonPanel);
 
-        // Add extra vertical glue to push content to the top
+        // Add extra vertical glue to reduce empty bottom space
         mainContainer.add(Box.createVerticalGlue());
 
         // Scroll Pane for entire content
@@ -523,8 +507,6 @@ public class UProfilePage {
         invoiceFrame.revalidate();
         invoiceFrame.repaint();
     }
-
-    // [Previous helper methods remain the same
 
     // Helper method to create styled buttons
     private static JButton createStyledButton(String text, Color bgColor) {
