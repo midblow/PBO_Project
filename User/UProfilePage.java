@@ -60,12 +60,9 @@ public class UProfilePage {
             mainPanel.add(homeContent, BorderLayout.CENTER);
             mainPanel.revalidate();
             mainPanel.repaint();
-<<<<<<< HEAD
-=======
             frame.dispose();
             HomeUser.main(new String[]{});
->>>>>>> 8aec8c0 (Progress 4: Navigasi, Integrasi, FIxing dan Koneksi dengan Database pada fitur Utama)
-            updateActiveButton(berandaButton);
+            updateActiveButtonNavbar(berandaButton);
         });
 
         // Button "Venue"
@@ -78,12 +75,9 @@ public class UProfilePage {
             mainPanel.add(venueContent, BorderLayout.CENTER);
             mainPanel.revalidate();
             mainPanel.repaint();
-<<<<<<< HEAD
-=======
             frame.dispose(); // Tutup halaman UProfilePage saat ini
             VenuePage.showVenuePage();
->>>>>>> 8aec8c0 (Progress 4: Navigasi, Integrasi, FIxing dan Koneksi dengan Database pada fitur Utama)
-            updateActiveButton(venueButton);
+            updateActiveButtonNavbar(venueButton);
         });
 
         // Button "Profile"
@@ -96,13 +90,6 @@ public class UProfilePage {
             mainPanel.add(profileContent, BorderLayout.CENTER);
             mainPanel.revalidate();
             mainPanel.repaint();
-<<<<<<< HEAD
-            updateActiveButton(profileButton);
-        });
-
-        // Set default active button to "Beranda"
-        updateActiveButton(berandaButton);
-=======
             updateActiveButtonNavbar(profileButton);
         });
 
@@ -150,7 +137,6 @@ public class UProfilePage {
         // You can add your custom components here instead of a label
         return homePanel;
     }
-<<<<<<< HEAD
 
     // Method to create the Venue content panel
     private static JPanel createVenueContentPanel() {
@@ -221,187 +207,6 @@ public class UProfilePage {
         sidebar.setPreferredSize(new Dimension(250, 700));
         sidebar.setBorder(new EmptyBorder(20, 10, 20, 10));
 
-        // Profile Picture and Name
-        JLabel profilePicture = new JLabel();
-        try {
-            ImageIcon originalIcon = new ImageIcon("asset/erwin.png");
-            Image scaledImage = originalIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
-            profilePicture.setIcon(new ImageIcon(scaledImage));
-        } catch (Exception e) {
-            profilePicture.setText("Profile Pic");
-        }
-        profilePicture.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel nameLabel = new JLabel("Erwin", SwingConstants.CENTER);
-        nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        nameLabel.setForeground(Color.WHITE);
-        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JLabel emailLabel = new JLabel("erwin@gmail.com", SwingConstants.CENTER);
-        emailLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        emailLabel.setForeground(LIGHT_GRAY);
-        emailLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Buttons in Sidebar
-        JButton profileButton = createSidebarButton("Profil");
-        profileButton.addActionListener(e -> {
-            JPanel profileContent = createProfileContentPanel(frame, mainPanel);
-            mainPanel.removeAll();
-            JPanel newSidebar = createSidebarPanel(frame, mainPanel);
-            mainPanel.add(newSidebar, BorderLayout.WEST);
-            mainPanel.add(profileContent, BorderLayout.CENTER);
-            mainPanel.revalidate();
-            mainPanel.repaint();
-        });
-
-        JButton historyButton = createSidebarButton("Booking Confirmation");
-        historyButton.addActionListener(e -> {
-            JPanel historyContent = createBookingContentPanel();
-            mainPanel.removeAll();
-            JPanel newSidebar = createSidebarPanel(frame, mainPanel);
-            mainPanel.add(newSidebar, BorderLayout.WEST);
-            mainPanel.add(historyContent, BorderLayout.CENTER);
-            mainPanel.revalidate();
-            mainPanel.repaint();
-        });
-
-        JButton logoutButton = createSidebarButton("Keluar");
-        logoutButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(frame, "Logout Berhasil", "Logout", JOptionPane.INFORMATION_MESSAGE);
-            frame.dispose();
-        });
-
-        // Add Components to Sidebar
-        sidebar.add(Box.createVerticalStrut(20));
-        sidebar.add(profilePicture);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 15)));
-        sidebar.add(nameLabel);
-        sidebar.add(emailLabel);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 30)));
-        sidebar.add(profileButton);
-        sidebar.add(historyButton);
-        sidebar.add(Box.createVerticalGlue());
-        sidebar.add(logoutButton);
-        sidebar.add(Box.createVerticalStrut(20));
-
-        return sidebar;
-    }
-
-    private static JPanel createProfileContentPanel(JFrame frame, JPanel mainPanel) {
-        JPanel profilePanel = new JPanel(new BorderLayout());
-        profilePanel.setBackground(SOFT_WHITE);
-=======
->>>>>>> 8aec8c0 (Progress 4: Navigasi, Integrasi, FIxing dan Koneksi dengan Database pada fitur Utama)
-
-    // Method to create the Venue content panel
-    private static JPanel createVenueContentPanel() {
-        JPanel venuePanel = new JPanel();
-        venuePanel.setBackground(SOFT_WHITE);
-        // You can add your custom components here instead of a label
-        return venuePanel;
-    }
-
-    private static JPanel createHeaderPanel() {
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(DEEP_NAVY);
-        headerPanel.setPreferredSize(new Dimension(1100, 50)); // Tinggi header lebih kecil
-
-<<<<<<< HEAD
-        contentPanel.add(Box.createVerticalStrut(20));
-
-        // Form panel with improved layout
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(SOFT_WHITE);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // Labels and text fields
-        String[] labels = { "Nama:", "Email:", "Jenis Kelamin", "Nomor Telepon:", "Alamat:" };
-        String[] values = { "Erwin", "erwin@gmail.com", "Laki-laki", "99999",
-                "Rembigan" };
-
-        for (int i = 0; i < labels.length; i++) {
-            gbc.gridx = 0;
-            gbc.gridy = i;
-            gbc.weightx = 0.3;
-            JLabel label = new JLabel(labels[i]);
-            label.setFont(new Font("Segoe UI", Font.BOLD, 16));
-            label.setForeground(TEXT_DARK);
-            formPanel.add(label, gbc);
-
-            gbc.gridx = 1;
-            gbc.weightx = 0.7;
-            JTextField textField = createTextField(values[i]);
-            formPanel.add(textField, gbc);
-=======
-        // Left side: Logo dengan ukuran lebih kecil
-        JLabel logoLabel = new JLabel();
-        try {
-            ImageIcon originalIcon = new ImageIcon("asset/logo.png");
-            Image scaledImage = originalIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH); // Ukuran logo
-                                                                                                       // lebih kecil
-            logoLabel.setIcon(new ImageIcon(scaledImage));
-        } catch (Exception e) {
-            logoLabel.setText("LOGO");
->>>>>>> 8aec8c0 (Progress 4: Navigasi, Integrasi, FIxing dan Koneksi dengan Database pada fitur Utama)
-        }
-        logoLabel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 5)); // Padding lebih kecil
-        headerPanel.add(logoLabel, BorderLayout.WEST);
-
-        // Center: Tulisan REVENUE dengan ukuran lebih kecil
-        JLabel revenueLabel = new JLabel("REVENUE", SwingConstants.LEFT);
-        revenueLabel.setForeground(Color.WHITE);
-        revenueLabel.setFont(new Font("Segoe UI", Font.BOLD, 16)); // Ukuran font lebih kecil
-        headerPanel.add(revenueLabel, BorderLayout.CENTER);
-
-        // Right side: Remove Greeting and profile picture
-        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5)); // Spasi lebih kecil
-        rightPanel.setBackground(DEEP_NAVY);
-
-        // Remove the following lines to delete greeting and profile picture
-        // JLabel greetingLabel = new JLabel("Halo, Erwin");
-        // greetingLabel.setForeground(Color.WHITE);
-        // greetingLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12)); // Ukuran font
-        // lebih kecil
-        // rightPanel.add(greetingLabel);
-
-        // JLabel profilePictureLabel = new JLabel();
-        // try {
-        // ImageIcon profilePictureIcon = new ImageIcon("asset/nama.png");
-        // Image scaledImage = profilePictureIcon.getImage().getScaledInstance(25, 25,
-        // Image.SCALE_SMOOTH); // Ukuran
-        // // gambar
-        // // lebih
-        // // kecil
-        // profilePictureLabel.setIcon(new ImageIcon(scaledImage));
-        // } catch (Exception e) {
-        // profilePictureLabel.setText(""); // Fallback jika gambar gagal dimuat
-        // }
-        // rightPanel.add(profilePictureLabel);
-
-        headerPanel.add(rightPanel, BorderLayout.EAST);
-
-        return headerPanel;
-    }
-
-    private static JPanel createBookingContentPanel() {
-        JPanel bookingPanel = new JPanel(new BorderLayout());
-        bookingPanel.setBackground(SOFT_WHITE);
-        bookingPanel.setBorder(new EmptyBorder(20, 40, 40, 40)); // Maintained bottom padding
-
-<<<<<<< HEAD
-        // Title Panel
-        JPanel titlePanel = new JPanel(new BorderLayout());
-        titlePanel.setBackground(SOFT_WHITE);
-        titlePanel.setBorder(new EmptyBorder(0, 0, 20, 0));
-
-        JLabel titleLabel = new JLabel("Riwayat Reservasi");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        titleLabel.setForeground(DEEP_NAVY);
-        titlePanel.add(titleLabel, BorderLayout.WEST);
-
-=======
         // Profile Picture and Name
         JLabel profilePicture = new JLabel();
         try {
@@ -609,7 +414,6 @@ public class UProfilePage {
         titleLabel.setForeground(DEEP_NAVY);
         titlePanel.add(titleLabel, BorderLayout.WEST);
 
->>>>>>> 8aec8c0 (Progress 4: Navigasi, Integrasi, FIxing dan Koneksi dengan Database pada fitur Utama)
         // Reservation container with fixed size
         JPanel reservationContainer = new JPanel();
         reservationContainer.setLayout(new BoxLayout(reservationContainer, BoxLayout.Y_AXIS));
@@ -857,32 +661,6 @@ public class UProfilePage {
         panel.add(valueComponent);
     }
 
-<<<<<<< HEAD
-    private static JPanel createReservationPanel(String name, String date, String status) {
-        JPanel reservationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        reservationPanel.setBackground(LIGHT_GRAY);
-
-        JLabel nameLabel = new JLabel(name);
-        nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        nameLabel.setForeground(DEEP_NAVY);
-
-        JLabel dateLabel = new JLabel(date);
-        dateLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        dateLabel.setForeground(TEXT_DARK);
-
-        JLabel statusLabel = new JLabel(status);
-        statusLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        statusLabel.setForeground(ACCENT_ORANGE);
-
-        reservationPanel.add(nameLabel);
-        reservationPanel.add(Box.createHorizontalStrut(16));
-        reservationPanel.add(dateLabel);
-        reservationPanel.add(Box.createHorizontalStrut(16));
-        reservationPanel.add(statusLabel);
-
-        return reservationPanel;
-    }
-=======
     // private static JPanel createReservationPanel(String name, String date, String status) {
     //     JPanel reservationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
     //     reservationPanel.setBackground(LIGHT_GRAY);
@@ -907,7 +685,6 @@ public class UProfilePage {
 
     //     return reservationPanel;
     // }
->>>>>>> 8aec8c0 (Progress 4: Navigasi, Integrasi, FIxing dan Koneksi dengan Database pada fitur Utama)
 
     // Declare activeButton as a class field, not inside a method
     private static final JButton[] activeButton = { null }; // Static field to track active button
@@ -942,21 +719,6 @@ public class UProfilePage {
         return button;
     }
 
-    // Helper method to update active button styles
-    private static void updateActiveButton(JButton button) {
-        if (activeButton[0] != null) {
-            // Revert style of the previously active button to default
-            activeButton[0].setForeground(ACCENT_ORANGE);
-            activeButton[0].setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
-        }
-        // Update the active button
-        activeButton[0] = button;
-        button.setForeground(DEEP_NAVY);
-        button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); // Underline active button
-<<<<<<< HEAD
-=======
-    }
-
     private static final JButton[] activeNavbarButton = { null };
 
     private static void updateActiveButtonNavbar(JButton button) {
@@ -971,6 +733,7 @@ public class UProfilePage {
         button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); // Underline effect
     }
 
+    // Track active button for sidebar
     private static final JButton[] activeSidebarButton = { null };
 
     private static void updateActiveButtonSidebar(JButton button) {
@@ -983,7 +746,6 @@ public class UProfilePage {
         activeSidebarButton[0] = button;
         button.setBackground(ACCENT_ORANGE);
         button.setForeground(Color.WHITE); // Highlight sidebar button
->>>>>>> 8aec8c0 (Progress 4: Navigasi, Integrasi, FIxing dan Koneksi dengan Database pada fitur Utama)
     }
 
     private static JButton createSidebarButton(String text) {
