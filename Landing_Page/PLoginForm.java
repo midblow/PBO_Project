@@ -1,10 +1,39 @@
 package Landing_Page;
 
 import javax.swing.*;
+
+import DB.DbConnection;
+import Provider.HomeProvider;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class PLoginForm extends JFrame{
+
+        private boolean verifyLogin(String username, String password) {
+        try (Connection conn = DbConnection.getConnection()) { // Menggunakan DbConnection
+            if (conn != null) {
+                String query = "SELECT * FROM provider WHERE gmail = ? AND password = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                    stmt.setString(1, username);
+                    stmt.setString(2, password);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            return true; // Jika ada data yang cocok, login berhasil
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Jika login gagal
+    }
+
     public static void main(String[] args) {
         // Create the frame
         JFrame frame = new JFrame("Login Provider");
@@ -111,7 +140,29 @@ public class PLoginForm extends JFrame{
         loginButton.setForeground(new Color(12, 34, 64));
         loginButton.setFocusPainted(false);
         loginButton.setFont(new Font("Poppins", Font.BOLD, 14));
+
+        // Action listener untuk login button
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = emailField.getText();
+                String password = new String(passwordField.getPassword());
+
+                // Verifikasi login
+                PLoginForm loginForm = new PLoginForm();
+                if (loginForm.verifyLogin(username, password)) {
+                    JOptionPane.showMessageDialog(frame, "Login Successful!");
+                    frame.dispose();
+                    HomeProvider.main(new String[]{}); // Buka halaman home_user jika login berhasil
+                    frame.dispose(); // Tutup form login
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
         roundedPanel.add(loginButton);
+
 
         // Sign Up
         JLabel signUpLabel = new JLabel("Don't have an account? Sign Up");

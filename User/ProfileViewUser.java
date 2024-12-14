@@ -4,9 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ProfileView extends JFrame {
+public class ProfileViewUser extends JFrame {
 
-    public ProfileView() {
+    public ProfileViewUser() {
         // Set up the Profile View Frame
         setTitle("Profile");
         setSize(500, 500);
@@ -63,7 +63,7 @@ public class ProfileView extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new ProfileView();
+                new ProfileViewUser();
             }
         });
     }

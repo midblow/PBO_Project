@@ -1,7 +1,7 @@
 @echo off
 
 :: Compile all Java files in the User folder and place them in the 'bin' directory
-javac -d bin Landing_Page/*.java
+javac -d bin User/*.java
 
 :: Run the main class from the Landing_Page package (replace 'MainClass' with the actual class you want to run)
 @REM java -cp bin Landing_Page.Dashboard

@@ -2,7 +2,7 @@ package Landing_Page;
 
 import javax.swing.*;
 
-import DB.DbConnection;
+import DB.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -11,17 +11,19 @@ import User.*;
 
 public class ULoginForm extends JFrame{
 
-    // Verifikasi username dan password
-    private boolean verifyLogin(String username, String password) {
-        try (Connection conn = DbConnection.getConnection()) { // Menggunakan DbConnection
+    private boolean verifyLogin(String gmail, String password) {
+        try (Connection conn = DbConnection.getConnection()) {
             if (conn != null) {
-                String query = "SELECT * FROM user WHERE gmail = ? AND password = ?";
+                String query = "SELECT id, gmail FROM user WHERE gmail = ? AND password = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setString(1, username);
+                    stmt.setString(1, gmail);
                     stmt.setString(2, password);
                     try (ResultSet rs = stmt.executeQuery()) {
                         if (rs.next()) {
-                            return true; // Jika ada data yang cocok, login berhasil
+                            // Simpan ID dan email pengguna ke dalam sesi
+                            Session.loggedInUserId = rs.getInt("id");
+                            Session.loggedInUserEmail = rs.getString("gmail");
+                            return true; // Login berhasil
                         }
                     }
                 }
@@ -29,7 +31,7 @@ public class ULoginForm extends JFrame{
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false; // Jika login gagal
+        return false; // Login gagal
     }
 
     public static void main(String[] args) {
@@ -122,22 +124,25 @@ public class ULoginForm extends JFrame{
         loginButton.setFocusPainted(false);
         loginButton.setFont(new Font("Poppins", Font.BOLD, 14));
 
-        // Action listener untuk login button
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String username = emailField.getText();
-                String password = new String(passwordField.getPassword());
-
+                String gmail = emailField.getText(); // Ambil input email
+                String password = new String(passwordField.getPassword()); // Ambil input password
+        
                 // Verifikasi login
                 ULoginForm loginForm = new ULoginForm();
-                if (loginForm.verifyLogin(username, password)) {
+                if (loginForm.verifyLogin(gmail, password)) {
+                    // Simpan email pengguna yang login ke dalam sesi
+                    Session.loggedInUserEmail = gmail;
+        
                     JOptionPane.showMessageDialog(frame, "Login Successful!");
                     frame.dispose();
-                    HomeUser.main(new String[]{}); // Buka halaman home_user jika login berhasil
-                    frame.dispose(); // Tutup form login
+        
+                    // Buka halaman home_user
+                    HomeUser.main(new String[]{}); 
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Invalid gmail or password", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

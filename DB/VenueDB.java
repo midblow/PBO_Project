@@ -47,4 +47,35 @@ public class VenueDB {
 
         return venues;
     }
+    
+    public static Venue getVenueById(int idVenue) {
+        Venue venue = null;
+        String query = "SELECT * FROM venue WHERE id_venue = ?";
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setInt(1, idVenue);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    venue = new Venue(
+                        rs.getInt("id_venue"),
+                        rs.getString("nama_venue"),
+                        rs.getString("deskripsi_fasilitas"),
+                        rs.getString("alamat"),
+                        rs.getString("penanggung_jawab"),
+                        rs.getInt("kapasitas"),
+                        rs.getInt("harga"),
+                        rs.getString("kota"),
+                        rs.getString("gambar"),
+                        rs.getString("jenis_instansi"),
+                        rs.getInt("id_provider"),
+                        rs.getBoolean("main_venue")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return venue;
+    }
 }
