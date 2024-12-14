@@ -5,13 +5,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-<<<<<<< HEAD
-=======
 import DB.*;
 import Landing_Page.Dashboard;
 import Landing_Page.ULoginForm;
 
->>>>>>> 8aec8c0 (Progress 4: Navigasi, Integrasi, FIxing dan Koneksi dengan Database pada fitur Utama)
 import java.awt.*;
 
 public class UProfilePage {
@@ -111,7 +108,6 @@ public class UProfilePage {
 
         // Set default active button to "Beranda"
         updateActiveButtonNavbar(profileButton);
->>>>>>> 8aec8c0 (Progress 4: Navigasi, Integrasi, FIxing dan Koneksi dengan Database pada fitur Utama)
 
         // Atur layout tombol pada navbar
         leftNavbarPanel.setLayout(new BoxLayout(leftNavbarPanel, BoxLayout.X_AXIS));
