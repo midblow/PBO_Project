@@ -5,6 +5,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import User.HomeUser;
+
 import java.awt.*;
 
 public class PProfilePage {
@@ -55,6 +57,8 @@ public class PProfilePage {
             mainPanel.add(homeContent, BorderLayout.CENTER);
             mainPanel.revalidate();
             mainPanel.repaint();
+            frame.dispose();
+            HomeProvider.main(new String[]{});
             updateActiveButton(berandaButton);
         });
 

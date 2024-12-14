@@ -2,7 +2,7 @@ package Landing_Page;
 
 import javax.swing.*;
 
-import DB.DbConnection;
+import DB.*;
 import Provider.HomeProvider;
 
 import java.awt.*;
@@ -14,16 +14,19 @@ import java.sql.SQLException;
 
 public class PLoginForm extends JFrame{
 
-        private boolean verifyLogin(String username, String password) {
-        try (Connection conn = DbConnection.getConnection()) { // Menggunakan DbConnection
+    private boolean verifyLogin(String gmail, String password) {
+        try (Connection conn = DbConnection.getConnection()) {
             if (conn != null) {
-                String query = "SELECT * FROM provider WHERE gmail = ? AND password = ?";
+                String query = "SELECT id_provider, gmail FROM provider WHERE gmail = ? AND password = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setString(1, username);
+                    stmt.setString(1, gmail);
                     stmt.setString(2, password);
                     try (ResultSet rs = stmt.executeQuery()) {
                         if (rs.next()) {
-                            return true; // Jika ada data yang cocok, login berhasil
+                            // Simpan ID dan email pengguna ke dalam sesi
+                            Session.loggedInProviderId = rs.getInt("id_provider");
+                            Session.loggedInProviderEmail = rs.getString("gmail");
+                            return true; // Login berhasil
                         }
                     }
                 }
@@ -31,7 +34,7 @@ public class PLoginForm extends JFrame{
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false; // Jika login gagal
+        return false; // Login gagal
     }
 
     public static void main(String[] args) {

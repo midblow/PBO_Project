@@ -13,9 +13,6 @@ public class VenueDB {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM venue")) {
 
-            // Debugging: Log apakah koneksi berhasil
-            System.out.println("Koneksi ke database berhasil.");
-
             while (rs.next()) {
                 int idVenue = rs.getInt("id_venue");
                 String namaVenue = rs.getString("nama_venue");
@@ -78,4 +75,38 @@ public class VenueDB {
         }
         return venue;
     }
+
+    public static List<Venue> getVenuesByProvider(int idProvider) {
+        List<Venue> venues = new ArrayList<>();
+        
+        String query = "SELECT * FROM venue WHERE id_provider = ?";
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setInt(1, idProvider);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Venue venue = new Venue(
+                        rs.getInt("id_venue"),
+                        rs.getString("nama_venue"),
+                        rs.getString("deskripsi_fasilitas"),
+                        rs.getString("alamat"),
+                        rs.getString("penanggung_jawab"),
+                        rs.getInt("kapasitas"),
+                        rs.getInt("harga"),
+                        rs.getString("kota"),
+                        rs.getString("gambar"),
+                        rs.getString("jenis_instansi"),
+                        rs.getInt("id_provider"),
+                        rs.getBoolean("main_venue")
+                    );
+                    venues.add(venue);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return venues;
+    }
+
 }

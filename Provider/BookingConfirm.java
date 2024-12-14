@@ -63,15 +63,14 @@ public class BookingConfirm {
         JButton homeButton = new JButton("Home");
         styleNavigationButton(homeButton, new Color(255, 140, 0));  // Updated color
         navPanel.add(homeButton);
-
         // Tambahkan ActionListener untuk Home
-        // homeButton.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         frame.dispose(); 
-        //         HomeProvider.showHomeProvider(); 
-        //     }
-        // });
+        homeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose(); 
+                HomeProvider.main(new String[]{});
+            }
+        });
 
         // Tombol navigasi Booking
         JButton bookingButton = new JButton("Booking Confirmation");
@@ -88,6 +87,10 @@ public class BookingConfirm {
         JButton profileButton = new JButton("Profile");
         styleNavigationButton(profileButton, new Color(255, 140, 0));  // Updated color
         navPanel.add(profileButton);
+        profileButton.addActionListener(e -> {
+            frame.dispose();
+            PProfilePage.main(new String[]{});
+        });
 
         mainPanel.add(navPanel);
 

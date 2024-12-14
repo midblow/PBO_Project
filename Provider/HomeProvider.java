@@ -1,7 +1,10 @@
 package Provider;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import DB.*;
+import java.util.List;
 
 public class HomeProvider {
 
@@ -38,8 +41,7 @@ public class HomeProvider {
         profile.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Open the Profile View when the icon is clicked
-                ProfileView.showProfileView();
+                ProfileView.showProfileView(); // Navigasi ke tampilan profil
             }
         });
         header.add(profile, BorderLayout.EAST);
@@ -58,34 +60,41 @@ public class HomeProvider {
 
         // Tombol navigasi
         JButton homeButton = new JButton("Home");
-        styleNavigationButton(homeButton, new Color(12, 34, 64));  // Updated color
-
-        // Membuat panel untuk menambahkan garis bawah pada "Beranda"
-        JPanel homePanel = new JPanel(new BorderLayout());
-        homePanel.setOpaque(false); // Panel transparan
-        homePanel.add(homeButton, BorderLayout.CENTER);
-        homePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(12, 34, 64))); // Garis bawah
-
-        navPanel.add(homePanel);
+        styleNavigationButton(homeButton, new Color(12, 34, 64));
 
         JButton bookingButton = new JButton("Booking Confirmation");
-        styleNavigationButton(bookingButton, new Color(255, 140, 0));  // Updated color
-        navPanel.add(bookingButton);
+        styleNavigationButton(bookingButton, new Color(255, 140, 0));
 
         JButton profileButton = new JButton("Profile");
-        styleNavigationButton(profileButton, new Color(255, 140, 0));  // Updated color
-        navPanel.add(profileButton);
+        styleNavigationButton(profileButton, new Color(255, 140, 0));
 
+        navPanel.add(homeButton);
+        navPanel.add(bookingButton);
+        navPanel.add(profileButton);
         mainPanel.add(navPanel);
 
-        // Tambahkan ActionListener untuk Booking
+        // Tambahkan ActionListener untuk Booking dan Profile
         bookingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.dispose(); 
-                BookingConfirm.showBooking(); 
+                frame.dispose();
+                BookingConfirm.showBooking();
             }
         });
+
+        profileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                PProfilePage.main(new String[]{});
+            }
+        });
+
+        // Ambil ID provider yang login dari session
+        int loggedInProviderId = Session.loggedInProviderId;
+
+        // Ambil daftar venue dari database berdasarkan ID provider yang login
+        List<Venue> venues = VenueDB.getVenuesByProvider(loggedInProviderId);
 
         // Section Rekomendasi Venue
         JPanel venueTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Menggunakan FlowLayout LEFT
@@ -100,75 +109,63 @@ public class HomeProvider {
         JPanel venuePanel = new JPanel(new GridLayout(1, 4, 20, 20));
         venuePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margin
 
-        // Tambahkan venue card tanpa lokasi
-        JPanel venueCard = createVenueCard("Taman Sangkareang", null, "asset/Sangkareang.jpg", false);
+        // Tampilkan venue utama (misalnya main venue)
+        Venue mainVenue = null;
 
-        // Dapatkan komponen gambar dari card
-        JLabel imageLabel = (JLabel) venueCard.getComponent(0); // Mengambil gambar pertama dalam card
-        ImageIcon originalIcon = (ImageIcon) imageLabel.getIcon();  // Mendapatkan ikon gambar asli
-
-        // Resize gambar agar memenuhi lebar panel
-        Image img = originalIcon.getImage();
-        Image resizedImg = img.getScaledInstance(1200, -1, Image.SCALE_SMOOTH); // Menyesuaikan lebar saja
-        imageLabel.setIcon(new ImageIcon(resizedImg)); // Menetapkan gambar yang sudah diresize ke label
-
-        venuePanel.add(venueCard);
-
+        for (Venue venue : venues) {
+            if (mainVenue == null && venue.isMainVenue()) {
+                mainVenue = venue; // Simpan venue utama pertama kali
+                venuePanel.add(createVenueCard(
+                    venue.getNamaVenue(),
+                    venue.getKota(),
+                    venue.getGambar(),
+                    false // Tidak perlu menampilkan lokasi
+                ));
+                break; // Hanya tampilkan venue utama pertama
+            }
+        }
         mainPanel.add(venuePanel);
-                
-        // List
+
+        // Section List Venue
         JPanel listVenueTitlePanel = new JPanel(new BorderLayout()); // Menggunakan BorderLayout
         listVenueTitlePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Tambahkan margin
 
-        // Label "List Venue"
         JLabel listVenueTitle = new JLabel("List Venue");
         listVenueTitle.setFont(new Font("Poppins", Font.BOLD, 25));
         listVenueTitle.setHorizontalAlignment(SwingConstants.LEFT); // Ratakan ke kiri
         listVenueTitlePanel.add(listVenueTitle, BorderLayout.WEST); // Tambahkan ke sisi kiri panel
 
-        // Button "Add Venue" dengan ikon dan teks
-        ImageIcon addVenueIcon = resizeIcon(new ImageIcon("asset/addVenue.png"), 20, 20);  // Menyesuaikan ukuran ikon
+        // Tombol "Add Venue"
+        ImageIcon addVenueIcon = resizeIcon(new ImageIcon("asset/addVenue.png"), 20, 20);
         JButton addVenueButton = new JButton("Add Venue", addVenueIcon);
-
-        // Mengatur font dan warna teks tombol
-        addVenueButton.setFont(new Font("Poppins", Font.PLAIN, 16));
-        addVenueButton.setForeground(new Color(255, 140, 0)); // Warna teks putih
-        addVenueButton.setBackground(new Color(255, 140, 0)); // Warna latar belakang tombol
-        addVenueButton.setOpaque(true);  // Agar background terlihat
-        addVenueButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); // Margin untuk oval
-
-        // Membuat tombol berbentuk oval
-        addVenueButton.setFocusPainted(false);
-        addVenueButton.setBorder(BorderFactory.createLineBorder(new Color(255, 140, 0), 2, true));  // Border untuk oval
-        addVenueButton.setContentAreaFilled(false);
-
-        listVenueTitlePanel.add(addVenueButton, BorderLayout.EAST); // Tambahkan tombol di sisi kanan panel
-
+        styleNavigationButton(addVenueButton, new Color(255, 140, 0));
+        listVenueTitlePanel.add(addVenueButton, BorderLayout.EAST); // Tombol di sisi kanan panel
         mainPanel.add(listVenueTitlePanel);
 
-        JPanel venueGridPanel = new JPanel(new GridLayout(0, 4, 20, 20)); // 0 baris berarti jumlah baris akan disesuaikan otomatis
+        JPanel venueGridPanel = new JPanel(new GridLayout(0, 4, 20, 20)); // Grid untuk daftar venue
         venueGridPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margin
 
-        // Tambahkan venue card dengan lokasi
-        venueGridPanel.add(createVenueCard("Taman Sangkareang", "Mataram", "asset/Sangkareang.jpg",true));
-        venueGridPanel.add(createVenueCard("Pantai Senggigi", "Mataram", "asset/Pantai_Senggigi.jpg", true));
-        venueGridPanel.add(createVenueCard("Grand Imperial", "Mataram", "asset/Grand_Imperial.jpg", true));
-        venueGridPanel.add(createVenueCard("Hotel Lombok Raya", "Mataram", "asset/Hotel_Lombok_Raya.jpg", true));
-        venueGridPanel.add(createVenueCard("Islamic Center", "Mataram", "asset/Islamic_Center.jpg", true));
-        venueGridPanel.add(createVenueCard("Senggigi Hotel", "Mataram", "asset/Senggigi_Hotel.jpg", true));
-        venueGridPanel.add(createVenueCard("Prime Park", "Mataram", "asset/Prime_Park.jpg", true));
-        venueGridPanel.add(createVenueCard("Narmada Convention Hall", "Mataram", "asset/Narmada_Convention_Hall.jpg", true));
-        venueGridPanel.add(createVenueCard("Gelanggang Pemuda", "Mataram", "asset/Gelanggang_Pemuda.png", true));
+        // Tampilkan semua venue kecuali venue utama pertama
+        for (Venue venue : venues) {
+            if (mainVenue == null || venue.getIdVenue() != mainVenue.getIdVenue()) {
+                venueGridPanel.add(createVenueCard(
+                    venue.getNamaVenue(),
+                    venue.getKota(),
+                    venue.getGambar(),
+                    true // Tampilkan lokasi
+                ));
+            }
+        }
         mainPanel.add(venueGridPanel);
 
         // JScrollPane untuk scrolling
         JScrollPane scrollPane = new JScrollPane(mainPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER); // Menyembunyikan scroll bar vertikal
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Menyembunyikan scroll bar horizontal
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         frame.add(scrollPane, BorderLayout.CENTER);
-        
+
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Frame otomatis diperbesar
-        frame.setVisible(true);        
+        frame.setVisible(true);
     }
 
     private static JPanel createVenueCard(String name, String location, String imagePath, boolean showLocation) {
@@ -180,30 +177,25 @@ public class HomeProvider {
         JLabel image = new JLabel(new ImageIcon(imagePath));
         card.add(image, BorderLayout.CENTER);
 
-        // Panel untuk Nama Venue (diletakkan di atas lokasi, di bawah gambar)
+        // Panel untuk Nama Venue
         JPanel namePanel = new JPanel();
         namePanel.setBackground(Color.WHITE);
-        namePanel.setLayout(new FlowLayout(FlowLayout.CENTER)); // Menggunakan FlowLayout agar mudah diatur
+        namePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         JLabel nameLabel = new JLabel("<html><center>" + name + "</center></html>", SwingConstants.CENTER);
-        nameLabel.setFont(new Font("Poppins", Font.BOLD, 16)); // Memperbesar font nama venue
-        nameLabel.setPreferredSize(new Dimension(300, 50)); // Menyediakan ruang lebih agar nama terlihat dengan baik
+        nameLabel.setFont(new Font("Poppins", Font.BOLD, 16));
         namePanel.add(nameLabel);
-        card.add(namePanel, BorderLayout.NORTH); // Menempatkan Nama Venue di bagian atas
+        card.add(namePanel, BorderLayout.NORTH);
 
+        // Lokasi (opsional)
         if (showLocation) {
-            // Panel untuk Lokasi dan Ikon Lokasi
             JPanel locationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            JLabel locationIcon = new JLabel(resizeIcon(new ImageIcon("asset/location_vanue.png"), 20, 20)); // Ikon Lokasi
-            locationPanel.add(locationIcon);
-
-            JLabel locationLabel = new JLabel(location, SwingConstants.LEFT);
+            JLabel locationIcon = new JLabel(resizeIcon(new ImageIcon("asset/location_vanue.png"), 20, 20));
+            JLabel locationLabel = new JLabel(location);
             locationLabel.setFont(new Font("Poppins", Font.PLAIN, 12));
+            locationPanel.add(locationIcon);
             locationPanel.add(locationLabel);
 
-            // Menggunakan BorderLayout untuk penempatan lokasi di bagian bawah
-            JPanel bottomPanel = new JPanel(new BorderLayout());
-            bottomPanel.add(locationPanel, BorderLayout.WEST);
-            card.add(bottomPanel, BorderLayout.SOUTH); // Menambahkan lokasi di bawah nama venue
+            card.add(locationPanel, BorderLayout.SOUTH);
         }
 
         return card;

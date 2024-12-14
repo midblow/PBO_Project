@@ -1,9 +1,11 @@
+package Provider;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class VenueFormWithCustomNavbar {
+public class AddVenue {
     // Add static reference to navbarPanel to fix the setActivePage method
     private static JPanel navbarPanel;
 
