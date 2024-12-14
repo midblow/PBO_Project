@@ -20,6 +20,7 @@ public class UProfilePage {
         SwingUtilities.invokeLater(UProfilePage::createAndShowGUI);
     }
 
+    // Method untuk membuat dan menampilkan GUI
     private static void createAndShowGUI() {
         JFrame frame = new JFrame("Kelola Akun Anda");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,14 +37,41 @@ public class UProfilePage {
         frame.add(headerPanel, BorderLayout.NORTH);
 
         // Navbar Panel
-        JPanel navbarPanel = new JPanel(new BorderLayout()); // Ubah layout menjadi BorderLayout
+        JPanel navbarPanel = new JPanel(new BorderLayout());
         navbarPanel.setBackground(SOFT_WHITE);
-        navbarPanel.setBorder(new EmptyBorder(10, 15, 10, 15)); // Sesuaikan padding agar tidak terlalu mepet
+        navbarPanel.setBorder(new EmptyBorder(10, 15, 10, 15));
 
-        JPanel leftNavbarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0)); // Reduced horizontal gap
+        JPanel leftNavbarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         leftNavbarPanel.setBackground(SOFT_WHITE);
-        leftNavbarPanel.setBorder(new EmptyBorder(5, 5, 5, 5)); // Adjust padding as needed
+        leftNavbarPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
+        // Button "Beranda"
+        JButton berandaButton = createNavbarButton("Beranda");
+        berandaButton.addActionListener(e -> {
+            JPanel homeContent = createHomeContentPanel();
+            mainPanel.removeAll();
+            JPanel sidebar = createSidebarPanel(frame, mainPanel);
+            mainPanel.add(sidebar, BorderLayout.WEST);
+            mainPanel.add(homeContent, BorderLayout.CENTER);
+            mainPanel.revalidate();
+            mainPanel.repaint();
+            updateActiveButton(berandaButton);
+        });
+
+        // Button "Venue"
+        JButton venueButton = createNavbarButton("Venue");
+        venueButton.addActionListener(e -> {
+            JPanel venueContent = createVenueContentPanel(); // Now defined
+            mainPanel.removeAll();
+            JPanel sidebar = createSidebarPanel(frame, mainPanel);
+            mainPanel.add(sidebar, BorderLayout.WEST);
+            mainPanel.add(venueContent, BorderLayout.CENTER);
+            mainPanel.revalidate();
+            mainPanel.repaint();
+            updateActiveButton(venueButton);
+        });
+
+        // Button "Profile"
         JButton profileButton = createNavbarButton("Profile");
         profileButton.addActionListener(e -> {
             JPanel profileContent = createProfileContentPanel(frame, mainPanel);
@@ -53,31 +81,19 @@ public class UProfilePage {
             mainPanel.add(profileContent, BorderLayout.CENTER);
             mainPanel.revalidate();
             mainPanel.repaint();
+            updateActiveButton(profileButton);
         });
 
-        JButton reservationButton = createNavbarButton("Booking Confirmation");
-        reservationButton.addActionListener(e -> {
-            JPanel bookingContent = createBookingContentPanel();
-            mainPanel.removeAll();
-            JPanel sidebar = createSidebarPanel(frame, mainPanel);
-            mainPanel.add(sidebar, BorderLayout.WEST);
-            mainPanel.add(bookingContent, BorderLayout.CENTER);
-            mainPanel.revalidate();
-            mainPanel.repaint();
-        });
+        // Set default active button to "Beranda"
+        updateActiveButton(berandaButton);
 
-        JButton logoutButton = createNavbarButton("Logout");
-        logoutButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(frame, "Logout Berhasil", "Logout", JOptionPane.INFORMATION_MESSAGE);
-            frame.dispose();
-        });
-
+        // Atur layout tombol pada navbar
         leftNavbarPanel.setLayout(new BoxLayout(leftNavbarPanel, BoxLayout.X_AXIS));
+        leftNavbarPanel.add(berandaButton);
+        leftNavbarPanel.add(Box.createHorizontalStrut(20));
+        leftNavbarPanel.add(venueButton);
+        leftNavbarPanel.add(Box.createHorizontalStrut(20));
         leftNavbarPanel.add(profileButton);
-        leftNavbarPanel.add(Box.createHorizontalStrut(20));
-        leftNavbarPanel.add(reservationButton);
-        leftNavbarPanel.add(Box.createHorizontalStrut(20));
-        leftNavbarPanel.add(logoutButton);
 
         navbarPanel.add(leftNavbarPanel, BorderLayout.WEST);
 
@@ -98,12 +114,27 @@ public class UProfilePage {
         frame.add(mainPanel, BorderLayout.CENTER);
 
         // Adjust sidebar width to align with navbar
-        Dimension sidebarPreferredSize = new Dimension(250, frame.getHeight()); // Perkecil sidebar agar tidak terlalu
-                                                                                // besar
+        Dimension sidebarPreferredSize = new Dimension(250, frame.getHeight());
         sidebar.setPreferredSize(sidebarPreferredSize);
 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    // Method to create the Home content panel
+    private static JPanel createHomeContentPanel() {
+        JPanel homePanel = new JPanel();
+        homePanel.setBackground(SOFT_WHITE);
+        // You can add your custom components here instead of a label
+        return homePanel;
+    }
+
+    // Method to create the Venue content panel
+    private static JPanel createVenueContentPanel() {
+        JPanel venuePanel = new JPanel();
+        venuePanel.setBackground(SOFT_WHITE);
+        // You can add your custom components here instead of a label
+        return venuePanel;
     }
 
     private static JPanel createHeaderPanel() {
@@ -130,28 +161,30 @@ public class UProfilePage {
         revenueLabel.setFont(new Font("Segoe UI", Font.BOLD, 16)); // Ukuran font lebih kecil
         headerPanel.add(revenueLabel, BorderLayout.CENTER);
 
-        // Right side: Greeting dan gambar nama.png
+        // Right side: Remove Greeting and profile picture
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5)); // Spasi lebih kecil
         rightPanel.setBackground(DEEP_NAVY);
 
-        JLabel greetingLabel = new JLabel("Halo, Erwin");
-        greetingLabel.setForeground(Color.WHITE);
-        greetingLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12)); // Ukuran font lebih kecil
+        // Remove the following lines to delete greeting and profile picture
+        // JLabel greetingLabel = new JLabel("Halo, Erwin");
+        // greetingLabel.setForeground(Color.WHITE);
+        // greetingLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12)); // Ukuran font
+        // lebih kecil
+        // rightPanel.add(greetingLabel);
 
-        JLabel profilePictureLabel = new JLabel();
-        try {
-            ImageIcon profilePictureIcon = new ImageIcon("asset/nama.png");
-            Image scaledImage = profilePictureIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH); // Ukuran
-                                                                                                             // gambar
-                                                                                                             // lebih
-                                                                                                             // kecil
-            profilePictureLabel.setIcon(new ImageIcon(scaledImage));
-        } catch (Exception e) {
-            profilePictureLabel.setText(""); // Fallback jika gambar gagal dimuat
-        }
-
-        rightPanel.add(greetingLabel);
-        rightPanel.add(profilePictureLabel);
+        // JLabel profilePictureLabel = new JLabel();
+        // try {
+        // ImageIcon profilePictureIcon = new ImageIcon("asset/nama.png");
+        // Image scaledImage = profilePictureIcon.getImage().getScaledInstance(25, 25,
+        // Image.SCALE_SMOOTH); // Ukuran
+        // // gambar
+        // // lebih
+        // // kecil
+        // profilePictureLabel.setIcon(new ImageIcon(scaledImage));
+        // } catch (Exception e) {
+        // profilePictureLabel.setText(""); // Fallback jika gambar gagal dimuat
+        // }
+        // rightPanel.add(profilePictureLabel);
 
         headerPanel.add(rightPanel, BorderLayout.EAST);
 
@@ -258,8 +291,9 @@ public class UProfilePage {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Labels and text fields
-        String[] labels = { "Nama:", "Email:", "Jenis Kelamin:", "Nomor Telepon:", "Alamat:" };
-        String[] values = { "Erwin", "erwin@gmail.com", "Laki-laki", "99999", "Rembigan" };
+        String[] labels = { "Nama:", "Email:", "Jenis Kelamin", "Nomor Telepon:", "Alamat:" };
+        String[] values = { "Erwin", "erwin@gmail.com", "Laki-laki", "99999",
+                "Rembigan" };
 
         for (int i = 0; i < labels.length; i++) {
             gbc.gridx = 0;
@@ -312,15 +346,13 @@ public class UProfilePage {
                 "Taman Sangkareang",
                 "2024-11-29 - 2024-11-30",
                 "PT. Makmur Jaya Sentosa",
-                "erwin@gmail.com",
-                "Pending"));
+                "erwin@gmail.com"));
         reservationContainer.add(Box.createVerticalStrut(20));
         reservationContainer.add(createEnhancedReservationCard(
                 "Taman Sangkareang",
                 "2024-12-02 - 2024-12-04",
                 "PT. Makmur Jaya Sentosa",
-                "erwin@gmail.com",
-                "Confirmed"));
+                "erwin@gmail.com"));
 
         // Scrollpane with clean look
         JScrollPane scrollPane = new JScrollPane(reservationContainer);
@@ -335,8 +367,7 @@ public class UProfilePage {
         return bookingPanel;
     }
 
-    private static JPanel createEnhancedReservationCard(String name, String date, String organization, String email,
-            String status) {
+    private static JPanel createEnhancedReservationCard(String name, String date, String organization, String email) {
         JPanel cardPanel = new JPanel(new BorderLayout(10, 10));
         cardPanel.setBackground(DEEP_NAVY); // Kembali ke warna biru tua
         cardPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
@@ -375,24 +406,15 @@ public class UProfilePage {
         emailLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         emailLabel.setForeground(LIGHT_GRAY);
 
-        // Status Label
-        JLabel statusLabel = new JLabel("Status: " + status);
-        statusLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        statusLabel.setForeground(status.equals("Confirmed") ? new Color(0, 255, 0) : // Hijau cerah untuk konfirmasi
-                ACCENT_ORANGE // Warna oranye untuk status lainnya
-        );
-
         detailPanel.add(organizationLabel);
         detailPanel.add(Box.createVerticalStrut(5));
         detailPanel.add(emailLabel);
-        detailPanel.add(Box.createVerticalStrut(10));
-        detailPanel.add(statusLabel);
 
         // Action Panel
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         actionPanel.setOpaque(false);
 
-        JButton invoiceButton = new JButton("Lihat Invoice");
+        JButton invoiceButton = new JButton("See Invoice");
         invoiceButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
         invoiceButton.setBackground(new Color(34, 177, 76)); // Hijau terang
         invoiceButton.setForeground(Color.WHITE);
@@ -412,7 +434,7 @@ public class UProfilePage {
         return cardPanel;
     }
 
-    // [Previous code remains the same]
+    // [Previous code remains the same
 
     private static void showInvoiceDialog() {
         // Create JFrame with more modern styling
@@ -424,22 +446,17 @@ public class UProfilePage {
         // Main container panel
         JPanel mainContainer = new JPanel();
         mainContainer.setLayout(new BoxLayout(mainContainer, BoxLayout.Y_AXIS));
-        mainContainer.setBorder(new EmptyBorder(30, 40, 50, 40)); // Increased bottom padding to 50
+        mainContainer.setBorder(new EmptyBorder(30, 40, 30, 40)); // Padding di semua sisi ditingkatkan
 
         // Invoice Header
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBorder(new EmptyBorder(0, 0, 20, 0));
 
-        JLabel invoiceTitleLabel = new JLabel("INVOICE");
+        JLabel invoiceTitleLabel = new JLabel("INVOICE LUNAS");
         invoiceTitleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         invoiceTitleLabel.setForeground(new Color(36, 65, 97));
 
-        JLabel invoiceStatusLabel = new JLabel("LUNAS");
-        invoiceStatusLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        invoiceStatusLabel.setForeground(new Color(0, 153, 51));
-
         headerPanel.add(invoiceTitleLabel, BorderLayout.WEST);
-        headerPanel.add(invoiceStatusLabel, BorderLayout.EAST);
         mainContainer.add(headerPanel);
 
         // Customer Information Panel
@@ -486,7 +503,7 @@ public class UProfilePage {
 
         // Cost Summary Panel
         JPanel costSummaryPanel = new JPanel(new GridLayout(0, 2, 10, 10));
-        costSummaryPanel.setBorder(new EmptyBorder(0, 0, 30, 0)); // Increased bottom padding
+        costSummaryPanel.setBorder(new EmptyBorder(20, 0, 20, 0)); // Padding lebih besar di sekitar elemen
 
         addCostRow(costSummaryPanel, "Biaya Sewa", "Rp 2.000.000", labelFont, valueFont);
         addCostRow(costSummaryPanel, "Biaya Layanan", "Rp 50.000", labelFont, valueFont);
@@ -496,21 +513,21 @@ public class UProfilePage {
 
         mainContainer.add(costSummaryPanel);
 
-        // Button Panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10)); // Added vertical padding
-        buttonPanel.setBorder(new EmptyBorder(0, 0, 20, 0)); // Added extra bottom padding
+        // Add extra vertical space before buttons
+        mainContainer.add(Box.createVerticalStrut(20)); // Jarak ekstra sebelum tombol
 
-        JButton downloadButton = createStyledButton("Unduh Invoice", new Color(0, 153, 51));
+        // Button Panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10)); // Added consistent padding
+        buttonPanel.setBorder(new EmptyBorder(20, 0, 20, 0)); // Padding lebih besar di sekitar tombol
+
+        JButton viewInvoiceButton = createStyledButton("Unduh Invoice", new Color(0, 153, 51));
         JButton closeButton = createStyledButton("Tutup", new Color(220, 53, 69));
 
         closeButton.addActionListener(e -> invoiceFrame.dispose());
 
-        buttonPanel.add(downloadButton);
+        buttonPanel.add(viewInvoiceButton);
         buttonPanel.add(closeButton);
         mainContainer.add(buttonPanel);
-
-        // Add extra vertical glue to push content to the top
-        mainContainer.add(Box.createVerticalGlue());
 
         // Scroll Pane for entire content
         JScrollPane scrollPane = new JScrollPane(mainContainer);
@@ -524,8 +541,6 @@ public class UProfilePage {
         invoiceFrame.repaint();
     }
 
-    // [Previous helper methods remain the same
-
     // Helper method to create styled buttons
     private static JButton createStyledButton(String text, Color bgColor) {
         JButton button = new JButton(text);
@@ -535,6 +550,7 @@ public class UProfilePage {
         button.setFocusPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
         return button;
     }
 
@@ -592,6 +608,10 @@ public class UProfilePage {
         return reservationPanel;
     }
 
+    // Declare activeButton as a class field, not inside a method
+    private static final JButton[] activeButton = { null }; // Static field to track active button
+
+    // Method untuk membuat tombol navbar
     private static JButton createNavbarButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Segoe UI", Font.BOLD, 14)); // Slightly increased font size
@@ -601,18 +621,37 @@ public class UProfilePage {
         button.setFocusPainted(false);
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setForeground(DEEP_NAVY);
-                button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); // Underline effect
+                if (button != activeButton[0]) {
+                    button.setForeground(DEEP_NAVY);
+                    button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); // Underline effect
+                }
             }
 
+            @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setForeground(ACCENT_ORANGE);
-                button.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+                if (button != activeButton[0]) {
+                    button.setForeground(ACCENT_ORANGE);
+                    button.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+                }
             }
         });
 
         return button;
+    }
+
+    // Helper method to update active button styles
+    private static void updateActiveButton(JButton button) {
+        if (activeButton[0] != null) {
+            // Revert style of the previously active button to default
+            activeButton[0].setForeground(ACCENT_ORANGE);
+            activeButton[0].setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+        }
+        // Update the active button
+        activeButton[0] = button;
+        button.setForeground(DEEP_NAVY);
+        button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); // Underline active button
     }
 
     private static JButton createSidebarButton(String text) {
