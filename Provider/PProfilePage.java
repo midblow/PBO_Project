@@ -2,11 +2,7 @@ package Provider;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
-import User.HomeUser;
-
 import java.awt.*;
 
 public class PProfilePage {
@@ -125,16 +121,13 @@ public class PProfilePage {
         frame.setVisible(true);
     }
 
-    // Method to create the Home content panel
     private static JPanel createHomeContentPanel() {
         JPanel homePanel = new JPanel();
         homePanel.setBackground(SOFT_WHITE);
         // You can add your custom components here instead of a label
-        return homePanel;
     }
 
     // Method to create the Venue content panel
-    private static JPanel createVenueContentPanel() {
         JPanel venuePanel = new JPanel();
         venuePanel.setBackground(SOFT_WHITE);
         // You can add your custom components here instead of a label
@@ -159,7 +152,6 @@ public class PProfilePage {
         logoLabel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 5)); // Padding lebih kecil
         headerPanel.add(logoLabel, BorderLayout.WEST);
 
-        // Center: Tulisan REVENUE dengan ukuran lebih kecil
         JLabel revenueLabel = new JLabel("REVENUE", SwingConstants.LEFT);
         revenueLabel.setForeground(Color.WHITE);
         revenueLabel.setFont(new Font("Segoe UI", Font.BOLD, 16)); // Ukuran font lebih kecil
@@ -168,50 +160,6 @@ public class PProfilePage {
         // Right side: Remove Greeting and profile picture
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5)); // Spasi lebih kecil
         rightPanel.setBackground(DEEP_NAVY);
-
-        // Remove the following lines to delete greeting and profile picture
-        // JLabel greetingLabel = new JLabel("Halo, Erwin");
-        // greetingLabel.setForeground(Color.WHITE);
-        // greetingLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12)); // Ukuran font
-        // lebih kecil
-        // rightPanel.add(greetingLabel);
-
-        // JLabel profilePictureLabel = new JLabel();
-        // try {
-        // ImageIcon profilePictureIcon = new ImageIcon("asset/nama.png");
-        // Image scaledImage = profilePictureIcon.getImage().getScaledInstance(25, 25,
-        // Image.SCALE_SMOOTH); // Ukuran
-        // // gambar
-        // // lebih
-        // // kecil
-        // profilePictureLabel.setIcon(new ImageIcon(scaledImage));
-        // } catch (Exception e) {
-        // profilePictureLabel.setText(""); // Fallback jika gambar gagal dimuat
-        // }
-        // rightPanel.add(profilePictureLabel);
-
-        headerPanel.add(rightPanel, BorderLayout.EAST);
-
-        return headerPanel;
-    }
-
-    private static JPanel createSidebarPanel(JFrame frame, JPanel mainPanel) {
-        JPanel sidebar = new JPanel();
-        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-        sidebar.setBackground(SOFT_NAVY);
-        sidebar.setPreferredSize(new Dimension(250, 700));
-        sidebar.setBorder(new EmptyBorder(20, 10, 20, 10));
-
-        // Profile Picture and Name
-        JLabel profilePicture = new JLabel();
-        try {
-            ImageIcon originalIcon = new ImageIcon("asset/erwin.png");
-            Image scaledImage = originalIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
-            profilePicture.setIcon(new ImageIcon(scaledImage));
-        } catch (Exception e) {
-            profilePicture.setText("Profile Pic");
-        }
-        profilePicture.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel nameLabel = new JLabel("PT. Makmur Jaya Sentosa", SwingConstants.CENTER);
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
@@ -223,7 +171,6 @@ public class PProfilePage {
         emailLabel.setForeground(LIGHT_GRAY);
         emailLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Buttons in Sidebar
         JButton profileButton = createSidebarButton("Profil");
         profileButton.addActionListener(e -> {
             JPanel profileContent = createProfileContentPanel(frame, mainPanel);
@@ -249,9 +196,9 @@ public class PProfilePage {
         JButton logoutButton = createSidebarButton("Keluar");
         logoutButton.addActionListener(e -> {
             JOptionPane.showMessageDialog(frame, "Logout Berhasil", "Logout", JOptionPane.INFORMATION_MESSAGE);
+            Session.clearSession();
             frame.dispose();
         });
-
         // Add Components to Sidebar
         sidebar.add(Box.createVerticalStrut(20));
         sidebar.add(profilePicture);
