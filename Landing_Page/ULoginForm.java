@@ -37,7 +37,7 @@ public class ULoginForm extends JFrame{
     public static void main(String[] args) {
         // Buat frame
         JFrame frame = new JFrame("Login User");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(450, 650); // Ukuran frame diperbesar
         frame.getContentPane().setBackground(new Color(12, 34, 64)); // Background warna biru gelap
         frame.setLayout(new GridBagLayout());

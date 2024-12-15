@@ -1,241 +1,289 @@
 package Provider;
+
+import DB.BookingDB;
+import DB.Session;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.*;
+import java.time.LocalDate;
+import java.util.List;
 
 public class BookingConfirm {
+
+    // Warna konstan
+    private static final Color DEEP_NAVY = new Color(17, 29, 48);
+    private static final Color ACCENT_ORANGE = new Color(255, 127, 39);
+    private static final Color SUCCESS_GREEN = new Color(34, 177, 76);
+    private static final Color REMOVE_RED = new Color(220, 53, 69);
+    private static final Color BUTTON_BLUE = new Color(12, 34, 64);
+    private static JButton activeNavbarButton = null;
+
     public static void showBooking() {
-        SwingUtilities.invokeLater(() -> new BookingConfirm());
+        SwingUtilities.invokeLater(() -> new BookingConfirm(Session.loggedInProviderId));
     }
-    public BookingConfirm(){
-        // Frame utama
-        JFrame frame = new JFrame("Revenue");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    public BookingConfirm(int providerId) {
+        JFrame frame = new JFrame("Booking Confirmation");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(1200, 800);
         frame.setLayout(new BorderLayout());
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         // Header
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(new Color(12, 34, 64)); // #0c2240
-        header.setPreferredSize(new Dimension(1200, 100)); // Tinggi header tetap
-
-        // Panel Kiri: Logo dan Judul
-        JPanel leftHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        leftHeader.setOpaque(false);
-
-        // Logo
-        JLabel logo = new JLabel(resizeIcon(new ImageIcon("asset/logo.png"), 50, 50));
-        leftHeader.add(logo);
-
-        // Teks "REVENUE"
-        JLabel revenueLabel = new JLabel("REVENUE", SwingConstants.LEFT);
-        revenueLabel.setForeground(Color.WHITE);
-        revenueLabel.setFont(new Font("Poppins", Font.BOLD, 24));
-        leftHeader.add(revenueLabel);
-
-        header.add(leftHeader, BorderLayout.WEST);
-
-        // Ikon Profil di Sebelah Kanan
-        JLabel profile = new JLabel(resizeIcon(new ImageIcon("asset/profil.png"), 50, 50));
-        profile.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                // Open the Profile View when the icon is clicked
-                ProfileView.showProfileView();
-            }
-        });
-        header.add(profile, BorderLayout.EAST);
-
+        JPanel header = createHeaderPanel();
         frame.add(header, BorderLayout.NORTH);
 
-        // Panel utama untuk konten
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS)); // Elemen disusun vertikal
-        mainPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // Navbar
+        JPanel navbar = createNavbarPanel(frame);
+        frame.add(navbar, BorderLayout.CENTER);
 
-        // Panel Navigasi Menu
-        JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 10));
-        navPanel.setOpaque(false); // Transparan
-        navPanel.setPreferredSize(new Dimension(1200, 50)); // Ukuran tetap
+        // Main Content
+        JPanel mainContent = createMainContentPanel();
+        frame.add(mainContent, BorderLayout.CENTER);
 
-        //navigasi menu home
-        JButton homeButton = new JButton("Home");
-        styleNavigationButton(homeButton, new Color(255, 140, 0));  // Updated color
-        navPanel.add(homeButton);
-        // Tambahkan ActionListener untuk Home
-        homeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose(); 
-                HomeProvider.main(new String[]{});
+        frame.setVisible(true);
+    }
+
+    private JPanel createHeaderPanel() {
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(DEEP_NAVY);
+        header.setPreferredSize(new Dimension(1200, 70));
+
+        // Logo dan Title
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        leftPanel.setOpaque(false);
+        JLabel logo = new JLabel(resizeIcon(new ImageIcon("asset/logo.png"), 40, 40));
+        JLabel title = new JLabel("REVENUE");
+        title.setFont(new Font("Poppins", Font.BOLD, 20));
+        title.setForeground(Color.WHITE);
+
+        leftPanel.add(logo);
+        leftPanel.add(title);
+
+        // Profile Icon
+        JLabel profileIcon = new JLabel(resizeIcon(new ImageIcon("asset/profil.png"), 40, 40));
+        profileIcon.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        header.add(leftPanel, BorderLayout.WEST);
+        header.add(profileIcon, BorderLayout.EAST);
+
+        return header;
+    }
+
+    private JPanel createNavbarPanel(JFrame frame) {
+        JPanel navbar = new JPanel(new FlowLayout(FlowLayout.LEFT, 50, 10));
+        navbar.setBackground(Color.WHITE);
+    
+        JButton homeButton = createNavbarButton("Home");
+        JButton bookingButton = createNavbarButton("Booking Confirmation");
+        JButton profileButton = createNavbarButton("Profile");
+    
+        // Default Active Button
+        updateActiveButtonNavbar(bookingButton);
+    
+        homeButton.addActionListener(e -> {
+            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(homeButton);
+            if (currentFrame != null) {
+                currentFrame.dispose(); // Tutup frame saat ini
             }
+            HomeProvider.main(new String[]{}); // Buka laman "Home"
         });
-
-        // Tombol navigasi Booking
-        JButton bookingButton = new JButton("Booking Confirmation");
-        styleNavigationButton(bookingButton, new Color(12, 34, 64));  // Updated color
-
-        // Membuat panel untuk menambahkan garis bawah pada "BOOKING"
-        JPanel bookingPanel = new JPanel(new BorderLayout());
-        bookingPanel.setOpaque(false); // Panel transparan
-        bookingPanel.add(bookingButton, BorderLayout.CENTER);
-        bookingPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(12, 34, 64))); // Garis bawah
-
-        navPanel.add(bookingPanel);
-
-        JButton profileButton = new JButton("Profile");
-        styleNavigationButton(profileButton, new Color(255, 140, 0));  // Updated color
-        navPanel.add(profileButton);
-        profileButton.addActionListener(e -> {
-            frame.dispose();
-            PProfilePage.main(new String[]{});
-        });
-
-        mainPanel.add(navPanel);
-
-        // Section List Order
-        JPanel orderTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Menggunakan FlowLayout LEFT
-        orderTitlePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Tambahkan margin
-
-        JLabel orderTitle = new JLabel("Order List");
-        orderTitle.setFont(new Font("Poppins", Font.BOLD, 25));
-        orderTitle.setHorizontalAlignment(SwingConstants.LEFT); // Ratakan ke kiri
-        orderTitlePanel.add(orderTitle);
-        mainPanel.add(orderTitlePanel);
-
-        JPanel orderPanel = new JPanel(new GridLayout(1, 4, 20, 20));
-        orderPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margin
         
-        // Section Order Cards
-        JPanel orderCardsPanel = new JPanel(new GridLayout(0, 2, 20, 20)); // Grid untuk 2 baris, 2 kolom
-        orderCardsPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15)); // Margin
-
-        // Contoh data kartu
-        String[][] orders = {
-            {"Taman Sangkareang", "erwin@gmail.com", "Erwin", "2024-11-29 - 2024-11-30", "SUCCESS"},
-            {"Taman Sangkareang", "erwin@gmail.com", "Erwin", "2024-12-02 - 2024-12-04", "PENDING"},
-            {"Hotel Lombok Raya", "alda@gmail.com", "Alda", "2024-11-29 - 2024-11-30", "PENDING" },
-            {"Pantai Senggigi", "sagi@gmail.com", "Sagi", "2024-12-08 - 2024-12-09", "PENDING"},
-            {"Hotel Lombok Raya", "alda@gmail.com", "Alda", "2024-11-29 - 2024-11-30", "PENDING" }
-        };        
-
-        for (String[] order : orders) {
-            JPanel cardPanel = new JPanel();
-            cardPanel.setLayout(new BorderLayout());
-            cardPanel.setBackground(Color.WHITE);
-            cardPanel.setPreferredSize(new Dimension(250, 150));
-            cardPanel.setBorder(createRoundedBorder(3));  // Border membulat pada kartu
-            cardPanel.setPreferredSize(new Dimension(250, 200));
-            // Konten kartu
-            JPanel contentPanel = new JPanel(new GridLayout(4, 1)); // 4 baris untuk konten
-            contentPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-
-            // Tambahkan nama venue sebagai bagian dari konten
-            JLabel venueLabel = new JLabel(order[0]); // Nama venue dari data
-            venueLabel.setFont(new Font("Poppins", Font.BOLD, 18)); 
-            venueLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            contentPanel.add(venueLabel);
-
-            // Tambahkan email, nama, dan tanggal
-            JLabel emailLabel = new JLabel("Email: " + order[1]);
-            emailLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
-            contentPanel.add(emailLabel);
-
-            JLabel nameLabel = new JLabel("Nama: " + order[2]);
-            nameLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
-            contentPanel.add(nameLabel);
-
-            JLabel dateLabel = new JLabel("Date: " + order[3]);
-            dateLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
-            contentPanel.add(dateLabel);
-
-            // Tambahkan contentPanel ke cardPanel
-            cardPanel.add(contentPanel, BorderLayout.CENTER);
-
-            JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Mengatur layout ke rata kanan
-            if (order[4].equals("SUCCESS")) {
-                JPanel successPanel = new JPanel();
-                successPanel.setBackground(new Color(34, 139, 34)); // Warna hijau
-                successPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Margin dalam
-                successPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-
-                JLabel successLabel = new JLabel("SUCCESS!!!");
-                successLabel.setForeground(Color.WHITE); // Teks warna putih
-                successPanel.add(successLabel);
-                actionPanel.add(successPanel);
-            } else {
-                JButton approveButton = new JButton("Approve Payment");
-                approveButton.setBackground(new Color(12, 34, 64)); // Warna tombol
-                approveButton.setForeground(Color.WHITE); // Warna teks
-                approveButton.setFocusPainted(false); // Hilangkan fokus
-                approveButton.setOpaque(true);
-                approveButton.setBorderPainted(false); // Hilangkan border
-                approveButton.setBorder(createRoundedBorder(10)); // Tombol dengan sudut membulat
-
-                JButton declineButton = new JButton("Decline");
-                declineButton.setBackground(new Color(220, 53, 69)); // Warna tombol
-                declineButton.setForeground(Color.WHITE); // Warna teks
-                declineButton.setFocusPainted(false); // Hilangkan fokus
-                declineButton.setOpaque(true);
-                declineButton.setBorderPainted(false); // Hilangkan border
-                declineButton.setBorder(createRoundedBorder(10)); // Tombol dengan sudut membulat
-
-                actionPanel.add(approveButton);
-                actionPanel.add(declineButton);
+        bookingButton.addActionListener(e -> {
+            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(bookingButton);
+            if (currentFrame != null) {
+                currentFrame.dispose(); // Tutup frame saat ini
             }
-
-            // Tambahkan actionPanel ke cardPanel
-            cardPanel.add(actionPanel, BorderLayout.SOUTH);
-
-            // Tambahkan cardPanel ke orderCardsPanel
-            orderCardsPanel.add(cardPanel);
-        }       
-
-        mainPanel.add(orderCardsPanel);
-
-        // JScrollPane untuk scrolling
-        JScrollPane scrollPane = new JScrollPane(mainPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER); // Menyembunyikan scroll bar vertikal
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Menyembunyikan scroll bar horizontal
-        frame.add(scrollPane, BorderLayout.CENTER);
-
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Frame otomatis diperbesar
-        frame.setVisible(true);        
+            BookingConfirm.showBooking(); // Buka laman "Booking Confirmation"
+        });
+        
+        profileButton.addActionListener(e -> {
+            JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(profileButton);
+            if (currentFrame != null) {
+                currentFrame.dispose(); // Tutup frame saat ini
+            }
+            PProfilePage.main(new String[]{}); // Buka laman "Profile"
+        });
+    
+        navbar.add(homeButton);
+        navbar.add(bookingButton);
+        navbar.add(profileButton);
+    
+        return navbar;
     }
 
-    private static Border createRoundedBorder(int radius) {
-        return new Border() {
-            @Override
-            public Insets getBorderInsets(Component c) {
-                return new Insets(radius, radius, radius, radius);
+    private JPanel createMainContentPanel() {
+        // Panel utama dengan BoxLayout untuk menyusun elemen secara vertikal
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBackground(new Color(245, 245, 245));
+    
+        // Tambahkan Navbar di bagian atas
+        JPanel navbar = createNavbarPanel(new JFrame());
+        navbar.setAlignmentX(Component.LEFT_ALIGNMENT); // Align ke kiri
+        mainPanel.add(navbar);
+    
+        // Title "Booking Confirmation"
+        JLabel titleLabel = new JLabel("Booking Confirmation", SwingConstants.LEFT); // SwingConstants.LEFT
+        titleLabel.setFont(new Font("Poppins", Font.BOLD, 28));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 10, 0)); // Tambahkan padding kiri
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT); // Align ke kiri
+        mainPanel.add(titleLabel);
+    
+        // Card Panel for Booking Content
+        JPanel cardPanel = new JPanel(new GridLayout(0, 2, 10, 20));
+        cardPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        cardPanel.setBackground(Color.WHITE);
+    
+        // Ambil data booking
+        List<Object[]> bookings = BookingDB.getBookingsForProvider(Session.loggedInProviderId);
+        if (bookings.isEmpty()) {
+            JLabel noDataLabel = new JLabel("No Bookings Available", SwingConstants.CENTER);
+            noDataLabel.setFont(new Font("Poppins", Font.PLAIN, 20));
+            noDataLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            mainPanel.add(noDataLabel);
+        } else {
+            for (Object[] booking : bookings) {
+                int bookingId = (int) booking[0];
+                String venue = (String) booking[1];
+                LocalDate start = (LocalDate) booking[2];
+                LocalDate end = (LocalDate) booking[3];
+                String name = (String) booking[4];
+                String email = (String) booking[5];
+                String status = BookingDB.getBookingStatusById(bookingId);
+    
+                JPanel card = createBookingCard(bookingId, venue, start, end, name, email, status);
+                cardPanel.add(card);
             }
-
-            @Override
-            public boolean isBorderOpaque() {
-                return true;
-            }
-
-            @Override
-            public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-                g.setColor(new Color(12, 34, 64));
-                g.fillRoundRect(x, y, width - 1, height - 1, radius, radius); // Membuat border dengan sudut membulat
-            }
-        };
+        }
+    
+        // Scroll Pane untuk booking cards
+        JScrollPane scrollPane = new JScrollPane(cardPanel);
+        scrollPane.setBorder(null);
+        scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+        mainPanel.add(scrollPane);
+    
+        return mainPanel;
     }
 
-    private static void styleNavigationButton(JButton button, Color color) {
+    private JPanel createBookingCard(int bookingId, String venue, LocalDate start, LocalDate end, String name, String email, String status) {
+        JPanel card = new JPanel(new BorderLayout());
+        // card.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230), 1));
+        card.setBackground(Color.WHITE);
+
+        // Content
+        JPanel content = new JPanel(new GridLayout(4, 1));
+        content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        content.add(new JLabel("<html><b>" + venue + "</b></html>"));
+        content.add(new JLabel("Email: " + email));
+        content.add(new JLabel("Name: " + name));
+        content.add(new JLabel("Date: " + start + " - " + end));
+
+        card.add(content, BorderLayout.CENTER);
+
+        // Action Buttons
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        if ("waiting".equals(status)) {
+            JButton approve = createActionButton("Approve Payment", BUTTON_BLUE);
+            JButton decline = createActionButton("Decline", REMOVE_RED);
+
+            approve.addActionListener(e -> {
+                // Total Amount contoh: dihitung berdasarkan logika bisnis atau data terkait
+                int totalAmount = 100000; // Ganti dengan logika yang sesuai
+                int serviceFee = 50000;   // Biaya layanan tetap atau dihitung
+            
+                boolean updated = BookingDB.updateBookingStatus(bookingId, "confirmed");
+                if (updated) {
+                    // Buat invoice setelah booking dikonfirmasi
+                    boolean invoiceCreated = BookingDB.createInvoice(bookingId, totalAmount, serviceFee);
+            
+                    if (invoiceCreated) {
+                        JOptionPane.showMessageDialog(null, 
+                            "Booking dikonfirmasi dan invoice berhasil dibuat.", 
+                            "Sukses", 
+                            JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, 
+                            "Booking dikonfirmasi, tetapi gagal membuat invoice.", 
+                            "Peringatan", 
+                            JOptionPane.WARNING_MESSAGE);
+                    }
+            
+                    refresh(); // Perbarui UI
+                } else {
+                    JOptionPane.showMessageDialog(null, 
+                        "Gagal mengonfirmasi booking.", 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
+                }
+            });
+            decline.addActionListener(e -> {
+                BookingDB.deleteBookingById(bookingId);
+                refresh();
+            });
+
+            actions.add(approve);
+            actions.add(decline);
+        } else if ("confirmed".equals(status)) {
+            // SUCCESS label
+            JLabel successLabel = new JLabel("SUCCESS!!!", SwingConstants.CENTER);
+            successLabel.setOpaque(true); // Membuat background terlihat
+            successLabel.setBackground(SUCCESS_GREEN); // Warna hijau
+            successLabel.setForeground(Color.WHITE); // Teks putih
+            successLabel.setFont(new Font("Poppins", Font.BOLD, 12));
+            successLabel.setPreferredSize(new Dimension(100, 30));
+            successLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Padding
+        
+            // Remove button
+            JButton removeButton = createActionButton("Remove", REMOVE_RED);
+            removeButton.addActionListener(e -> {
+                BookingDB.deleteBookingById(bookingId);
+                refresh();
+            });
+        
+            // Tambahkan SUCCESS label dan Remove button ke panel actions
+            actions.add(successLabel);
+            actions.add(removeButton);
+        }
+        card.add(actions, BorderLayout.SOUTH);
+        return card;
+    }
+
+    private JButton createNavbarButton(String text) {
+        JButton button = new JButton(text);
         button.setFont(new Font("Poppins", Font.PLAIN, 16));
-        button.setForeground(color);
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
+        button.setForeground(ACCENT_ORANGE);
         button.setContentAreaFilled(false);
+        button.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+        return button;
     }
 
-    private static ImageIcon resizeIcon(ImageIcon icon, int width, int height) {
+    private void updateActiveButtonNavbar(JButton button) {
+        if (activeNavbarButton != null) {
+            activeNavbarButton.setForeground(ACCENT_ORANGE);
+            activeNavbarButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+        }
+        button.setForeground(DEEP_NAVY);
+        button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY));
+        activeNavbarButton = button;
+    }
+
+    private JButton createActionButton(String text, Color color) {
+        JButton button = new JButton(text);
+        button.setBackground(color);
+        button.setForeground(Color.WHITE);
+        button.setFont(new Font("Poppins", Font.BOLD, 12));
+        button.setFocusPainted(false);
+        return button;
+    }
+
+    private ImageIcon resizeIcon(ImageIcon icon, int width, int height) {
         Image img = icon.getImage();
         Image resizedImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         return new ImageIcon(resizedImg);
     }
-    
+
+    private void refresh() {
+        SwingUtilities.invokeLater(BookingConfirm::showBooking);
+    }
 }

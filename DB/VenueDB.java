@@ -109,4 +109,33 @@ public class VenueDB {
         return venues;
     }
 
+    public static boolean insertVenue(String namaVenue, String deskripsi, String alamat, String kota, 
+        String penanggungJawab, int kapasitas, double harga, 
+        String tipeVenue, boolean isMain) {
+            String query = "INSERT INTO venue (nama_venue, deskripsi_fasilitas, alamat, kota, penanggung_jawab, " +
+            "kapasitas, harga, jenis_instansi, main_venue) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            try (Connection conn = DbConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, namaVenue);
+            stmt.setString(2, deskripsi);
+            stmt.setString(3, alamat);
+            stmt.setString(4, kota);
+            stmt.setString(5, penanggungJawab);
+            stmt.setInt(6, kapasitas);
+            stmt.setDouble(7, harga);
+            stmt.setString(8, tipeVenue);
+            stmt.setBoolean(9, isMain);
+
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
+
+            } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+            }
+        }
 }
+
+

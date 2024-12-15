@@ -12,7 +12,7 @@ public class Dashboard {
         SwingUtilities.invokeLater(() -> {
             frame = new JFrame("Revenue");
 
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setSize(1440, 700);
             frame.setLayout(new BorderLayout());
             frame.setBackground(Color.WHITE);

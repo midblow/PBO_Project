@@ -1,6 +1,8 @@
 package Provider;
 
 import javax.swing.*;
+
+import DB.VenueDB;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,8 +15,9 @@ public class AddVenue {
         SwingUtilities.invokeLater(() -> {
             // Frame Utama
             JFrame frame = new JFrame("My Venue");
-            frame.setSize(1000, 800);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(1200, 800);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setLocationRelativeTo(null);
 
             // Panel Utama untuk Header dan Navbar
@@ -102,7 +105,9 @@ public class AddVenue {
             mainVenueCheckbox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
             // Submit Button
-            JButton submitButton = createSubmitButton();
+            JButton submitButton = createSubmitButton(namaVenueField, deskripsiArea, alamatField, kotaField, 
+            penanggungJawabField, kapasitasField, hargaField, 
+            tipeVenueGroup, mainVenueCheckbox);
 
             // Add components to main panel with GridBagLayout
             mainPanel.add(namaVenueLabel, gbc);
@@ -134,6 +139,81 @@ public class AddVenue {
             frame.setVisible(true);
         });
     }
+
+    private static JButton createSubmitButton(JTextField namaVenueField, JTextArea deskripsiArea,
+    JTextField alamatField, JTextField kotaField,
+    JTextField penanggungJawabField, JTextField kapasitasField,
+    JTextField hargaField, ButtonGroup tipeVenueGroup,
+    JCheckBox mainVenueCheckbox) {
+    JButton button = new JButton("Submit");
+    button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+    button.setBackground(new Color(66, 133, 244));
+    button.setForeground(Color.WHITE);
+    button.setFocusPainted(false);
+
+    button.addActionListener(e -> {
+        try {
+            // Ambil nilai dari field input
+            String namaVenue = namaVenueField.getText();
+            String deskripsi = deskripsiArea.getText();
+            String alamat = alamatField.getText();
+            String kota = kotaField.getText();
+            String penanggungJawab = penanggungJawabField.getText();
+            boolean isMain = mainVenueCheckbox.isSelected();
+
+            // Validasi input wajib
+            if (namaVenue.isEmpty() || deskripsi.isEmpty() || alamat.isEmpty() || kota.isEmpty() ||
+            penanggungJawab.isEmpty() || tipeVenueGroup.getSelection() == null) {
+            JOptionPane.showMessageDialog(null, "Semua field harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+            }
+
+            // Validasi kapasitas (hanya angka bulat)
+            int kapasitas;
+            try {
+                kapasitas = Integer.parseInt(kapasitasField.getText());
+                if (kapasitas <= 0) {
+                    JOptionPane.showMessageDialog(null, "Kapasitas harus berupa angka positif!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Kapasitas harus berupa angka bulat!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Validasi harga (hanya angka bulat)
+            int harga;
+            try {
+                harga = Integer.parseInt(hargaField.getText());
+                if (harga <= 0) {
+                    JOptionPane.showMessageDialog(null, "Harga harus berupa angka positif!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Harga harus berupa angka bulat!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Ambil tipe venue
+            String tipeVenue = tipeVenueGroup.getSelection().getActionCommand();
+
+            // Insert ke database
+            boolean success = VenueDB.insertVenue(namaVenue, deskripsi, alamat, kota, penanggungJawab,
+                        kapasitas, harga, tipeVenue, isMain);
+
+            // Tampilkan pesan berdasarkan hasil
+            if (success) {
+                JOptionPane.showMessageDialog(null, "Venue berhasil ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Gagal menambahkan venue.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        return button;
+    }
+
 
     // Header setup
     public static void createHeader(JPanel headerPanel) {
@@ -186,7 +266,7 @@ public class AddVenue {
         navbarPanel.setPreferredSize(new Dimension(1000, 50)); // Navbar height
 
         // Navbar Links
-        JLabel myVenueLabel = createNavLink("My Venue");
+        JLabel myVenueLabel = createNavLink("Home");
         JLabel bookingConfirmationLabel = createNavLink("Booking Confirmation");
         JLabel profileLabel = createNavLink("Profile");
 
@@ -196,7 +276,7 @@ public class AddVenue {
         navbarPanel.add(profileLabel);
 
         // Add mouse listeners to change active state and hover effects
-        addNavbarLinkMouseListeners(myVenueLabel, "My Venue", navbarPanel);
+        addNavbarLinkMouseListeners(myVenueLabel, "Home", navbarPanel);
         addNavbarLinkMouseListeners(bookingConfirmationLabel, "Booking Confirmation", navbarPanel);
         addNavbarLinkMouseListeners(profileLabel, "Profile", navbarPanel);
 
@@ -237,7 +317,7 @@ public class AddVenue {
         });
     }
 
-    private static String activePage = "My Venue"; // Default active page
+    private static String activePage = "Home"; // Default active page
 
     // Method to set active page and update navbar state
     private static void setActivePage(String page, JPanel navbarPanel) {
@@ -311,14 +391,5 @@ public class AddVenue {
         });
 
         return tambahFotoLabel;
-    }
-
-    private static JButton createSubmitButton() {
-        JButton button = new JButton("Submit");
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        button.setBackground(new Color(66, 133, 244));
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        return button;
     }
 }

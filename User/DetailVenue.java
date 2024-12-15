@@ -22,7 +22,7 @@ public class DetailVenue {
    private void showDetailVenue() {
         // Frame utama
         JFrame frame = new JFrame("Detail Venue");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(1200, 1000);
         frame.setLayout(new BorderLayout());
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Memaksimalkan jendela

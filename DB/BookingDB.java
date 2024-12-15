@@ -58,5 +58,230 @@ public class BookingDB {
             return false;
         }
     }
+
+    public static List<Object[]> getAllBookingsForUser(int userId) {
+        List<Object[]> bookings = new ArrayList<>();
+        String query = """
+            SELECT b.id, 
+                   v.nama_venue, 
+                   b.start_date, b.end_date, 
+                   p.lembaga, p.gmail
+            FROM booking b
+            INNER JOIN venue v ON b.id_venue = v.id_venue
+            INNER JOIN provider p ON v.id_provider = p.id_provider
+            WHERE b.user_id = ? AND b.status = 'confirmed';
+        """;
+    
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setInt(1, userId);
+    
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    bookings.add(new Object[]{
+                        rs.getInt("id"),               // Booking ID
+                        rs.getString("nama_venue"),           // Nama Venue
+                        rs.getDate("start_date").toLocalDate(), // Start Date
+                        rs.getDate("end_date").toLocalDate(),   // End Date
+                        rs.getString("lembaga"),              // Lembaga
+                        rs.getString("gmail")                 // Email
+                    });
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return bookings;
+    }
+
+    public static List<Object[]> getBookingsForProvider(int providerId) {
+        List<Object[]> bookings = new ArrayList<>();
+        String query = """
+            SELECT b.id, v.nama_venue, b.start_date, b.end_date, u.name AS user_name, u.gmail
+            FROM booking b
+            INNER JOIN venue v ON b.id_venue = v.id_venue
+            INNER JOIN user u ON b.user_id = u.id
+            WHERE v.id_provider = ?;
+        """;
+    
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setInt(1, providerId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    bookings.add(new Object[]{
+                        rs.getInt("id"),              // ID Booking
+                        rs.getString("nama_venue"),   // Nama Venue
+                        rs.getDate("start_date").toLocalDate(), // Start Date
+                        rs.getDate("end_date").toLocalDate(),   // End Date
+                        rs.getString("user_name"),    // Nama User
+                        rs.getString("gmail")         // Email User
+                    });
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if (bookings.isEmpty()) {
+            System.out.println("No bookings found for provider with ID: " + providerId);
+        }
+    
+        return bookings;
+    }
+
+    public static boolean updateBookingStatus(int bookingId, String newStatus) {
+        String updateStatusQuery = "UPDATE booking SET status = ? WHERE id = ?";
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(updateStatusQuery)) {
+    
+            stmt.setString(1, newStatus); // Status baru ('confirmed', 'declined')
+            stmt.setInt(2, bookingId); // ID booking
+    
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // True jika berhasil
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void deleteBookingById(int bookingId) {
+        Connection conn = null;
+        PreparedStatement deleteInvoiceStmt = null;
+        PreparedStatement deleteBookingStmt = null;
+    
+        try {
+            conn = DbConnection.getConnection();
+            conn.setAutoCommit(false); // Mulai transaksi
+    
+            // Hapus referensi di tabel `invoice`
+            String deleteInvoiceSQL = "DELETE FROM invoice WHERE booking_id = ?";
+            deleteInvoiceStmt = conn.prepareStatement(deleteInvoiceSQL);
+            deleteInvoiceStmt.setInt(1, bookingId);
+            deleteInvoiceStmt.executeUpdate();
+    
+            // Hapus data dari tabel `booking`
+            String deleteBookingSQL = "DELETE FROM booking WHERE id = ?";
+            deleteBookingStmt = conn.prepareStatement(deleteBookingSQL);
+            deleteBookingStmt.setInt(1, bookingId);
+            deleteBookingStmt.executeUpdate();
+    
+            conn.commit(); // Commit transaksi
+            System.out.println("Booking and related invoices deleted successfully.");
+        } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback(); // Rollback jika ada error
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                if (deleteInvoiceStmt != null) deleteInvoiceStmt.close();
+                if (deleteBookingStmt != null) deleteBookingStmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public static String getBookingStatusById(int bookingId) {
+        String status = null;
+        String query = "SELECT status FROM booking WHERE id = ?";
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, bookingId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    status = rs.getString("status");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    public static Object[] getInvoiceByBookingId(int bookingId) {
+        String query = "SELECT id_invoice, date, total_amount, service_fee FROM invoice WHERE booking_id = ?";
+        try (Connection conn = DbConnection.getConnection(); // Pastikan koneksi database sudah tersedia
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setInt(1, bookingId); // Set parameter booking_id
+            ResultSet rs = stmt.executeQuery();
+    
+            if (rs.next()) {
+                // Return data invoice sebagai array object
+                return new Object[]{
+                    rs.getInt("id_invoice"),
+                    rs.getDate("date"),
+                    rs.getDouble("total_amount"),
+                    rs.getDouble("service_fee")
+                };
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Kembalikan null jika tidak ada data
+    }
+
+    public static boolean isBookingIdValid(int bookingId) {
+        String query = "SELECT COUNT(*) FROM booking WHERE id = ?";
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, bookingId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // True jika bookingId ditemukan
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean createInvoice(int bookingId, int totalAmount, int serviceFee) {
+        // Validasi bookingId terlebih dahulu
+        if (!isBookingIdValid(bookingId)) {
+            System.out.println("Invalid booking ID: " + bookingId);
+            return false;
+        }
+    
+        String query = """
+            INSERT INTO invoice (booking_id, date, total_amount, service_fee) 
+            VALUES (?, CURRENT_DATE, ?, ?)
+            """;
+    
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            // Set parameter untuk query
+            stmt.setInt(1, bookingId);
+            stmt.setInt(2, totalAmount);
+            stmt.setInt(3, serviceFee);
+    
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Invoice berhasil dibuat untuk Booking ID: " + bookingId);
+                return true;
+            } else {
+                System.out.println("Gagal membuat invoice untuk Booking ID: " + bookingId);
+                return false;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error saat membuat invoice untuk Booking ID: " + bookingId);
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
+
 

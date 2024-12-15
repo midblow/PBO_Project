@@ -11,7 +11,7 @@ public class HomeUser {
     public static void main(String[] args) {
         // Frame utama
         frame = new JFrame("Revenue");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(1200, 800);
         frame.setLayout(new BorderLayout());
 

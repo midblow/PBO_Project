@@ -3,20 +3,23 @@ import java.sql.*;
 
 public class UserDB {
     // Metode untuk mengambil data pengguna berdasarkan email
-    public static String[] getUserDataByEmail(String email) {
-        String[] userData = new String[5]; // Nama, Email, Gender, Nomor HP, Alamat
-        try (Connection conn = DbConnection.getConnection()) { // Asumsi ada kelas DbConnection untuk koneksi database
+    public static User getUserDataByEmail(String gmail) {
+        User user = null; // Inisialisasi objek user
+        try (Connection conn = DbConnection.getConnection()) { // Pastikan koneksi database Anda sudah benar
             if (conn != null) {
-                String query = "SELECT name, gmail, gender, nomorhp, alamat FROM user WHERE gmail = ?";
+                String query = "SELECT * FROM user WHERE gmail = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setString(1, email);
+                    stmt.setString(1, gmail);
                     try (ResultSet rs = stmt.executeQuery()) {
                         if (rs.next()) {
-                            userData[0] = rs.getString("name");
-                            userData[1] = rs.getString("gmail");
-                            userData[2] = rs.getString("gender");
-                            userData[3] = rs.getString("nomorhp");
-                            userData[4] = rs.getString("alamat");
+                            user = new User(
+                                rs.getInt("id"),
+                                rs.getString("gmail"),
+                                rs.getString("name"),
+                                rs.getString("gender"),
+                                rs.getLong("nomorhp"),
+                                rs.getString("alamat")
+                            );
                         }
                     }
                 }
@@ -24,19 +27,20 @@ public class UserDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return userData;
+        return user;
     }
 
-    public static boolean updateUserData(String email, String name, String gender, String phone, String address) {
+    public static boolean updateUserData(String oldEmail, String name, String newEmail, String gender, String phone, String address) {
         try (Connection conn = DbConnection.getConnection()) {
             if (conn != null) {
-                String query = "UPDATE user SET name = ?, gender = ?, nomorhp = ?, alamat = ? WHERE gmail = ?";
+                String query = "UPDATE user SET name = ?, gmail = ?, gender = ?, nomorhp = ?, alamat = ? WHERE gmail = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
                     stmt.setString(1, name);
-                    stmt.setString(2, gender);
-                    stmt.setString(3, phone);
-                    stmt.setString(4, address);
-                    stmt.setString(5, email);
+                    stmt.setString(2, newEmail); // Email baru
+                    stmt.setString(3, gender);
+                    stmt.setString(4, phone);
+                    stmt.setString(5, address);
+                    stmt.setString(6, oldEmail); // Email lama
     
                     int rowsUpdated = stmt.executeUpdate();
                     return rowsUpdated > 0;
@@ -47,4 +51,30 @@ public class UserDB {
         }
         return false;
     }
+
+    public static boolean isEmailExisting(String email, String currentUserEmail) {
+        if (email == null || email.trim().isEmpty()) {
+            return false; // Jika email kosong, anggap belum ada
+        }
+    
+        String query = "SELECT COUNT(*) FROM user WHERE gmail = ? AND gmail != ?";
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn != null) {
+                try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                    stmt.setString(1, email); // Email baru yang ingin dicek
+                    stmt.setString(2, currentUserEmail); // Email pengguna saat ini (dikecualikan)
+    
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            return rs.getInt(1) > 0; // Jika ada lebih dari 0 baris, email sudah ada
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Jika terjadi error atau tidak ada hasil
+    }
+
 }

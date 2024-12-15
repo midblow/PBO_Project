@@ -11,7 +11,7 @@ public class HomeProvider {
     public static void main(String[] args) {
         // Frame utama
         JFrame frame = new JFrame("Revenue");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(1200, 800);
         frame.setLayout(new BorderLayout());
 
@@ -138,6 +138,14 @@ public class HomeProvider {
         // Tombol "Add Venue"
         ImageIcon addVenueIcon = resizeIcon(new ImageIcon("asset/addVenue.png"), 20, 20);
         JButton addVenueButton = new JButton("Add Venue", addVenueIcon);
+        addVenueButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                AddVenue.main(new String[]{});
+            }
+        });
+
         styleNavigationButton(addVenueButton, new Color(255, 140, 0));
         listVenueTitlePanel.add(addVenueButton, BorderLayout.EAST); // Tombol di sisi kanan panel
         mainPanel.add(listVenueTitlePanel);

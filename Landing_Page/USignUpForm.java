@@ -8,7 +8,7 @@ public class USignUpForm {
     public USignUpForm() {
         // Create the frame
         JFrame frame = new JFrame("Sign Up User");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(400, 700); // Ukuran frame yang sesuai
         frame.getContentPane().setBackground(new Color(12, 34, 64)); // Background warna biru gelap
         frame.setLayout(new BorderLayout());
