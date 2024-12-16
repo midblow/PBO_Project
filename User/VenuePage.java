@@ -204,7 +204,16 @@ public class VenuePage {
         locationLabel.setOpaque(true);
         locationPanel.add(locationLabel);
         card.add(locationPanel, BorderLayout.SOUTH);
-        
+
+        card.setCursor(new Cursor(Cursor.HAND_CURSOR)); 
+        card.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                frame.dispose(); 
+                new DetailVenue(venue.getIdVenue()); 
+            }
+        });
+            
         return card;
     }
  

@@ -77,4 +77,25 @@ public class UserDB {
         return false; // Jika terjadi error atau tidak ada hasil
     }
 
+    public static boolean addUser(String gmail, String name, String password, String gender, long nomorHp, String alamat) {
+        String query = "INSERT INTO user (gmail, name, password, gender, nomorhp, alamat) VALUES (?, ?, ?, ?, ?, ?)";
+    
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setString(1, gmail);
+            stmt.setString(2, name);
+            stmt.setString(3, password);
+            stmt.setString(4, gender);
+            stmt.setLong(5, nomorHp);
+            stmt.setString(6, alamat);
+    
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0; // Berhasil jika ada baris yang ditambahkan
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

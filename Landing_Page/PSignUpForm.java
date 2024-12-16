@@ -1,6 +1,9 @@
 package Landing_Page;
 
 import javax.swing.*;
+
+import DB.ProviderDB;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -76,7 +79,7 @@ public class PSignUpForm {
         roundedPanel.add(emailPanel, gbc);
 
         // Nama Label and Field with Icon inside
-        JLabel namaLabel = new JLabel("Nama");
+        JLabel namaLabel = new JLabel("Username");
         namaLabel.setForeground(Color.WHITE);
         namaLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
         gbc.gridx = 0;
@@ -228,6 +231,51 @@ public class PSignUpForm {
         signUpButton.setForeground(new Color(12, 34, 64));
         signUpButton.setFocusPainted(false);
         signUpButton.setFont(new Font("Poppins", Font.BOLD, 14));
+        signUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Ambil data input dari form
+                String email = emailField.getText().trim();
+                String username = namaField.getText().trim();
+                String lembaga = lembagaField.getText().trim();
+                String password = new String(passwordField.getPassword()).trim();
+                String nomorHpStr = phoneField.getText().trim();
+                String alamat = alamatField.getText().trim();
+
+                // Validasi input kosong
+                if (email.isEmpty() || username.isEmpty() || lembaga.isEmpty() || 
+                    password.isEmpty() || nomorHpStr.isEmpty() || alamat.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Semua field harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Validasi nomor telepon (harus angka)
+                long nomorHp;
+                try {
+                    nomorHp = Long.parseLong(nomorHpStr);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Nomor telepon harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Cek duplikasi email
+                if (ProviderDB.isEmailExisting(email, "")) {
+                    JOptionPane.showMessageDialog(null, "Email sudah digunakan!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Simpan ke database
+                boolean isAdded = ProviderDB.addProvider(email, username, lembaga, password, nomorHp, alamat);
+
+                if (isAdded) {
+                    JOptionPane.showMessageDialog(null, "Pendaftaran berhasil!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    frame.dispose();
+                    PLoginForm.main(new String[]{});
+                } else {
+                    JOptionPane.showMessageDialog(null, "Pendaftaran gagal. Silakan coba lagi.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
         gbc.gridx = 0;
         gbc.gridy = 9;

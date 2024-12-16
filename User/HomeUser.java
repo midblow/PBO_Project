@@ -110,7 +110,7 @@ public class HomeUser {
         List<Venue> venues = VenueDB.getAllVenues();
 
         // Batasi jumlah maksimal venue yang ditampilkan
-        int maxVenues = Math.min(6, venues.size()); // Hanya tampilkan maksimal 6 venue
+        int maxVenues = Math.min(7, venues.size()); // Hanya tampilkan maksimal 6 venue
 
         // Panel untuk venue yang dinamis (horizontal)
         JPanel venuePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20)); // Menggunakan FlowLayout horizontal
@@ -164,9 +164,17 @@ public class HomeUser {
 
         // JScrollPane untuk scrolling (hanya mengaktifkan scroll horizontal di venue)
         JScrollPane scrollPane = new JScrollPane(mainPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Menghilangkan scroll horizontal
         frame.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel footerPanel = new JPanel();
+        footerPanel.setLayout(new BorderLayout());
+        JLabel footerImage = new JLabel(new ImageIcon("asset/Footer.png"));
+        footerImage.setHorizontalAlignment(SwingConstants.CENTER);
+        footerPanel.add(footerImage, BorderLayout.CENTER);
+        footerPanel.setPreferredSize(new Dimension(frame.getWidth(), 200)); // Sesuaikan lebar dengan frame
+        mainPanel.add(footerPanel, BorderLayout.SOUTH); // Atau gunakan frame.add jika ingin langsung ke frame
 
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Frame otomatis diperbesar
         frame.setVisible(true);
@@ -189,15 +197,25 @@ public class HomeUser {
         nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
         namePanel.add(nameLabel);
         card.add(namePanel, BorderLayout.NORTH);
-    
+
         // Lokasi Venue
         JPanel locationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel locationIcon = new JLabel(resizeIcon(new ImageIcon("asset/location_vanue.png"), 15, 15));
         locationPanel.add(locationIcon);
-        JLabel locationLabel = new JLabel(venue.getAlamat(), SwingConstants.LEFT);
+
+        // Memotong lokasi jika lebih dari 3 kata
+        String locationText = venue.getAlamat();
+        String[] words = locationText.split(" "); // Pisahkan berdasarkan spasi
+        if (words.length > 3) {
+            locationText = String.join(" ", java.util.Arrays.copyOfRange(words, 0, 3)) + "..."; // Gabungkan 3 kata pertama + "..."
+        }
+
+        // Tampilkan nama lokasi dengan teks yang dipotong jika lebih dari 3 kata
+        JLabel locationLabel = new JLabel(locationText, SwingConstants.LEFT);
         locationLabel.setFont(new Font("Poppins", Font.PLAIN, 12));
         locationPanel.add(locationLabel);
         card.add(locationPanel, BorderLayout.SOUTH);
+
     
         card.addMouseListener(new MouseAdapter() {
             @Override

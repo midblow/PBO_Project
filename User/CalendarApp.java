@@ -13,31 +13,31 @@ public class CalendarApp extends JPanel {
     private JLabel monthYearLabel;
     private int currentMonth;
     private int currentYear;
-    private List<Booking> bookings; // Data booking untuk venue
-    private int currentUserId; // ID user yang sedang login
+    private List<Booking> bookings; 
+    private int currentUserId; 
 
     public CalendarApp(List<Booking> bookings, int currentUserId) {
         this.bookings = bookings;
         this.currentUserId = currentUserId;
         setLayout(new BorderLayout());
 
-        // Panel untuk navigasi bulan
         JPanel navigationPanel = new JPanel();
         JButton prevButton = new JButton("Prev");
         JButton nextButton = new JButton("Next");
 
-        // Navigasi bulan: styling tombol
         navigationPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         Color buttonColor = new Color(12, 34, 64);
         prevButton.setBackground(buttonColor);
         nextButton.setBackground(buttonColor);
+        prevButton.setFont(new Font("Poppins", Font.BOLD, 22));
+        nextButton.setFont(new Font("Poppins", Font.BOLD, 22));
         prevButton.setForeground(Color.WHITE);
         nextButton.setForeground(Color.WHITE);
-        prevButton.setPreferredSize(new Dimension(80, 30));
-        nextButton.setPreferredSize(new Dimension(80, 30));
+        prevButton.setPreferredSize(new Dimension(150, 30));
+        nextButton.setPreferredSize(new Dimension(150, 30));
 
         monthYearLabel = new JLabel("", SwingConstants.CENTER);
-        monthYearLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        monthYearLabel.setFont(new Font("Poppins", Font.BOLD, 22));
 
         navigationPanel.setLayout(new BorderLayout());
         navigationPanel.add(prevButton, BorderLayout.WEST);
@@ -45,21 +45,17 @@ public class CalendarApp extends JPanel {
         navigationPanel.add(nextButton, BorderLayout.EAST);
         add(navigationPanel, BorderLayout.NORTH);
 
-        // Panel untuk kalender
         calendarPanel = new JPanel();
         calendarPanel.setLayout(new GridLayout(0, 7, 5, 5)); // 7 kolom untuk hari dalam seminggu
         calendarPanel.setBackground(Color.LIGHT_GRAY);
         add(calendarPanel, BorderLayout.CENTER);
 
-        // Set bulan dan tahun saat ini
         LocalDate currentDate = LocalDate.now();
         currentMonth = currentDate.getMonthValue();
         currentYear = currentDate.getYear();
 
-        // Update kalender pertama kali
         updateCalendar();
 
-        // Listener tombol navigasi
         prevButton.addActionListener(e -> {
             currentMonth--;
             if (currentMonth < 1) {
@@ -79,18 +75,14 @@ public class CalendarApp extends JPanel {
         });
     }
 
-    /**
-     * Update kalender dengan data booking.
-     */
     private void updateCalendar() {
         calendarPanel.removeAll();
         monthYearLabel.setText(String.format("%s %d", Month.of(currentMonth), currentYear));
-    
-        // Hari-hari dalam seminggu
+
         String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         for (String day : days) {
             JLabel label = new JLabel(day, SwingConstants.CENTER);
-            label.setFont(new Font("Arial", Font.BOLD, 12));
+            label.setFont(new Font("Poppins", Font.BOLD, 20));
             label.setOpaque(true);
             label.setBackground(new Color(12, 34, 64));
             label.setForeground(Color.WHITE);
@@ -116,7 +108,7 @@ public class CalendarApp extends JPanel {
             LocalDate date = LocalDate.of(currentYear, currentMonth, day);
     
             JLabel label = new JLabel(String.valueOf(day), SwingConstants.CENTER);
-            label.setFont(new Font("Arial", Font.PLAIN, 12));
+            label.setFont(new Font("Poppins", Font.PLAIN, 20));
             label.setOpaque(true);
             label.setBackground(getStatusColor(date));
             calendarPanel.add(label);
@@ -140,6 +132,6 @@ public class CalendarApp extends JPanel {
                 }
             }
         }
-        return Color.WHITE; // Default jika tidak ada booking
+        return Color.WHITE; 
     }
 }

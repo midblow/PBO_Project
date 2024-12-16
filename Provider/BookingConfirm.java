@@ -1,6 +1,7 @@
 package Provider;
 
 import DB.BookingDB;
+import DB.InvoiceDB;
 import DB.Session;
 
 import javax.swing.*;
@@ -40,6 +41,9 @@ public class BookingConfirm {
         // Main Content
         JPanel mainContent = createMainContentPanel();
         frame.add(mainContent, BorderLayout.CENTER);
+
+        JPanel footer = createFooterPanel();
+        frame.add(footer, BorderLayout.SOUTH);
 
         frame.setVisible(true);
     }
@@ -116,7 +120,7 @@ public class BookingConfirm {
         // Panel utama dengan BoxLayout untuk menyusun elemen secara vertikal
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBackground(new Color(245, 245, 245));
+        mainPanel.setBackground(new Color(255, 255, 255));
     
         // Tambahkan Navbar di bagian atas
         JPanel navbar = createNavbarPanel(new JFrame());
@@ -128,12 +132,20 @@ public class BookingConfirm {
         titleLabel.setFont(new Font("Poppins", Font.BOLD, 28));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 10, 0)); // Tambahkan padding kiri
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT); // Align ke kiri
+        titleLabel.setBackground(Color.WHITE);
+        titleLabel.setOpaque(true);
         mainPanel.add(titleLabel);
     
-        // Card Panel for Booking Content
         JPanel cardPanel = new JPanel(new GridLayout(0, 2, 10, 20));
         cardPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         cardPanel.setBackground(Color.WHITE);
+        
+        // Scroll Pane untuk booking cards
+        JScrollPane scrollPane = new JScrollPane(cardPanel);
+        scrollPane.setBorder(null);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setPreferredSize(new Dimension(0, 800)); 
+        scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
     
         // Ambil data booking
         List<Object[]> bookings = BookingDB.getBookingsForProvider(Session.loggedInProviderId);
@@ -157,10 +169,6 @@ public class BookingConfirm {
             }
         }
     
-        // Scroll Pane untuk booking cards
-        JScrollPane scrollPane = new JScrollPane(cardPanel);
-        scrollPane.setBorder(null);
-        scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
         mainPanel.add(scrollPane);
     
         return mainPanel;
@@ -188,35 +196,45 @@ public class BookingConfirm {
             JButton decline = createActionButton("Decline", REMOVE_RED);
 
             approve.addActionListener(e -> {
-                // Total Amount contoh: dihitung berdasarkan logika bisnis atau data terkait
-                int totalAmount = 100000; // Ganti dengan logika yang sesuai
-                int serviceFee = 50000;   // Biaya layanan tetap atau dihitung
+                int venueId = BookingDB.getVenueIdByBookingId(bookingId);
+                if (venueId == -1) {
+                    JOptionPane.showMessageDialog(null, "Venue tidak ditemukan untuk booking ini.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             
+                // Ambil tanggal booking untuk pengecekan
+                LocalDate startDate = start; // Tanggal mulai booking
+                LocalDate endDate = end;     // Tanggal selesai booking
+            
+                // Pengecekan overlap sebelum mengubah status
+                if (BookingDB.isDateOverlap(venueId, startDate, endDate)) {
+                    JOptionPane.showMessageDialog(null, 
+                        "Tanggal booking bertabrakan dengan booking yang sudah di-approve.", 
+                        "Peringatan", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+            
+                // Jika tidak ada overlap, update status ke 'confirmed'
                 boolean updated = BookingDB.updateBookingStatus(bookingId, "confirmed");
                 if (updated) {
-                    // Buat invoice setelah booking dikonfirmasi
-                    boolean invoiceCreated = BookingDB.createInvoice(bookingId, totalAmount, serviceFee);
-            
+                    boolean invoiceCreated = InvoiceDB.createInvoice(bookingId, venueId);
                     if (invoiceCreated) {
-                        JOptionPane.showMessageDialog(null, 
-                            "Booking dikonfirmasi dan invoice berhasil dibuat.", 
-                            "Sukses", 
-                            JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null,
+                            "Booking dikonfirmasi dan invoice berhasil dibuat.",
+                            "Sukses", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(null, 
-                            "Booking dikonfirmasi, tetapi gagal membuat invoice.", 
-                            "Peringatan", 
-                            JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(null,
+                            "Booking dikonfirmasi, tetapi gagal membuat invoice.",
+                            "Peringatan", JOptionPane.WARNING_MESSAGE);
                     }
-            
                     refresh(); // Perbarui UI
                 } else {
-                    JOptionPane.showMessageDialog(null, 
-                        "Gagal mengonfirmasi booking.", 
-                        "Error", 
-                        JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null,
+                        "Gagal mengonfirmasi booking.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
+            
             decline.addActionListener(e -> {
                 BookingDB.deleteBookingById(bookingId);
                 refresh();
@@ -283,6 +301,57 @@ public class BookingConfirm {
         return new ImageIcon(resizedImg);
     }
 
+    private ImageIcon resizeIcon(ImageIcon icon, int width) {
+        Image img = icon.getImage();
+        int height = (int) ((double) img.getHeight(null) / img.getWidth(null) * width); // Menyesuaikan tinggi agar proporsional
+        Image resizedImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(resizedImg);
+    }
+    
+    private class LoadImageWorker extends SwingWorker<ImageIcon, Void> {
+        private final String imagePath;
+        private final JLabel label;
+
+        public LoadImageWorker(String imagePath, JLabel label) {
+            this.imagePath = imagePath;
+            this.label = label;
+        }
+
+        @Override
+        protected ImageIcon doInBackground() throws Exception {
+            // Pemuatan gambar di latar belakang
+            ImageIcon icon = new ImageIcon(imagePath);
+            int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;  // Ambil lebar layar
+            return resizeIcon(icon, screenWidth); // Resize gambar sesuai lebar layar
+        }
+
+        @Override
+        protected void done() {
+            try {
+                // Setelah gambar selesai dimuat, perbarui label dengan gambar baru
+                ImageIcon icon = get();
+                label.setIcon(icon);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private JPanel createFooterPanel() {
+        JPanel footer = new JPanel(new BorderLayout());
+        footer.setBackground(Color.WHITE);
+    
+        // Label untuk footer yang akan diubah setelah gambar dimuat
+        JLabel footerImageLabel = new JLabel();
+        footer.add(footerImageLabel, BorderLayout.CENTER);
+    
+        // Menjalankan SwingWorker untuk memuat gambar footer di latar belakang
+        new LoadImageWorker("asset/Footer.png", footerImageLabel).execute();
+    
+        return footer;
+    }
+    
+    
     private void refresh() {
         SwingUtilities.invokeLater(BookingConfirm::showBooking);
     }

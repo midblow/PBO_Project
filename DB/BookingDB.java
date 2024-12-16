@@ -37,26 +37,36 @@ public class BookingDB {
         return bookings;
     }
 
-    // Method untuk menyimpan booking baru ke database
     public static boolean saveBooking(int venueId, LocalDate startDate, LocalDate endDate, String paymentMethod, int userId) {
-        String query = "INSERT INTO booking (id_venue, start_date, end_date, metode_pembayaran, status, user_id) VALUES (?, ?, ?, ?, 'waiting', ?)";
-
+        String query = """
+            INSERT INTO booking (id_venue, start_date, end_date, metode_pembayaran, status, user_id) 
+            VALUES (?, ?, ?, ?, 'waiting', ?)
+        """;
+    
         try (Connection conn = DbConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
+             PreparedStatement stmt = conn.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+    
             stmt.setInt(1, venueId);
             stmt.setDate(2, Date.valueOf(startDate));
             stmt.setDate(3, Date.valueOf(endDate));
             stmt.setString(4, paymentMethod);
             stmt.setInt(5, userId);
-
+    
             int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0;
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return false;
+            if (rowsInserted > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int bookingId = generatedKeys.getInt(1);
+    
+                        // Panggil method createInvoice
+                        return InvoiceDB.createInvoice(bookingId, venueId);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
     public static List<Object[]> getAllBookingsForUser(int userId) {
@@ -248,40 +258,66 @@ public class BookingDB {
         return false;
     }
 
-    public static boolean createInvoice(int bookingId, int totalAmount, int serviceFee) {
-        // Validasi bookingId terlebih dahulu
-        if (!isBookingIdValid(bookingId)) {
-            System.out.println("Invalid booking ID: " + bookingId);
-            return false;
+    public static int getVenueIdByBookingId(int bookingId) {
+        String query = "SELECT id_venue FROM booking WHERE id = ?";
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, bookingId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_venue");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    
+        return -1; // Return -1 jika venueId tidak ditemukan
+    }
+
+    public static String getMetodePembayaranByBookingId(int bookingId) {
+        String metodePembayaran = null;
+        String query = "SELECT metode_pembayaran FROM booking WHERE id = ?";
+        
+        try (Connection conn = DbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, bookingId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    metodePembayaran = rs.getString("metode_pembayaran");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return metodePembayaran; // Return null jika tidak ditemukan
+    }
+
+    public static boolean isDateOverlap(int venueId, LocalDate startDate, LocalDate endDate) {
         String query = """
-            INSERT INTO invoice (booking_id, date, total_amount, service_fee) 
-            VALUES (?, CURRENT_DATE, ?, ?)
-            """;
+            SELECT COUNT(*) FROM booking 
+            WHERE id_venue = ? AND status = 'confirmed'
+            AND (start_date <= ? AND end_date >= ?)
+        """;
     
         try (Connection conn = DbConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
     
-            // Set parameter untuk query
-            stmt.setInt(1, bookingId);
-            stmt.setInt(2, totalAmount);
-            stmt.setInt(3, serviceFee);
+            stmt.setInt(1, venueId);
+            stmt.setDate(2, Date.valueOf(endDate));
+            stmt.setDate(3, Date.valueOf(startDate));
     
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Invoice berhasil dibuat untuk Booking ID: " + bookingId);
-                return true;
-            } else {
-                System.out.println("Gagal membuat invoice untuk Booking ID: " + bookingId);
-                return false;
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // Jika hasil > 0, berarti ada overlap
+                }
             }
         } catch (SQLException e) {
-            System.err.println("Error saat membuat invoice untuk Booking ID: " + bookingId);
             e.printStackTrace();
-            return false;
         }
+        return false; // Default jika tidak ada overlap
     }
+
 }
 
 

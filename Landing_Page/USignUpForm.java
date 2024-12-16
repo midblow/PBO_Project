@@ -1,6 +1,9 @@
 package Landing_Page;
 
 import javax.swing.*;
+
+import DB.UserDB;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -146,16 +149,15 @@ public class USignUpForm {
         genderCombo.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
         genderPanel.add(genderCombo, BorderLayout.CENTER);
 
-        ImageIcon genderIcon = new ImageIcon("asset/gender.png"); // Path to gender icon
+        ImageIcon genderIcon = new ImageIcon("asset/gender.png");
         JLabel genderIconLabel = new JLabel(new ImageIcon(genderIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-        genderPanel.add(genderIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
+        genderPanel.add(genderIconLabel, BorderLayout.EAST); 
 
         gbc.gridx = 1;
         gbc.gridy = 5;
         gbc.gridwidth = 2;
         roundedPanel.add(genderPanel, gbc);
 
-        // Phone Label and Field with Icon inside
         JLabel phoneLabel = new JLabel("Nomor Telepon");
         phoneLabel.setForeground(Color.WHITE);
         phoneLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
@@ -165,7 +167,7 @@ public class USignUpForm {
         roundedPanel.add(phoneLabel, gbc);
 
         JPanel phonePanel = new JPanel(new BorderLayout());
-        phonePanel.setOpaque(false); // Menonaktifkan background panel, agar transparan
+        phonePanel.setOpaque(false); 
         JTextField phoneField = new JTextField();
         phoneField.setBackground(new Color(12, 34, 64));
         phoneField.setForeground(Color.WHITE);
@@ -173,45 +175,42 @@ public class USignUpForm {
         phoneField.setCaretColor(Color.WHITE);
         phonePanel.add(phoneField, BorderLayout.CENTER);
 
-        ImageIcon phoneIcon = new ImageIcon("asset/phone.png"); // Path to phone icon
+        ImageIcon phoneIcon = new ImageIcon("asset/phone.png"); 
         JLabel phoneIconLabel = new JLabel(new ImageIcon(phoneIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-        phonePanel.add(phoneIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
+        phonePanel.add(phoneIconLabel, BorderLayout.EAST); 
 
         gbc.gridx = 1;
         gbc.gridy = 6;
         gbc.gridwidth = 2;
         roundedPanel.add(phonePanel, gbc);
 
-        // Alamat Label
         JLabel alamatLabel = new JLabel("Alamat");
         alamatLabel.setForeground(Color.WHITE);
         alamatLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
         gbc.gridx = 0;
-        gbc.gridy = 7; // Posisi setelah Nomor Telepon
+        gbc.gridy = 7; 
         gbc.gridwidth = 1;
         roundedPanel.add(alamatLabel, gbc);
 
-        // Panel untuk Alamat field dengan ikon di kanan
         JPanel alamatPanel = new JPanel(new BorderLayout());
-        alamatPanel.setOpaque(false); // Menonaktifkan background panel, agar transparan
+        alamatPanel.setOpaque(false); 
         JTextField alamatField = new JTextField();
         alamatField.setBackground(new Color(12, 34, 64));
         alamatField.setForeground(Color.WHITE);
         alamatField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
         alamatField.setCaretColor(Color.WHITE);
-        alamatField.setPreferredSize(new Dimension(200, 30)); // Ukuran input field
+        alamatField.setPreferredSize(new Dimension(200, 30)); 
         alamatPanel.add(alamatField, BorderLayout.CENTER);
 
-        ImageIcon alamatIconImage = new ImageIcon("asset/location.png"); // Path ke ikon Alamat
+        ImageIcon alamatIconImage = new ImageIcon("asset/location.png"); 
         JLabel alamatIconLabel = new JLabel(new ImageIcon(alamatIconImage.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-        alamatPanel.add(alamatIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
+        alamatPanel.add(alamatIconLabel, BorderLayout.EAST);
 
         gbc.gridx = 1;
-        gbc.gridy = 7; // Sama seperti posisi Alamat Label
+        gbc.gridy = 7; 
         gbc.gridwidth = 2;
         roundedPanel.add(alamatPanel, gbc);
 
-        // Terms and Conditions Checkbox
         JCheckBox termsCheckBox = new JCheckBox("I Agree to the Terms & Conditions");
         termsCheckBox.setForeground(Color.WHITE);
         termsCheckBox.setBackground(new Color(15, 32, 55));
@@ -220,19 +219,57 @@ public class USignUpForm {
         gbc.gridwidth = 3;
         roundedPanel.add(termsCheckBox, gbc);
 
-        // Sign Up Button with Icon
         JButton signUpButton = new JButton("Sign Up");
         signUpButton.setBackground(Color.WHITE);
         signUpButton.setForeground(new Color(12, 34, 64));
         signUpButton.setFocusPainted(false);
         signUpButton.setFont(new Font("Poppins", Font.BOLD, 14));
+        signUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String email = emailField.getText().trim();
+                String name = namaField.getText().trim();
+                String password = new String(passwordField.getPassword()).trim();
+                String gender = (String) genderCombo.getSelectedItem();
+                String nomorHpStr = phoneField.getText().trim();
+                String alamat = alamatField.getText().trim();
+
+                if (email.isEmpty() || name.isEmpty() || password.isEmpty() || 
+                    gender.isEmpty() || nomorHpStr.isEmpty() || alamat.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Semua field harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                long nomorHp;
+                try {
+                    nomorHp = Long.parseLong(nomorHpStr);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Nomor telepon harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (UserDB.isEmailExisting(email, "")) {
+                    JOptionPane.showMessageDialog(null, "Email sudah digunakan!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                boolean isAdded = UserDB.addUser(email, name, password, gender, nomorHp, alamat);
+
+                if (isAdded) {
+                    JOptionPane.showMessageDialog(null, "Pendaftaran berhasil!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    frame.dispose(); 
+                    ULoginForm.main(new String[]{});
+                } else {
+                    JOptionPane.showMessageDialog(null, "Pendaftaran gagal. Silakan coba lagi.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
         gbc.gridx = 0;
         gbc.gridy = 9;
         gbc.gridwidth = 3;
         roundedPanel.add(signUpButton, gbc);
 
-        // Sign In Link
         JLabel loginLabel = new JLabel("Already have an account? Log In");
         loginLabel.setForeground(Color.WHITE);
         loginLabel.setFont(new Font("Poppins", Font.PLAIN, 12));
@@ -241,9 +278,8 @@ public class USignUpForm {
         loginLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Close current frame and show login form
                 frame.dispose();
-                ULoginForm.main(new String[]{}); // Assuming ULoginForm is your login form class
+                ULoginForm.main(new String[]{}); 
             }
         });
         gbc.gridx = 0;

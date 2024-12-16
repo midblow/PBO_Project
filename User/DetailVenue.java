@@ -6,7 +6,6 @@ import DB.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.awt.event.*;
-import java.sql.*;
 import java.time.LocalDate;
 import java.awt.*;
 import java.util.List;
@@ -291,7 +290,7 @@ public class DetailVenue {
                     detailDropdown.addItem("BNI");
                 } else if ("Gerai".equals(selectedCategory)) {
                     detailDropdown.addItem("Alfamart");
-                    detailDropdown.addItem("Indomaret");
+                    detailDropdown.addItem("Indomart");
                 } else if ("E-Wallet".equals(selectedCategory)) {
                     detailDropdown.addItem("Dana");
                     detailDropdown.addItem("OVO");
@@ -321,11 +320,14 @@ public class DetailVenue {
             confirmButton.addActionListener(event -> {
                 String paymentMethod = (String) detailDropdown.getSelectedItem();
                 if (paymentMethod != null) {
-                    // Simpan data ke database
-                    Date startDate = (Date) startDateSpinner.getValue();
-                    Date endDate = (Date) endDateSpinner.getValue();
+
+                    java.util.Date startDateUtil = (Date) startDateSpinner.getValue();
+                    java.util.Date endDateUtil = (Date) endDateSpinner.getValue();
+                    LocalDate startDate = startDateUtil.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+                    LocalDate endDate = endDateUtil.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+
                     int userId = Session.loggedInUserId; // Ambil ID pengguna dari sesi
-                    boolean success = saveBookingToDatabase(venue.getIdVenue(), userId, startDate, endDate, paymentMethod);
+                    boolean success = BookingDB.saveBooking(venue.getIdVenue(), startDate, endDate, paymentMethod, userId);
         
                     if (success) {
                         JOptionPane.showMessageDialog(frame, "Booking berhasil disimpan!", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -358,57 +360,46 @@ public class DetailVenue {
         CalendarApp calendarApp = new CalendarApp(bookings, currentUserId);
         mainPanel.add(calendarApp);
 
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Jarak vertikal 20px
+
+        JPanel footerPanel = new JPanel();
+        footerPanel.setLayout(new BorderLayout());
+        JLabel footerImage = new JLabel(new ImageIcon("asset/Footer.png"));
+        footerImage.setHorizontalAlignment(SwingConstants.CENTER);
+        footerPanel.add(footerImage, BorderLayout.CENTER);
+        footerPanel.setPreferredSize(new Dimension(frame.getWidth(), 200)); // Sesuaikan lebar dengan frame
+        mainPanel.add(footerPanel, BorderLayout.SOUTH); // Atau gunakan frame.add jika ingin langsung ke frame
+
         // Scroll panel untuk mainPanel
         JScrollPane scrollPane = new JScrollPane(mainPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         frame.add(scrollPane, BorderLayout.CENTER);
 
+        
         frame.setVisible(true);
     }
 
-    private static JPanel createVenueCard(String name, String location, String imagePath, boolean showLocation) {
+    private static JPanel createVenueCard(String name, String description, String imagePath, boolean showLocation) {
         JPanel card = new JPanel(new BorderLayout());
-        card.setPreferredSize(new Dimension(1200, 400)); // Menyesuaikan ukuran lebar card
-    
+        card.setPreferredSize(new Dimension(1000, 300)); // Atur ukuran tetap card sesuai kebutuhan
+        card.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1)); // Tambahkan border opsional
+        
         // Gambar Venue
         JLabel imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        // Resize gambar
         ImageIcon originalIcon = new ImageIcon(imagePath);
+        Image resizedImage = originalIcon.getImage().getScaledInstance(1000, 200, Image.SCALE_SMOOTH); // Resize ke 400x200
+        imageLabel.setIcon(new ImageIcon(resizedImage));
         
-        // Add a listener to resize the image after the panel is fully laid out
-        card.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                // Resize image dynamically when the panel size is determined
-                int panelWidth = card.getWidth(); // Get the actual panel width
-                if (panelWidth > 0) { // Ensure width is valid
-                    // Resize the image to the panel width while maintaining aspect ratio
-                    Image img = originalIcon.getImage();
-                    int height = (int) (img.getHeight(null) * ((double) panelWidth / img.getWidth(null)));
-                    Image resizedImg = img.getScaledInstance(panelWidth, height, Image.SCALE_SMOOTH); // Resize image
-                    imageLabel.setIcon(new ImageIcon(resizedImg)); // Set resized image
-                    card.revalidate(); // Ensure layout is updated
-                }
-            }
-        });
-    
-        // Initial image resizing before layout is done (may be scaled incorrectly but won't throw error)
-        int initialWidth = card.getWidth() > 0 ? card.getWidth() : 1200;
-        Image img = originalIcon.getImage();
-        int height = (int) (img.getHeight(null) * ((double) initialWidth / img.getWidth(null)));
-        Image resizedImg = img.getScaledInstance(initialWidth, height, Image.SCALE_SMOOTH); // Resize image
-        imageLabel.setIcon(new ImageIcon(resizedImg)); // Set resized image
         card.add(imageLabel, BorderLayout.CENTER);
-        
-        // Panel Nama Venue
-        JPanel namePanel = new JPanel();
-        namePanel.setBackground(Color.WHITE);
-        JLabel nameLabel = new JLabel("<html><center>" + name + "</center></html>", SwingConstants.CENTER);
-        nameLabel.setFont(new Font("Poppins", Font.BOLD, 16));
-        namePanel.add(nameLabel);
-        card.add(namePanel, BorderLayout.NORTH);
+
         
         return card;
     }
+    
 
     private void validateDates(
         JSpinner startDateSpinner,
@@ -419,47 +410,25 @@ public class DetailVenue {
         Date startDate = (Date) startDateSpinner.getValue();
         Date endDate = (Date) endDateSpinner.getValue();
     
-        // Konversi Date ke LocalDate
         LocalDate startLocalDate = new java.sql.Date(startDate.getTime()).toLocalDate();
         LocalDate endLocalDate = new java.sql.Date(endDate.getTime()).toLocalDate();
-    
-        // Periksa apakah tanggal masuk dalam rentang yang sudah dipesan oleh user lain
+ 
         boolean isOverlap = bookings.stream().anyMatch(booking -> {
             if (!"confirmed".equalsIgnoreCase(booking.getStatus())) {
-                return false; // Abaikan status selain "confirmed"
+                return false; 
             }
             LocalDate bookingStart = booking.getStartDate();
             LocalDate bookingEnd = booking.getEndDate();
-            // Periksa overlap tanggal dengan booking yang sudah ada
             return !startLocalDate.isAfter(bookingEnd) && !endLocalDate.isBefore(bookingStart);
         });
     
         // Logika validasi tanggal
         if (!isOverlap && !startLocalDate.isAfter(endLocalDate)) {
-            bookButton.setEnabled(true); // Aktifkan tombol jika valid
-            bookButton.setBackground(new Color(0, 120, 215)); // Ubah warna tombol menjadi biru
+            bookButton.setEnabled(true); 
+            bookButton.setBackground(new Color(0, 120, 215)); 
         } else {
-            bookButton.setEnabled(false); // Nonaktifkan tombol jika tidak valid
-            bookButton.setBackground(Color.GRAY); // Ubah warna tombol menjadi abu-abu
-        }
-    }
-    
-    private boolean saveBookingToDatabase(int venueId, int userId, Date startDate, Date endDate, String paymentMethod) {
-        String query = "INSERT INTO booking (id_venue, user_id, start_date, end_date, metode_pembayaran, status) VALUES (?, ?, ?, ?, ?, 'waiting')";
-        try (Connection conn = DbConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-    
-            stmt.setInt(1, venueId);  // ID Venue
-            stmt.setInt(2, userId);   // ID User
-            stmt.setDate(3, new java.sql.Date(startDate.getTime())); // Tanggal Mulai
-            stmt.setDate(4, new java.sql.Date(endDate.getTime()));   // Tanggal Selesai
-            stmt.setString(5, paymentMethod); // Metode Pembayaran
-    
-            int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return false;
+            bookButton.setEnabled(false); 
+            bookButton.setBackground(Color.GRAY); 
         }
     }
        
@@ -551,7 +520,7 @@ class CustomDateModel extends SpinnerDateModel {
     public Object getNextValue() {
         Date nextDate = (Date) super.getNextValue();
         while (isDateBlocked(nextDate)) {
-            nextDate = new Date(nextDate.getTime() + (24 * 60 * 60 * 1000)); // Tambah 1 hari
+            nextDate = new Date(nextDate.getTime() + (24 * 60 * 60 * 1000));
         }
         return nextDate;
     }
@@ -560,7 +529,7 @@ class CustomDateModel extends SpinnerDateModel {
     public Object getPreviousValue() {
         Date previousDate = (Date) super.getPreviousValue();
         while (isDateBlocked(previousDate)) {
-            previousDate = new Date(previousDate.getTime() - (24 * 60 * 60 * 1000)); // Kurangi 1 hari
+            previousDate = new Date(previousDate.getTime() - (24 * 60 * 60 * 1000));
         }
         return previousDate;
     }
@@ -569,7 +538,7 @@ class CustomDateModel extends SpinnerDateModel {
         LocalDate localDate = new java.sql.Date(date.getTime()).toLocalDate();
         return bookings.stream().anyMatch(booking -> {
             if (!"confirmed".equalsIgnoreCase(booking.getStatus())) {
-                return false; // Abaikan status selain "confirmed"
+                return false; 
             }
             LocalDate bookingStart = booking.getStartDate();
             LocalDate bookingEnd = booking.getEndDate();
