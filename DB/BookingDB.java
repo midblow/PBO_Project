@@ -136,10 +136,6 @@ public class BookingDB {
             e.printStackTrace();
         }
 
-        if (bookings.isEmpty()) {
-            System.out.println("No bookings found for provider with ID: " + providerId);
-        }
-    
         return bookings;
     }
 
@@ -180,8 +176,8 @@ public class BookingDB {
             deleteBookingStmt.setInt(1, bookingId);
             deleteBookingStmt.executeUpdate();
     
-            conn.commit(); // Commit transaksi
-            System.out.println("Booking and related invoices deleted successfully.");
+            conn.commit(); 
+            System.out.println("Booking dan invoice yang berelasi berhasil dihapus.");
         } catch (SQLException e) {
             if (conn != null) {
                 try {
