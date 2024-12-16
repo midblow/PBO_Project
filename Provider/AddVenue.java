@@ -29,7 +29,7 @@ public class AddVenue {
             createHeader(headerPanel);
 
             // Navbar Panel
-            navbarPanel = createNavbar(); // Assign to static reference
+            navbarPanel = createNavbar(frame); // Assign to static reference
 
             // Tambahkan Header dan Navbar ke mainContainerPanel
             mainContainerPanel.add(headerPanel, BorderLayout.NORTH);
@@ -141,79 +141,76 @@ public class AddVenue {
     }
 
     private static JButton createSubmitButton(JTextField namaVenueField, JTextArea deskripsiArea,
-    JTextField alamatField, JTextField kotaField,
-    JTextField penanggungJawabField, JTextField kapasitasField,
-    JTextField hargaField, ButtonGroup tipeVenueGroup,
-    JCheckBox mainVenueCheckbox) {
-    JButton button = new JButton("Submit");
-    button.setFont(new Font("Segoe UI", Font.BOLD, 14));
-    button.setBackground(new Color(66, 133, 244));
-    button.setForeground(Color.WHITE);
-    button.setFocusPainted(false);
+                                          JTextField alamatField, JTextField kotaField,
+                                          JTextField penanggungJawabField, JTextField kapasitasField,
+                                          JTextField hargaField, ButtonGroup tipeVenueGroup,
+                                          JCheckBox mainVenueCheckbox) {
+        JButton button = new JButton("Submit");
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setBackground(new Color(66, 133, 244));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
 
-    button.addActionListener(e -> {
-        try {
-            // Ambil nilai dari field input
-            String namaVenue = namaVenueField.getText();
-            String deskripsi = deskripsiArea.getText();
-            String alamat = alamatField.getText();
-            String kota = kotaField.getText();
-            String penanggungJawab = penanggungJawabField.getText();
-            boolean isMain = mainVenueCheckbox.isSelected();
-
-            // Validasi input wajib
-            if (namaVenue.isEmpty() || deskripsi.isEmpty() || alamat.isEmpty() || kota.isEmpty() ||
-            penanggungJawab.isEmpty() || tipeVenueGroup.getSelection() == null) {
-            JOptionPane.showMessageDialog(null, "Semua field harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-            }
-
-            // Validasi kapasitas (hanya angka bulat)
-            int kapasitas;
+        button.addActionListener(e -> {
             try {
-                kapasitas = Integer.parseInt(kapasitasField.getText());
-                if (kapasitas <= 0) {
-                    JOptionPane.showMessageDialog(null, "Kapasitas harus berupa angka positif!", "Error", JOptionPane.ERROR_MESSAGE);
+                // Ambil nilai dari field input
+                String namaVenue = namaVenueField.getText();
+                String deskripsi = deskripsiArea.getText();
+                String alamat = alamatField.getText();
+                String kota = kotaField.getText();
+                String penanggungJawab = penanggungJawabField.getText();
+                boolean isMain = mainVenueCheckbox.isSelected();
+
+                // Validasi input wajib
+                if (namaVenue.isEmpty() || deskripsi.isEmpty() || alamat.isEmpty() || kota.isEmpty() ||
+                    penanggungJawab.isEmpty() || tipeVenueGroup.getSelection() == null) {
+                    JOptionPane.showMessageDialog(null, "Semua field harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "Kapasitas harus berupa angka bulat!", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
 
-            // Validasi harga (hanya angka bulat)
-            int harga;
-            try {
-                harga = Integer.parseInt(hargaField.getText());
-                if (harga <= 0) {
-                    JOptionPane.showMessageDialog(null, "Harga harus berupa angka positif!", "Error", JOptionPane.ERROR_MESSAGE);
+                // Validasi kapasitas
+                int kapasitas = Integer.parseInt(kapasitasField.getText());
+                int harga = Integer.parseInt(hargaField.getText());
+
+                // Ambil tipe venue
+                String tipeVenue = tipeVenueGroup.getSelection().getActionCommand();
+
+                // Tambahkan JFileChooser untuk gambar di sini
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Pilih Foto");
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                        "Gambar (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png"));
+
+                int result = fileChooser.showOpenDialog(null);
+                if (result != JFileChooser.APPROVE_OPTION) {
+                    JOptionPane.showMessageDialog(null, "Harap pilih gambar venue!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+
+                // Ambil path gambar
+                String gambarPath = fileChooser.getSelectedFile().getAbsolutePath();
+
+                // Insert ke database
+                boolean success = VenueDB.insertVenue(namaVenue, deskripsi, alamat, kota, penanggungJawab,
+                        kapasitas, harga, tipeVenue, isMain, gambarPath);
+
+                if (success) {
+                    JOptionPane.showMessageDialog(null, "Venue berhasil ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Gagal menambahkan venue.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "Harga harus berupa angka bulat!", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Ambil tipe venue
-            String tipeVenue = tipeVenueGroup.getSelection().getActionCommand();
-
-            // Insert ke database
-            boolean success = VenueDB.insertVenue(namaVenue, deskripsi, alamat, kota, penanggungJawab,
-                        kapasitas, harga, tipeVenue, isMain);
-
-            // Tampilkan pesan berdasarkan hasil
-            if (success) {
-                JOptionPane.showMessageDialog(null, "Venue berhasil ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, "Gagal menambahkan venue.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Terjadi kesalahan: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Kapasitas dan Harga harus berupa angka positif!", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Terjadi kesalahan: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+
         return button;
     }
-
 
     // Header setup
     public static void createHeader(JPanel headerPanel) {
@@ -258,28 +255,24 @@ public class AddVenue {
         headerPanel.add(logoRevenuePanel, BorderLayout.WEST);
     }
 
-    public static JPanel createNavbar() {
-        // Navbar Panel
+    public static JPanel createNavbar(JFrame frame) {
         JPanel navbarPanel = new JPanel();
-        navbarPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 15, 10)); // Horizontal layout
-        navbarPanel.setBackground(new Color(255, 255, 255)); // White background for navbar
-        navbarPanel.setPreferredSize(new Dimension(1000, 50)); // Navbar height
-
-        // Navbar Links
+        navbarPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 15, 10));
+        navbarPanel.setBackground(Color.WHITE);
+    
         JLabel myVenueLabel = createNavLink("Home");
         JLabel bookingConfirmationLabel = createNavLink("Booking Confirmation");
         JLabel profileLabel = createNavLink("Profile");
-
-        // Add links to navbar
+    
+        // Add mouse listeners for navigation
+        addNavbarLinkMouseListeners(myVenueLabel, "Home", navbarPanel, frame);
+        addNavbarLinkMouseListeners(bookingConfirmationLabel, "Booking Confirmation", navbarPanel, frame);
+        addNavbarLinkMouseListeners(profileLabel, "Profile", navbarPanel, frame);
+    
         navbarPanel.add(myVenueLabel);
         navbarPanel.add(bookingConfirmationLabel);
         navbarPanel.add(profileLabel);
-
-        // Add mouse listeners to change active state and hover effects
-        addNavbarLinkMouseListeners(myVenueLabel, "Home", navbarPanel);
-        addNavbarLinkMouseListeners(bookingConfirmationLabel, "Booking Confirmation", navbarPanel);
-        addNavbarLinkMouseListeners(profileLabel, "Profile", navbarPanel);
-
+    
         return navbarPanel;
     }
 
@@ -291,28 +284,33 @@ public class AddVenue {
         return label;
     }
 
-    private static void addNavbarLinkMouseListeners(JLabel label, String page, JPanel navbarPanel) {
-        // Hover effect: Change color to dark blue when mouse is over the label
+    private static void addNavbarLinkMouseListeners(JLabel label, String page, JPanel navbarPanel, JFrame frame) {
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 label.setForeground(new Color(66, 133, 244)); // Dark blue on hover
-                label.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(66, 133, 244))); // Underline on
-                                                                                                       // hover
+                label.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(66, 133, 244))); // Underline on hover
             }
-
+    
             @Override
             public void mouseExited(MouseEvent e) {
-                // Revert to original color when mouse exits
-                if (!page.equals(activePage)) { // Only revert if it's not the active page
-                    label.setForeground(new Color(255, 120, 45)); // Orange color
+                if (!page.equals(activePage)) {
+                    label.setForeground(new Color(255, 120, 45)); // Orange for inactive links
                     label.setBorder(BorderFactory.createEmptyBorder()); // Remove underline
                 }
             }
-
+    
             @Override
             public void mouseClicked(MouseEvent e) {
-                setActivePage(page, navbarPanel); // Set this page as active on click
+                setActivePage(page, navbarPanel); // Highlight active page
+                frame.dispose(); // Tutup frame saat ini
+    
+                // Navigasi berdasarkan halaman
+                if (page.equals("Home")) {
+                    HomeProvider.main(new String[]{}); // Navigasi ke HomeProvider
+                } else if (page.equals("Profile")) {
+                    PProfilePage.main(new String[]{}); // Navigasi ke ProfilePage
+                }
             }
         });
     }
@@ -361,31 +359,20 @@ public class AddVenue {
         JLabel tambahFotoLabel = new JLabel("+ Tambah Foto");
         tambahFotoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         tambahFotoLabel.setForeground(new Color(60, 120, 216));
-        tambahFotoLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Menjadikan cursor berbentuk tangan
+        tambahFotoLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Tambahkan aksi ketika label diklik
         tambahFotoLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Membuka file chooser
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setDialogTitle("Pilih Foto"); // Judul dialog
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY); // Hanya file, bukan folder
+                fileChooser.setDialogTitle("Pilih Foto Venue");
+                fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Gambar (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png"));
 
-                // Filter agar hanya menampilkan file gambar
-                fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-                        "Gambar (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png"));
-
-                int result = fileChooser.showOpenDialog(null); // Tampilkan dialog
-
+                int result = fileChooser.showOpenDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    // Ambil file yang dipilih
                     java.io.File selectedFile = fileChooser.getSelectedFile();
-                    String filePath = selectedFile.getAbsolutePath();
-                    System.out.println("File dipilih: " + filePath);
-
-                    // Tampilkan pesan sukses atau update UI jika perlu
                     tambahFotoLabel.setText("Foto Dipilih: " + selectedFile.getName());
+                    tambahFotoLabel.setToolTipText(selectedFile.getAbsolutePath()); // Simpan path gambar
                 }
             }
         });

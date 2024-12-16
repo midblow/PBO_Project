@@ -111,9 +111,9 @@ public class VenueDB {
 
     public static boolean insertVenue(String namaVenue, String deskripsi, String alamat, String kota, 
         String penanggungJawab, int kapasitas, double harga, 
-        String tipeVenue, boolean isMain) {
+        String tipeVenue, boolean isMain, String gambarPath) {
             String query = "INSERT INTO venue (nama_venue, deskripsi_fasilitas, alamat, kota, penanggung_jawab, " +
-            "kapasitas, harga, jenis_instansi, main_venue) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            "kapasitas, harga, jenis_instansi, main_venue, gambar) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (Connection conn = DbConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -127,6 +127,7 @@ public class VenueDB {
             stmt.setDouble(7, harga);
             stmt.setString(8, tipeVenue);
             stmt.setBoolean(9, isMain);
+            stmt.setString(10, gambarPath); 
 
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;
