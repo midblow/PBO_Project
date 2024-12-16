@@ -2,7 +2,7 @@ package Provider;
 
 import javax.swing.*;
 
-import DB.VenueDB;
+import DB.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -10,11 +10,12 @@ import java.awt.event.MouseEvent;
 public class AddVenue {
     // Add static reference to navbarPanel to fix the setActivePage method
     private static JPanel navbarPanel;
-
+    private static String selectedImagePath = null;
+    private static JFrame frame;
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Frame Utama
-            JFrame frame = new JFrame("My Venue");
+            frame = new JFrame("Add Venue");
             frame.setSize(1200, 800);
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -90,6 +91,10 @@ public class AddVenue {
             JLabel tipeVenueLabel = createFormLabel("Tipe Venue", labelFont, labelColor);
             JRadioButton pemerintahButton = new JRadioButton("Pemerintah");
             JRadioButton swastaButton = new JRadioButton("Swasta");
+            
+            pemerintahButton.setActionCommand("Pemerintah");
+            swastaButton.setActionCommand("Swasta");
+            
             ButtonGroup tipeVenueGroup = new ButtonGroup();
             tipeVenueGroup.add(pemerintahButton);
             tipeVenueGroup.add(swastaButton);
@@ -175,28 +180,20 @@ public class AddVenue {
                 // Ambil tipe venue
                 String tipeVenue = tipeVenueGroup.getSelection().getActionCommand();
 
-                // Tambahkan JFileChooser untuk gambar di sini
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setDialogTitle("Pilih Foto");
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-                        "Gambar (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png"));
-
-                int result = fileChooser.showOpenDialog(null);
-                if (result != JFileChooser.APPROVE_OPTION) {
+                if (selectedImagePath == null || selectedImagePath.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Harap pilih gambar venue!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                // Ambil path gambar
-                String gambarPath = fileChooser.getSelectedFile().getAbsolutePath();
+                int idProvider = Session.loggedInProviderId;
 
-                // Insert ke database
-                boolean success = VenueDB.insertVenue(namaVenue, deskripsi, alamat, kota, penanggungJawab,
-                        kapasitas, harga, tipeVenue, isMain, gambarPath);
+                boolean success = VenueDB.insertVenue( namaVenue, deskripsi, alamat, kota, penanggungJawab,
+                kapasitas, harga, tipeVenue, isMain, selectedImagePath, idProvider);
 
                 if (success) {
                     JOptionPane.showMessageDialog(null, "Venue berhasil ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    frame.dispose(); 
+                    HomeProvider.main(new String[]{});
                 } else {
                     JOptionPane.showMessageDialog(null, "Gagal menambahkan venue.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -265,9 +262,9 @@ public class AddVenue {
         JLabel profileLabel = createNavLink("Profile");
     
         // Add mouse listeners for navigation
-        addNavbarLinkMouseListeners(myVenueLabel, "Home", navbarPanel, frame);
-        addNavbarLinkMouseListeners(bookingConfirmationLabel, "Booking Confirmation", navbarPanel, frame);
-        addNavbarLinkMouseListeners(profileLabel, "Profile", navbarPanel, frame);
+        addNavbarLinkMouseListeners(myVenueLabel, "Home", navbarPanel);
+        addNavbarLinkMouseListeners(bookingConfirmationLabel, "Booking Confirmation", navbarPanel);
+        addNavbarLinkMouseListeners(profileLabel, "Profile", navbarPanel);
     
         navbarPanel.add(myVenueLabel);
         navbarPanel.add(bookingConfirmationLabel);
@@ -284,7 +281,7 @@ public class AddVenue {
         return label;
     }
 
-    private static void addNavbarLinkMouseListeners(JLabel label, String page, JPanel navbarPanel, JFrame frame) {
+    private static void addNavbarLinkMouseListeners(JLabel label, String page, JPanel navbarPanel) {
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -303,13 +300,15 @@ public class AddVenue {
             @Override
             public void mouseClicked(MouseEvent e) {
                 setActivePage(page, navbarPanel); // Highlight active page
-                frame.dispose(); // Tutup frame saat ini
+                frame.dispose(); 
     
                 // Navigasi berdasarkan halaman
                 if (page.equals("Home")) {
                     HomeProvider.main(new String[]{}); // Navigasi ke HomeProvider
                 } else if (page.equals("Profile")) {
                     PProfilePage.main(new String[]{}); // Navigasi ke ProfilePage
+                } else if (page.equals("Booking Confirmation")) {
+                    BookingConfirm.showBooking();
                 }
             }
         });
@@ -360,23 +359,23 @@ public class AddVenue {
         tambahFotoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         tambahFotoLabel.setForeground(new Color(60, 120, 216));
         tambahFotoLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
+    
         tambahFotoLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setDialogTitle("Pilih Foto Venue");
                 fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Gambar (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png"));
-
+    
                 int result = fileChooser.showOpenDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     java.io.File selectedFile = fileChooser.getSelectedFile();
                     tambahFotoLabel.setText("Foto Dipilih: " + selectedFile.getName());
-                    tambahFotoLabel.setToolTipText(selectedFile.getAbsolutePath()); // Simpan path gambar
+                    selectedImagePath = selectedFile.getAbsolutePath(); // Simpan path gambar
                 }
             }
         });
-
+    
         return tambahFotoLabel;
     }
 }
