@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 public class UProfilePage {
     private static final Color DEEP_NAVY = new Color(17, 29, 48);
-    private static final Color SOFT_NAVY = new Color(36, 65, 97);
+    private static final Color SOFT_NAVY = new Color(12, 34, 64);
     private static final Color LIGHT_GRAY = new Color(240, 242, 245);
     private static final Color ACCENT_ORANGE = new Color(255, 127, 39);
     private static final Color SOFT_WHITE = new Color(252, 253, 255);
@@ -69,7 +69,7 @@ public class UProfilePage {
             updateActiveButtonNavbar(venueButton);
         });
 
-        JButton profileButton = createNavbarButton("Profile");
+        JButton profileButton = createNavbarButton("Profil");
         profileButton.addActionListener(e -> {
             JPanel profileContent = createProfileContentPanel(frame, mainPanel);
             mainPanel.removeAll();
@@ -225,7 +225,7 @@ public class UProfilePage {
         profilePanel.setBackground(SOFT_WHITE);
         String loggedInUserEmail = Session.loggedInUserEmail;
         if (loggedInUserEmail == null) {
-            JOptionPane.showMessageDialog(frame, "Session expired. Please login again.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Sesi telah berakhir. Silakan login kembali.", "Error", JOptionPane.ERROR_MESSAGE);
             frame.dispose();
             ULoginForm.main(new String[]{}); 
             return null;
@@ -233,7 +233,7 @@ public class UProfilePage {
 
         User user = UserDB.getUserDataByEmail(loggedInUserEmail);
         if (user == null) {
-            JOptionPane.showMessageDialog(frame, "User data not found. Please login again.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Data pengguna tidak ditemukan. Silakan login kembali.", "Error", JOptionPane.ERROR_MESSAGE);
             frame.dispose();
             ULoginForm.main(new String[]{}); 
             return null;
@@ -328,18 +328,18 @@ public class UProfilePage {
 
                 boolean isUpdated = UserDB.updateUserData(
                     loggedInUserEmail,
-                    textFields[0].getText(), // Nama
-                    email, // Email baru
-                    textFields[2].getText(), // Jenis Kelamin
-                    textFields[3].getText(), // Nomor Telepon
-                    textFields[4].getText()  // Alamat
+                    textFields[0].getText(), 
+                    email, 
+                    textFields[2].getText(), 
+                    textFields[3].getText(), 
+                    textFields[4].getText()  
                 );
         
                 if (isUpdated) {
-                    JOptionPane.showMessageDialog(frame, "Data updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Data berhasil diperbarui!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     Session.loggedInUserEmail = email; 
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Failed to update data.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Gagal untuk memperbarui Data.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
 
                 for (JTextField textField : textFields) {
@@ -396,7 +396,7 @@ public class UProfilePage {
         
                 String dateRange = startDate + " - " + endDate;
                 reservationContainer.add(createEnhancedReservationCard(venueName, dateRange, organization, email, bookingId));
-                reservationContainer.add(Box.createVerticalStrut(20)); // Spasi antar kartu
+                reservationContainer.add(Box.createVerticalStrut(20)); 
             }
         }
         JScrollPane scrollPane = new JScrollPane(reservationContainer);
@@ -412,7 +412,6 @@ public class UProfilePage {
         cardPanel.setBackground(DEEP_NAVY);
         cardPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
     
-        // Panel atas: Nama Venue (kiri), Tanggal (kanan), dan Garis di bawah
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
     
@@ -426,19 +425,17 @@ public class UProfilePage {
         dateLabel.setForeground(LIGHT_GRAY);
         topPanel.add(dateLabel, BorderLayout.EAST);
     
-        // Garis Horizontal dengan Padding Top
         JPanel separatorPanel = new JPanel(new BorderLayout());
         separatorPanel.setOpaque(false);
-        separatorPanel.setBorder(new EmptyBorder(10, 0, 0, 0)); // Padding atas 10px
+        separatorPanel.setBorder(new EmptyBorder(10, 0, 0, 0)); 
 
         JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
         separator.setForeground(Color.LIGHT_GRAY);
-        separator.setPreferredSize(new Dimension(Integer.MAX_VALUE, 3)); // Garis panjang penuh
+        separator.setPreferredSize(new Dimension(Integer.MAX_VALUE, 3)); 
 
-        separatorPanel.add(separator, BorderLayout.CENTER); // Tambahkan garis ke panel
+        separatorPanel.add(separator, BorderLayout.CENTER); 
         topPanel.add(separatorPanel, BorderLayout.SOUTH);
 
-        // Panel tengah: Informasi
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setOpaque(false);
@@ -455,7 +452,6 @@ public class UProfilePage {
         infoPanel.add(orgLabel);
         infoPanel.add(emailLabel);
     
-        // Panel bawah: Tombol "See Invoice"
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.setOpaque(false);
     
@@ -467,10 +463,9 @@ public class UProfilePage {
         invoiceButton.addActionListener(e -> showInvoiceDialog(bookingId));
         buttonPanel.add(invoiceButton);
     
-        // Susun ke dalam cardPanel
-        cardPanel.add(topPanel, BorderLayout.NORTH);      // Nama Venue, Tanggal, Garis
-        cardPanel.add(infoPanel, BorderLayout.CENTER);    // Informasi Nama Lembaga dan Email
-        cardPanel.add(buttonPanel, BorderLayout.SOUTH);   // Tombol di kanan bawah
+        cardPanel.add(topPanel, BorderLayout.NORTH);     
+        cardPanel.add(infoPanel, BorderLayout.CENTER);   
+        cardPanel.add(buttonPanel, BorderLayout.SOUTH);  
     
         return cardPanel;
     }    
@@ -482,7 +477,6 @@ public class UProfilePage {
             return;
         }
     
-        // Data Invoice
         String invoiceNumber = (String) invoiceData[0];
         String invoiceDate = (String) invoiceData[1];
         String venueName = (String) invoiceData[2];
@@ -507,7 +501,6 @@ public class UProfilePage {
         container.setBorder(new EmptyBorder(10, 20, 10, 20));
         container.setBackground(Color.WHITE);
     
-        // INVOICE dan LUNAS di tengah
         JLabel titleLabel = new JLabel("INVOICE");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -519,9 +512,8 @@ public class UProfilePage {
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         container.add(statusLabel);
     
-        container.add(Box.createVerticalStrut(10)); // Jarak
+        container.add(Box.createVerticalStrut(10)); 
     
-        // Informasi User dan Invoice
         String[][] userInfo = {
             {"<html><b>Nama:</b></html>", userName, "<html><b>No Invoice:</b></html>", invoiceNumber},
             {"<html><b>Email:</b></html>", userEmail, "<html><b>Tanggal Diterima:</b></html>", invoiceDate},
@@ -529,7 +521,6 @@ public class UProfilePage {
         };
         container.add(wrapInPanel(createCustomTable(userInfo, new String[]{"", "", "", ""}), 2));
     
-        // Detail Booking
         String[][] bookingDetail = {
             {venueName, penanggungJawab, lembaga, lamaWaktu + " days", formatCurrency(hargaPerHari), formatCurrency(hargaPerHari * lamaWaktu)},
             {"<html><b>Biaya Layanan</b></html>", "", "", "", "", formatCurrency(serviceFee)},
@@ -539,7 +530,6 @@ public class UProfilePage {
             "<html><b>Lama Waktu</b></html>", "<html><b>Harga per Hari (Rp)</b></html>", "<html><b>Jumlah (Rp)</b></html>"};
         container.add(wrapInPanel(createCustomTable(bookingDetail, bookingColumns), 2));
     
-        // Metode Pembayaran
         String[][] paymentDetail = {
             {"<html><b>Metode:</b></html>", classifyPaymentMethod(metodePembayaran)},
             {"<html><b>Nama " + classifyPaymentMethod(metodePembayaran) + ":</b></html>", formatPaymentName(metodePembayaran)},
@@ -548,7 +538,6 @@ public class UProfilePage {
         };
         container.add(wrapInPanel(createCustomTable(paymentDetail, new String[]{"", ""}), 2));
     
-        // Tombol
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton downloadButton = new JButton("Unduh Invoice");
         styleButton(downloadButton, new Color(34, 177, 76));
@@ -562,8 +551,7 @@ public class UProfilePage {
         invoiceFrame.add(container, BorderLayout.CENTER);
         invoiceFrame.setVisible(true);
     }
-    
-    // Membuat tabel dengan grid
+
     private static JTable createCustomTable(String[][] data, String[] columns) {
         JTable table = new JTable(data, columns);
         table.setEnabled(false);
@@ -572,18 +560,16 @@ public class UProfilePage {
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.getTableHeader().setBackground(new Color(230, 230, 250));
         table.setGridColor(Color.LIGHT_GRAY);
-        table.setShowGrid(true); // Tampilkan grid
+        table.setShowGrid(true); 
         return table;
     }
     
-    // Membungkus panel dengan jarak tambahan
     private static JPanel wrapInPanel(JTable table, int padding) {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new EmptyBorder(padding, 0, padding, 0)); // Tambahkan jarak atas dan bawah
+        panel.setBorder(new EmptyBorder(padding, 0, padding, 0));
         panel.add(new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
         return panel;
     }
-    // Helper: Format Mata Uang
     private static String formatCurrency(double amount) {
         return String.format("Rp %,d", (int) amount);
     }
@@ -591,7 +577,6 @@ public class UProfilePage {
         if (metodePembayaran == null) return "Tidak Diketahui";
         metodePembayaran = metodePembayaran.toLowerCase();
     
-        // Pengecekan berdasarkan jenis pembayaran
         if (metodePembayaran.equals("bri") || metodePembayaran.equals("bni") || 
             metodePembayaran.equals("bca") || metodePembayaran.equals("mandiri")) {
             return "Bank";
@@ -606,17 +591,13 @@ public class UProfilePage {
     
     private static String formatPaymentName(String metodePembayaran) {
         if (metodePembayaran == null) return "";
-    
-        // Khusus nama ShopeePay dan LinkAja
         if (metodePembayaran.equalsIgnoreCase("linkaja")) return "LinkAja";
         if (metodePembayaran.equalsIgnoreCase("shopeepay")) return "ShopeePay";
     
-        // Jika panjangnya 3 huruf maka uppercase
         if (metodePembayaran.length() == 3) {
             return metodePembayaran.toUpperCase();
         }
     
-        // Capitalize each word
         return capitalizeEachWord(metodePembayaran);
     }
     
@@ -637,10 +618,10 @@ public class UProfilePage {
     private static final JButton[] activeNavbarButton = { null };
     private static JButton createNavbarButton(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14)); // Slightly increased font size
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14)); 
         button.setForeground(ACCENT_ORANGE);
         button.setBackground(SOFT_WHITE);
-        button.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0)); // Bottom space for underline
+        button.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0)); 
         button.setFocusPainted(false);
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -670,7 +651,7 @@ public class UProfilePage {
 
         activeNavbarButton[0] = button;
         button.setForeground(DEEP_NAVY);
-        button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); // Underline effect
+        button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); 
     }
 
     private static final JButton[] activeSidebarButton = { null };
@@ -695,12 +676,12 @@ public class UProfilePage {
         button.setMaximumSize(new Dimension(200, 40));
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                if (button != activeSidebarButton[0]) { // Hanya ubah gaya jika bukan tombol aktif
+                if (button != activeSidebarButton[0]) { 
                     button.setBackground(ACCENT_ORANGE);
                 }
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                if (button != activeSidebarButton[0]) { // Hanya ubah gaya jika bukan tombol aktif
+                if (button != activeSidebarButton[0]) { 
                     button.setBackground(SOFT_NAVY);
                 }
             }

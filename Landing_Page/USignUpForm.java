@@ -9,47 +9,38 @@ import java.awt.event.*;
 
 public class USignUpForm {
     public USignUpForm() {
-        // Create the frame
         JFrame frame = new JFrame("Sign Up User");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 700); // Ukuran frame yang sesuai
-        frame.getContentPane().setBackground(new Color(12, 34, 64)); // Background warna biru gelap
+        frame.setSize(400, 700); 
+        frame.getContentPane().setBackground(new Color(12, 34, 64)); 
         frame.setLayout(new BorderLayout());
 
-        // Panel utama untuk konten
         JPanel contentPanel = new JPanel(new BorderLayout());
         contentPanel.setOpaque(false);
 
-        // Panel rounded untuk form
         JPanel roundedPanel = new JPanel(new GridBagLayout());
-        roundedPanel.setBackground(new Color(20, 44, 84)); // Panel dengan warna biru gelap
-        roundedPanel.setPreferredSize(new Dimension(350, 600)); // Mengurangi tinggi panel
+        roundedPanel.setBackground(new Color(20, 44, 84)); 
+        roundedPanel.setPreferredSize(new Dimension(350, 600)); 
         roundedPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // GridBagConstraints untuk penataan komponen
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.CENTER;
 
-
-        // Astronaut Icon
         ImageIcon astronautIconImage = new ImageIcon("asset/hallo_user.2.png");
         Image scaledAstronautIcon = astronautIconImage.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH); // Resize astronaut icon
         JLabel astronautIcon = new JLabel(new ImageIcon(scaledAstronautIcon));
-        astronautIcon.setBounds(135, 150, 80, 80); // Tempatkan ikon di atas label Sign Up
+        astronautIcon.setBounds(135, 150, 80, 80); 
         roundedPanel.add(astronautIcon);
 
-        // Title "Sign Up"
         JLabel signUpLabel = new JLabel("Sign Up");
-        signUpLabel.setBounds(105, 240, 140, 30); // Tempatkan label tepat di bawah ikon
+        signUpLabel.setBounds(105, 240, 140, 30); 
         signUpLabel.setForeground(Color.WHITE);
         signUpLabel.setFont(new Font("Poppins", Font.BOLD, 24));
         signUpLabel.setHorizontalAlignment(SwingConstants.CENTER);
         roundedPanel.add(signUpLabel);
 
-
-        // Email Label and Field with Icon inside
         JLabel emailLabel = new JLabel("Email");
         emailLabel.setForeground(Color.WHITE);
         emailLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
@@ -58,27 +49,25 @@ public class USignUpForm {
         gbc.gridwidth = 1;
         roundedPanel.add(emailLabel, gbc);
 
-        // Panel untuk email field dengan ikon di kanan
         JPanel emailPanel = new JPanel(new BorderLayout());
-        emailPanel.setOpaque(false); // Menonaktifkan background panel, agar transparan
+        emailPanel.setOpaque(false); 
         JTextField emailField = new JTextField();
         emailField.setBackground(new Color(12, 34, 64));
         emailField.setForeground(Color.WHITE);
         emailField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
         emailField.setCaretColor(Color.WHITE);
-        emailField.setPreferredSize(new Dimension(200, 30)); // Ukuran input field
+        emailField.setPreferredSize(new Dimension(200, 30));
         emailPanel.add(emailField, BorderLayout.CENTER);
 
-        ImageIcon emailIcon = new ImageIcon("asset/email.png"); // Path to email icon
+        ImageIcon emailIcon = new ImageIcon("asset/email.png"); 
         JLabel emailIconLabel = new JLabel(new ImageIcon(emailIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-        emailPanel.add(emailIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
+        emailPanel.add(emailIconLabel, BorderLayout.EAST); 
 
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
         roundedPanel.add(emailPanel, gbc);
 
-        // Nama Label and Field with Icon inside
         JLabel namaLabel = new JLabel("Nama");
         namaLabel.setForeground(Color.WHITE);
         namaLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
@@ -88,7 +77,7 @@ public class USignUpForm {
         roundedPanel.add(namaLabel, gbc);
 
         JPanel namaPanel = new JPanel(new BorderLayout());
-        namaPanel.setOpaque(false); // Menonaktifkan background panel, agar transparan
+        namaPanel.setOpaque(false);
         JTextField namaField = new JTextField();
         namaField.setBackground(new Color(12, 34, 64));
         namaField.setForeground(Color.WHITE);
@@ -96,16 +85,15 @@ public class USignUpForm {
         namaField.setCaretColor(Color.WHITE);
         namaPanel.add(namaField, BorderLayout.CENTER);
 
-        ImageIcon namaIcon = new ImageIcon("asset/nama.png"); // Path to nama icon
+        ImageIcon namaIcon = new ImageIcon("asset/nama.png"); 
         JLabel namaIconLabel = new JLabel(new ImageIcon(namaIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-        namaPanel.add(namaIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
+        namaPanel.add(namaIconLabel, BorderLayout.EAST); 
 
         gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
         roundedPanel.add(namaPanel, gbc);
 
-        // Password Label and Field with Icon inside
         JLabel passwordLabel = new JLabel("Password");
         passwordLabel.setForeground(Color.WHITE);
         passwordLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
@@ -115,7 +103,7 @@ public class USignUpForm {
         roundedPanel.add(passwordLabel, gbc);
 
         JPanel passwordPanel = new JPanel(new BorderLayout());
-        passwordPanel.setOpaque(false); // Menonaktifkan background panel, agar transparan
+        passwordPanel.setOpaque(false); 
         JPasswordField passwordField = new JPasswordField();
         passwordField.setBackground(new Color(12, 34, 64));
         passwordField.setForeground(Color.WHITE);
@@ -123,16 +111,15 @@ public class USignUpForm {
         passwordField.setCaretColor(Color.WHITE);
         passwordPanel.add(passwordField, BorderLayout.CENTER);
 
-        ImageIcon passwordIcon = new ImageIcon("asset/password.png"); // Path to password icon
+        ImageIcon passwordIcon = new ImageIcon("asset/password.png"); 
         JLabel passwordIconLabel = new JLabel(new ImageIcon(passwordIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-        passwordPanel.add(passwordIconLabel, BorderLayout.EAST); // Letakkan ikon di sebelah kanan
+        passwordPanel.add(passwordIconLabel, BorderLayout.EAST); 
 
         gbc.gridx = 1;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
         roundedPanel.add(passwordPanel, gbc);
 
-        // Gender Label and ComboBox with Icon inside
         JLabel genderLabel = new JLabel("Jenis Kelamin");
         genderLabel.setForeground(Color.WHITE);
         genderLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
@@ -142,7 +129,7 @@ public class USignUpForm {
         roundedPanel.add(genderLabel, gbc);
 
         JPanel genderPanel = new JPanel(new BorderLayout());
-        genderPanel.setOpaque(false); // Menonaktifkan background panel, agar transparan
+        genderPanel.setOpaque(false); 
         JComboBox<String> genderCombo = new JComboBox<>(new String[] {"Laki-Laki", "Perempuan"});
         genderCombo.setBackground(new Color(12, 34, 64));
         genderCombo.setForeground(Color.WHITE);
@@ -287,14 +274,11 @@ public class USignUpForm {
         gbc.gridwidth = 3;
         roundedPanel.add(loginLabel, gbc);
 
-        // Wrap rounded panel in a JScrollPane
         JScrollPane scrollPane = new JScrollPane(roundedPanel);
         contentPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Add the contentPanel to the frame
         frame.add(contentPanel, BorderLayout.CENTER);
 
-        // Center the frame
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookingDB {
-
-    // Method untuk mendapatkan semua booking berdasarkan id venue
     public static List<Booking> getBookingsForVenue(int venueId) {
         List<Booking> bookings = new ArrayList<>();
         String query = "SELECT * FROM booking WHERE id_venue = ?";
@@ -58,7 +56,6 @@ public class BookingDB {
                     if (generatedKeys.next()) {
                         int bookingId = generatedKeys.getInt(1);
     
-                        // Panggil method createInvoice
                         return InvoiceDB.createInvoice(bookingId, venueId);
                     }
                 }
@@ -90,12 +87,12 @@ public class BookingDB {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     bookings.add(new Object[]{
-                        rs.getInt("id"),               // Booking ID
-                        rs.getString("nama_venue"),           // Nama Venue
-                        rs.getDate("start_date").toLocalDate(), // Start Date
-                        rs.getDate("end_date").toLocalDate(),   // End Date
-                        rs.getString("lembaga"),              // Lembaga
-                        rs.getString("gmail")                 // Email
+                        rs.getInt("id"),               
+                        rs.getString("nama_venue"),           
+                        rs.getDate("start_date").toLocalDate(), 
+                        rs.getDate("end_date").toLocalDate(),   
+                        rs.getString("lembaga"),              
+                        rs.getString("gmail")                 
                     });
                 }
             }
@@ -123,12 +120,12 @@ public class BookingDB {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     bookings.add(new Object[]{
-                        rs.getInt("id"),              // ID Booking
-                        rs.getString("nama_venue"),   // Nama Venue
-                        rs.getDate("start_date").toLocalDate(), // Start Date
-                        rs.getDate("end_date").toLocalDate(),   // End Date
-                        rs.getString("user_name"),    // Nama User
-                        rs.getString("gmail")         // Email User
+                        rs.getInt("id"),              
+                        rs.getString("nama_venue"),   
+                        rs.getDate("start_date").toLocalDate(), 
+                        rs.getDate("end_date").toLocalDate(),  
+                        rs.getString("user_name"),    
+                        rs.getString("gmail")         
                     });
                 }
             }
@@ -144,11 +141,11 @@ public class BookingDB {
         try (Connection conn = DbConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(updateStatusQuery)) {
     
-            stmt.setString(1, newStatus); // Status baru ('confirmed', 'declined')
-            stmt.setInt(2, bookingId); // ID booking
+            stmt.setString(1, newStatus); 
+            stmt.setInt(2, bookingId); 
     
             int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0; // True jika berhasil
+            return rowsAffected > 0; 
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -162,15 +159,13 @@ public class BookingDB {
     
         try {
             conn = DbConnection.getConnection();
-            conn.setAutoCommit(false); // Mulai transaksi
+            conn.setAutoCommit(false); 
     
-            // Hapus referensi di tabel `invoice`
             String deleteInvoiceSQL = "DELETE FROM invoice WHERE booking_id = ?";
             deleteInvoiceStmt = conn.prepareStatement(deleteInvoiceSQL);
             deleteInvoiceStmt.setInt(1, bookingId);
             deleteInvoiceStmt.executeUpdate();
     
-            // Hapus data dari tabel `booking`
             String deleteBookingSQL = "DELETE FROM booking WHERE id = ?";
             deleteBookingStmt = conn.prepareStatement(deleteBookingSQL);
             deleteBookingStmt.setInt(1, bookingId);
@@ -181,7 +176,7 @@ public class BookingDB {
         } catch (SQLException e) {
             if (conn != null) {
                 try {
-                    conn.rollback(); // Rollback jika ada error
+                    conn.rollback(); 
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
@@ -217,14 +212,13 @@ public class BookingDB {
 
     public static Object[] getInvoiceByBookingId(int bookingId) {
         String query = "SELECT id_invoice, date, total_amount, service_fee FROM invoice WHERE booking_id = ?";
-        try (Connection conn = DbConnection.getConnection(); // Pastikan koneksi database sudah tersedia
+        try (Connection conn = DbConnection.getConnection(); 
              PreparedStatement stmt = conn.prepareStatement(query)) {
     
-            stmt.setInt(1, bookingId); // Set parameter booking_id
+            stmt.setInt(1, bookingId); 
             ResultSet rs = stmt.executeQuery();
     
             if (rs.next()) {
-                // Return data invoice sebagai array object
                 return new Object[]{
                     rs.getInt("id_invoice"),
                     rs.getDate("date"),
@@ -235,7 +229,7 @@ public class BookingDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Kembalikan null jika tidak ada data
+        return null; 
     }
 
     public static boolean isBookingIdValid(int bookingId) {
@@ -245,7 +239,7 @@ public class BookingDB {
             stmt.setInt(1, bookingId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt(1) > 0; // True jika bookingId ditemukan
+                    return rs.getInt(1) > 0; 
                 }
             }
         } catch (SQLException e) {
@@ -267,7 +261,7 @@ public class BookingDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return -1; // Return -1 jika venueId tidak ditemukan
+        return -1; 
     }
 
     public static String getMetodePembayaranByBookingId(int bookingId) {
@@ -286,7 +280,7 @@ public class BookingDB {
             e.printStackTrace();
         }
         
-        return metodePembayaran; // Return null jika tidak ditemukan
+        return metodePembayaran; 
     }
 
     public static boolean isDateOverlap(int venueId, LocalDate startDate, LocalDate endDate) {
@@ -305,13 +299,13 @@ public class BookingDB {
     
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt(1) > 0; // Jika hasil > 0, berarti ada overlap
+                    return rs.getInt(1) > 0; 
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false; // Default jika tidak ada overlap
+        return false; 
     }
 
 }

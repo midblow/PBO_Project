@@ -8,7 +8,6 @@ public class User {
     private long nomorhp;
     private String alamat;
 
-    // Constructor untuk menginisialisasi data User
     public User(int id, String name, String gmail, String gender, long nomorhp, String alamat) {
         this.id = id;
         this.name = name;
@@ -18,7 +17,6 @@ public class User {
         this.alamat = alamat;
     }
 
-    // Getter dan Setter untuk setiap field
     public int getId() {
         return id;
     }

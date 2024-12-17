@@ -14,7 +14,6 @@ public class Venue {
     private int idProvider;
     private boolean mainVenue;
 
-    // Constructor
     public Venue(int idVenue, String namaVenue, String deskripsiFasilitas, String alamat, String penanggungJawab,
                  int kapasitas, int harga, String kota, String gambar, String jenisInstansi, int idProvider, boolean mainVenue) {
         this.idVenue = idVenue;
@@ -31,7 +30,6 @@ public class Venue {
         this.mainVenue = mainVenue;
     }
 
-    // Getter and Setter methods
     public int getIdVenue() {
         return idVenue;
     }

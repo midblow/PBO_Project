@@ -8,9 +8,7 @@ import java.time.LocalDate;
 
 public class InvoiceDB {
 
-    // Method utama untuk membuat invoice
     public static boolean createInvoice(int bookingId, int venueId) {
-        // Step 1: Ambil data start_date dan end_date dari booking
         LocalDate[] dates = getStartAndEndDate(bookingId);
         if (dates == null) {
             System.out.println("Tanggal booking tidak ditemukan.");
@@ -20,25 +18,20 @@ public class InvoiceDB {
         LocalDate startDate = dates[0];
         LocalDate endDate = dates[1];
 
-        // Step 2: Hitung lama waktu (jumlah hari)
         int lamaWaktu = calculateLamaWaktu(startDate, endDate);
 
-        // Step 3: Ambil harga per hari dari venue
         double hargaPerHari = getHargaPerHari(venueId);
         if (hargaPerHari <= 0) {
             System.out.println("Harga venue tidak valid.");
             return false;
         }
 
-        // Step 4: Hitung total_amount
-        double serviceFee = 50000.0; // Static Service Fee
+        double serviceFee = 50000.0; 
         double totalAmount = (hargaPerHari * lamaWaktu) + serviceFee;
 
-        // Step 5: Simpan invoice ke database
         return saveInvoice(bookingId, totalAmount, serviceFee);
     }
 
-    // Helper: Ambil start_date dan end_date berdasarkan bookingId
     private static LocalDate[] getStartAndEndDate(int bookingId) {
         String query = "SELECT start_date, end_date FROM booking WHERE id = ?";
         try (Connection conn = DbConnection.getConnection();
@@ -58,7 +51,6 @@ public class InvoiceDB {
         return null;
     }
 
-    // Helper: Ambil harga venue dari tabel venue
     private static double getHargaPerHari(int venueId) {
         String query = "SELECT harga FROM venue WHERE id_venue = ?";
         try (Connection conn = DbConnection.getConnection();
@@ -75,12 +67,10 @@ public class InvoiceDB {
         return 0.0;
     }
 
-    // Helper: Hitung lama waktu antara dua tanggal
     private static int calculateLamaWaktu(LocalDate startDate, LocalDate endDate) {
         return (int) java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate) + 1;
     }
 
-    // Helper: Simpan invoice ke database
     private static boolean saveInvoice(int bookingId, double totalAmount, double serviceFee) {
         String query = """
             INSERT INTO invoice (booking_id, date, total_amount, service_fee) 

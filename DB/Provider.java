@@ -9,7 +9,6 @@ public class Provider {
     private long nomorHp;
     private String alamat;
 
-    // Constructor
     public Provider(int idProvider, String gmail, String username, String lembaga, String password, long nomorHp, String alamat) {
         this.idProvider = idProvider;
         this.gmail = gmail;
@@ -20,7 +19,6 @@ public class Provider {
         this.alamat = alamat;
     }
 
-    // Getters and Setters
     public int getIdProvider() {
         return idProvider;
     }

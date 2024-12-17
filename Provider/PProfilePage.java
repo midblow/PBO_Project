@@ -7,9 +7,8 @@ import DB.*;
 import Landing_Page.PLoginForm;
 
 public class PProfilePage {
-    // Refined Color Palette
     private static final Color DEEP_NAVY = new Color(17, 29, 48);
-    private static final Color SOFT_NAVY = new Color(36, 65, 97);
+    private static final Color SOFT_NAVY = new Color(12, 34, 64);
     private static final Color LIGHT_GRAY = new Color(240, 242, 245);
     private static final Color ACCENT_ORANGE = new Color(255, 127, 39);
     private static final Color SOFT_WHITE = new Color(252, 253, 255);
@@ -19,7 +18,6 @@ public class PProfilePage {
         SwingUtilities.invokeLater(PProfilePage::createAndShowGUI);
     }
 
-    // Method untuk membuat dan menampilkan GUI
     private static void createAndShowGUI() {
         JFrame frame = new JFrame("Kelola Akun Anda");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -28,15 +26,12 @@ public class PProfilePage {
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.getContentPane().setBackground(SOFT_WHITE);
 
-        // Main Panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(SOFT_WHITE);
 
-        // Header Panel
         JPanel headerPanel = createHeaderPanel();
         frame.add(headerPanel, BorderLayout.NORTH);
 
-        // Navbar Panel
         JPanel navbarPanel = new JPanel(new BorderLayout());
         navbarPanel.setBackground(SOFT_WHITE);
         navbarPanel.setBorder(new EmptyBorder(10, 15, 10, 15));
@@ -45,7 +40,6 @@ public class PProfilePage {
         leftNavbarPanel.setBackground(SOFT_WHITE);
         leftNavbarPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-        // Button "Beranda"
         JButton berandaButton = createNavbarButton("Beranda");
         berandaButton.addActionListener(e -> {
             JPanel homeContent = createHomeContentPanel();
@@ -60,7 +54,6 @@ public class PProfilePage {
             updateActiveButtonNavbar(berandaButton);
         });
 
-        // Button "Venue"
         JButton venueButton = createNavbarButton("Booking Confirmation");
         venueButton.addActionListener(e -> {
             JPanel venueContent = createVenueContentPanel();
@@ -75,8 +68,7 @@ public class PProfilePage {
             updateActiveButtonNavbar(venueButton);
         });
 
-        // Button "Profile"
-        JButton profileButton = createNavbarButton("Profile");
+        JButton profileButton = createNavbarButton("Profil");
         profileButton.addActionListener(e -> {
             JPanel profileContent = createProfileContentPanel(frame, mainPanel);
             mainPanel.removeAll();
@@ -88,10 +80,8 @@ public class PProfilePage {
             updateActiveButtonNavbar(profileButton);
         });
 
-        // Set default active button to "Profile"
         updateActiveButtonNavbar(profileButton);
 
-        // Atur layout tombol pada navbar
         leftNavbarPanel.setLayout(new BoxLayout(leftNavbarPanel, BoxLayout.X_AXIS));
         leftNavbarPanel.add(berandaButton);
         leftNavbarPanel.add(Box.createHorizontalStrut(20));
@@ -101,14 +91,12 @@ public class PProfilePage {
 
         navbarPanel.add(leftNavbarPanel, BorderLayout.WEST);
 
-        // Sidebar and Default Content
         JPanel sidebar = createSidebarPanel(frame, mainPanel);
         JPanel profileContent = createProfileContentPanel(frame, mainPanel);
 
         mainPanel.add(sidebar, BorderLayout.WEST);
         mainPanel.add(profileContent, BorderLayout.CENTER);
 
-        // Add navbar below header
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(SOFT_WHITE);
         topPanel.add(headerPanel, BorderLayout.NORTH);
@@ -117,7 +105,6 @@ public class PProfilePage {
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(mainPanel, BorderLayout.CENTER);
 
-        // Adjust sidebar width to align with navbar
         Dimension sidebarPreferredSize = new Dimension(250, frame.getHeight());
         sidebar.setPreferredSize(sidebarPreferredSize);
 
@@ -235,17 +222,17 @@ public class PProfilePage {
         String loggedInProviderEmail = Session.loggedInProviderEmail;
     
         if (loggedInProviderEmail == null) {
-            JOptionPane.showMessageDialog(frame, "Session expired. Please login again.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Sesi telah berakhir. Silahkan login kembali.", "Error", JOptionPane.ERROR_MESSAGE);
             frame.dispose();
-            PLoginForm.main(new String[]{}); // Kembali ke halaman login
+            PLoginForm.main(new String[]{}); 
             return null;
         }
     
         Provider provider = ProviderDB.getProviderByEmail(loggedInProviderEmail);
         if (provider == null) {
-            JOptionPane.showMessageDialog(frame, "Provider data not found. Please login again.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Data Provider tidak ditemukan. Silahkan login kembali.", "Error", JOptionPane.ERROR_MESSAGE);
             frame.dispose();
-            PLoginForm.main(new String[]{}); // Kembali ke halaman login
+            PLoginForm.main(new String[]{}); 
             return null;
         }
 
@@ -278,7 +265,7 @@ public class PProfilePage {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
     
-        JTextField[] textFields = new JTextField[labels.length]; // Untuk menyimpan referensi JTextField
+        JTextField[] textFields = new JTextField[labels.length]; 
     
         for (int i = 0; i < labels.length; i++) {
             gbc.gridx = 0;
@@ -294,7 +281,7 @@ public class PProfilePage {
             gbc.weightx = 0.7;
     
             JTextField textField = createTextField(providerData[i] != null ? providerData[i] : "");
-            textFields[i] = textField; // Simpan referensi ke array
+            textFields[i] = textField; 
             formPanel.add(textField, gbc);
         }
     
@@ -303,78 +290,73 @@ public class PProfilePage {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.setBackground(SOFT_WHITE);
     
-        // Tombol Edit
         JButton editButton = new JButton("Edit");
         editButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
         editButton.setBackground(ACCENT_ORANGE);
         editButton.setForeground(Color.WHITE);
         editButton.setFocusPainted(false);
 
-        // Tombol Batal
         JButton cancelButton = new JButton("Batal");
         cancelButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        cancelButton.setBackground(new Color(220, 53, 69)); // Warna merah
+        cancelButton.setBackground(new Color(220, 53, 69)); 
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setFocusPainted(false);
-        cancelButton.setVisible(false); // Awalnya disembunyikan
+        cancelButton.setVisible(false);
 
         cancelButton.addActionListener(e -> {
-            // Batalkan perubahan, reset nilai JTextField
             for (int i = 0; i < textFields.length; i++) {
                 textFields[i].setText(providerData[i] != null ? providerData[i] : "");
                 textFields[i].setEditable(false);
                 textFields[i].setBackground(LIGHT_GRAY);
             }
             editButton.setText("Edit");
-            cancelButton.setVisible(false); // Sembunyikan tombol Batal
+            cancelButton.setVisible(false); 
         });
         
         
         editButton.addActionListener(e -> {
             if (editButton.getText().equals("Edit")) {
-                // Ubah semua JTextField menjadi editable
                 for (JTextField textField : textFields) {
                     textField.setEditable(true);
                     textField.setBackground(Color.WHITE);
                 }
                 editButton.setText("Save");
-                cancelButton.setVisible(true); // Tampilkan tombol Batal
+                cancelButton.setVisible(true); 
             } else {
                 String email = textFields[1].getText();
                 
                 if (ProviderDB.isEmailExisting(email, loggedInProviderEmail)) {
                     JOptionPane.showMessageDialog(frame, "Email sudah digunakan oleh pengguna lain. Mohon gunakan email lain.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return; // Hentikan proses jika email sudah ada
+                    return; 
                 }
 
                 boolean isUpdated = ProviderDB.updateProvider(
                     loggedInProviderEmail,
-                    textFields[0].getText(), // Nama
-                    email, // Email baru
-                    textFields[2].getText(), // lembaga
-                    textFields[3].getText(), // Nomor Telepon
+                    textFields[0].getText(), 
+                    email, 
+                    textFields[2].getText(), 
+                    textFields[3].getText(), 
                     textFields[4].getText()
                 );
         
                 if (isUpdated) {
-                    JOptionPane.showMessageDialog(frame, "Data updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    Session.loggedInProviderEmail = email; // Update session email jika berhasil
+                    JOptionPane.showMessageDialog(frame, "Data berhasil diperbarui!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    Session.loggedInProviderEmail = email; 
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Failed to update data.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Gagal untuk memperbarui data.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
         
-                // Ubah kembali ke non-editable
                 for (JTextField textField : textFields) {
                     textField.setEditable(false);
                     textField.setBackground(LIGHT_GRAY);
                 }
                 editButton.setText("Edit");
-                cancelButton.setVisible(false); // Sembunyikan tombol Batal
+                cancelButton.setVisible(false); 
             }
         });
 
         buttonPanel.add(editButton);
-        buttonPanel.add(cancelButton); // Tambahkan tombol Batal ke panel
+        buttonPanel.add(cancelButton); 
         
         contentPanel.add(Box.createVerticalStrut(20));
         contentPanel.add(buttonPanel);
@@ -384,13 +366,13 @@ public class PProfilePage {
     }
 
     private static final JButton[] activeNavbarButton = { null };
-    // Method untuk membuat tombol navbar
+
     private static JButton createNavbarButton(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14)); // Slightly increased font size
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14)); 
         button.setForeground(ACCENT_ORANGE);
         button.setBackground(SOFT_WHITE);
-        button.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0)); // Bottom space for underline
+        button.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0)); 
         button.setFocusPainted(false);
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -398,7 +380,7 @@ public class PProfilePage {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 if (button != activeNavbarButton[0]) {
                     button.setForeground(DEEP_NAVY);
-                    button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); // Underline effect
+                    button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); 
                 }
             }
 
@@ -416,28 +398,24 @@ public class PProfilePage {
 
     private static void updateActiveButtonNavbar(JButton button) {
         if (activeNavbarButton[0] != null) {
-            // Revert style of the previously active navbar button
             activeNavbarButton[0].setForeground(ACCENT_ORANGE);
             activeNavbarButton[0].setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
         }
-        // Update the active navbar button
         activeNavbarButton[0] = button;
         button.setForeground(DEEP_NAVY);
-        button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); // Underline effect
+        button.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, DEEP_NAVY)); 
     }
 
     private static final JButton[] activeSidebarButton = { null };
 
     private static void updateActiveButtonSidebar(JButton button) {
         if (activeSidebarButton[0] != null) {
-            // Revert style of the previously active sidebar button
             activeSidebarButton[0].setBackground(SOFT_NAVY);
             activeSidebarButton[0].setForeground(Color.WHITE);
         }
-        // Update the active sidebar button
         activeSidebarButton[0] = button;
         button.setBackground(ACCENT_ORANGE);
-        button.setForeground(Color.WHITE); // Highlight sidebar button
+        button.setForeground(Color.WHITE); 
     }
 
     private static JButton createSidebarButton(String text) {
@@ -451,13 +429,13 @@ public class PProfilePage {
         button.setMaximumSize(new Dimension(200, 40));
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                if (button != activeSidebarButton[0]) { // Hanya ubah gaya jika bukan tombol aktif
+                if (button != activeSidebarButton[0]) { 
                     button.setBackground(ACCENT_ORANGE);
                 }
             }
     
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                if (button != activeSidebarButton[0]) { // Hanya ubah gaya jika bukan tombol aktif
+                if (button != activeSidebarButton[0]) { 
                     button.setBackground(SOFT_NAVY);
                 }
             }

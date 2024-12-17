@@ -27,16 +27,10 @@ public class VenueDB {
                 int idProvider = rs.getInt("id_provider");
                 boolean mainVenue = rs.getBoolean("main_venue");
 
-                // Debugging: Log data venue yang dibaca
-                // System.out.println("Membaca venue: " + namaVenue + " di " + alamat);
-
                 Venue venue = new Venue(idVenue, namaVenue, deskripsiFasilitas, alamat, penanggungJawab,
                         kapasitas, harga, kota, gambar, jenisInstansi, idProvider, mainVenue);
                 venues.add(venue);
             }
-
-            // Cek jumlah venue yang berhasil diambil
-            // System.out.println("Jumlah venue yang ditemukan: " + venues.size());
 
         } catch (SQLException e) {
             e.printStackTrace();

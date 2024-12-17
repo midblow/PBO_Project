@@ -10,7 +10,6 @@ public class Booking {
     private LocalDate endDate;
     private String status;
 
-    // Getter dan Setter
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

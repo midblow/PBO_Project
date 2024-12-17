@@ -9,7 +9,6 @@ public class Invoice {
     private double totalAmount;
     private double serviceFee;
 
-    // Constructor
     public Invoice(int idInvoice, int bookingId, LocalDate date, double totalAmount, double serviceFee) {
         this.idInvoice = idInvoice;
         this.bookingId = bookingId;
@@ -18,7 +17,6 @@ public class Invoice {
         this.serviceFee = serviceFee;
     }
 
-    // Getter and Setter
     public int getIdInvoice() { return idInvoice; }
     public void setIdInvoice(int idInvoice) { this.idInvoice = idInvoice; }
 

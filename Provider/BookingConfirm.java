@@ -10,8 +10,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class BookingConfirm {
-
-    // Warna konstan
     private static final Color DEEP_NAVY = new Color(17, 29, 48);
     private static final Color ACCENT_ORANGE = new Color(255, 127, 39);
     private static final Color SUCCESS_GREEN = new Color(34, 177, 76);
@@ -30,20 +28,16 @@ public class BookingConfirm {
         frame.setLayout(new BorderLayout());
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        // Header
         JPanel header = createHeaderPanel();
         frame.add(header, BorderLayout.NORTH);
 
-        // Navbar
         JPanel navbar = createNavbarPanel(frame);
         frame.add(navbar, BorderLayout.CENTER);
 
-        // Main Content
         JPanel mainContent = createMainContentPanel();
-        frame.add(mainContent, BorderLayout.CENTER);
-
-        JPanel footer = createFooterPanel();
-        frame.add(footer, BorderLayout.SOUTH);
+        JScrollPane scrollPane = new JScrollPane(mainContent);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        frame.add(scrollPane, BorderLayout.CENTER);
 
         frame.setVisible(true);
     }
@@ -53,7 +47,6 @@ public class BookingConfirm {
         header.setBackground(DEEP_NAVY);
         header.setPreferredSize(new Dimension(1200, 70));
 
-        // Logo dan Title
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         leftPanel.setOpaque(false);
         JLabel logo = new JLabel(resizeIcon(new ImageIcon("asset/logo.png"), 40, 40));
@@ -64,7 +57,6 @@ public class BookingConfirm {
         leftPanel.add(logo);
         leftPanel.add(title);
 
-        // Profile Icon
         JLabel profileIcon = new JLabel(resizeIcon(new ImageIcon("asset/profil.png"), 40, 40));
         profileIcon.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -80,33 +72,32 @@ public class BookingConfirm {
     
         JButton homeButton = createNavbarButton("Home");
         JButton bookingButton = createNavbarButton("Booking Confirmation");
-        JButton profileButton = createNavbarButton("Profile");
-    
-        // Default Active Button
+        JButton profileButton = createNavbarButton("Profil");
+
         updateActiveButtonNavbar(bookingButton);
     
         homeButton.addActionListener(e -> {
             JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(homeButton);
             if (currentFrame != null) {
-                currentFrame.dispose(); // Tutup frame saat ini
+                currentFrame.dispose(); 
             }
-            HomeProvider.main(new String[]{}); // Buka laman "Home"
+            HomeProvider.main(new String[]{}); 
         });
         
         bookingButton.addActionListener(e -> {
             JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(bookingButton);
             if (currentFrame != null) {
-                currentFrame.dispose(); // Tutup frame saat ini
+                currentFrame.dispose(); 
             }
-            BookingConfirm.showBooking(); // Buka laman "Booking Confirmation"
+            BookingConfirm.showBooking(); 
         });
         
         profileButton.addActionListener(e -> {
             JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(profileButton);
             if (currentFrame != null) {
-                currentFrame.dispose(); // Tutup frame saat ini
+                currentFrame.dispose(); 
             }
-            PProfilePage.main(new String[]{}); // Buka laman "Profile"
+            PProfilePage.main(new String[]{}); 
         });
     
         navbar.add(homeButton);
@@ -117,21 +108,18 @@ public class BookingConfirm {
     }
 
     private JPanel createMainContentPanel() {
-        // Panel utama dengan BoxLayout untuk menyusun elemen secara vertikal
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(new Color(255, 255, 255));
     
-        // Tambahkan Navbar di bagian atas
         JPanel navbar = createNavbarPanel(new JFrame());
-        navbar.setAlignmentX(Component.LEFT_ALIGNMENT); // Align ke kiri
+        navbar.setAlignmentX(Component.LEFT_ALIGNMENT); 
         mainPanel.add(navbar);
     
-        // Title "Booking Confirmation"
-        JLabel titleLabel = new JLabel("Booking Confirmation", SwingConstants.LEFT); // SwingConstants.LEFT
+        JLabel titleLabel = new JLabel("Booking Confirmation", SwingConstants.LEFT); 
         titleLabel.setFont(new Font("Poppins", Font.BOLD, 28));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 10, 0)); // Tambahkan padding kiri
-        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT); // Align ke kiri
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 10, 0)); 
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT); 
         titleLabel.setBackground(Color.WHITE);
         titleLabel.setOpaque(true);
         mainPanel.add(titleLabel);
@@ -139,15 +127,13 @@ public class BookingConfirm {
         JPanel cardPanel = new JPanel(new GridLayout(0, 2, 10, 20));
         cardPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         cardPanel.setBackground(Color.WHITE);
-        
-        // Scroll Pane untuk booking cards
+
         JScrollPane scrollPane = new JScrollPane(cardPanel);
         scrollPane.setBorder(null);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(0, 800)); 
         scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
     
-        // Ambil data booking
         List<Object[]> bookings = BookingDB.getBookingsForProvider(Session.loggedInProviderId);
         if (bookings.isEmpty()) {
             JLabel noDataLabel = new JLabel("No Bookings Available", SwingConstants.CENTER);
@@ -168,18 +154,20 @@ public class BookingConfirm {
                 cardPanel.add(card);
             }
         }
-    
+
         mainPanel.add(scrollPane);
+
+        JPanel footer = createFooterPanel();
+        footer.setAlignmentX(Component.LEFT_ALIGNMENT);
+        mainPanel.add(footer);
     
         return mainPanel;
     }
 
     private JPanel createBookingCard(int bookingId, String venue, LocalDate start, LocalDate end, String name, String email, String status) {
         JPanel card = new JPanel(new BorderLayout());
-        // card.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230), 1));
         card.setBackground(Color.WHITE);
 
-        // Content
         JPanel content = new JPanel(new GridLayout(4, 1));
         content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         content.add(new JLabel("<html><b>" + venue + "</b></html>"));
@@ -189,7 +177,6 @@ public class BookingConfirm {
 
         card.add(content, BorderLayout.CENTER);
 
-        // Action Buttons
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         if ("waiting".equals(status)) {
             JButton approve = createActionButton("Approve Payment", BUTTON_BLUE);
@@ -202,11 +189,9 @@ public class BookingConfirm {
                     return;
                 }
             
-                // Ambil tanggal booking untuk pengecekan
-                LocalDate startDate = start; // Tanggal mulai booking
-                LocalDate endDate = end;     // Tanggal selesai booking
+                LocalDate startDate = start; 
+                LocalDate endDate = end;     
             
-                // Pengecekan overlap sebelum mengubah status
                 if (BookingDB.isDateOverlap(venueId, startDate, endDate)) {
                     JOptionPane.showMessageDialog(null, 
                         "Tanggal booking bertabrakan dengan booking yang sudah di-approve.", 
@@ -214,7 +199,6 @@ public class BookingConfirm {
                     return;
                 }
             
-                // Jika tidak ada overlap, update status ke 'confirmed'
                 boolean updated = BookingDB.updateBookingStatus(bookingId, "confirmed");
                 if (updated) {
                     boolean invoiceCreated = InvoiceDB.createInvoice(bookingId, venueId);
@@ -227,7 +211,7 @@ public class BookingConfirm {
                             "Booking dikonfirmasi, tetapi gagal membuat invoice.",
                             "Peringatan", JOptionPane.WARNING_MESSAGE);
                     }
-                    refresh(); // Perbarui UI
+                    refresh(); 
                 } else {
                     JOptionPane.showMessageDialog(null,
                         "Gagal mengonfirmasi booking.",
@@ -243,23 +227,20 @@ public class BookingConfirm {
             actions.add(approve);
             actions.add(decline);
         } else if ("confirmed".equals(status)) {
-            // SUCCESS label
             JLabel successLabel = new JLabel("SUCCESS!!!", SwingConstants.CENTER);
-            successLabel.setOpaque(true); // Membuat background terlihat
-            successLabel.setBackground(SUCCESS_GREEN); // Warna hijau
-            successLabel.setForeground(Color.WHITE); // Teks putih
+            successLabel.setOpaque(true); 
+            successLabel.setBackground(SUCCESS_GREEN); 
+            successLabel.setForeground(Color.WHITE); 
             successLabel.setFont(new Font("Poppins", Font.BOLD, 12));
             successLabel.setPreferredSize(new Dimension(100, 30));
             successLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // Padding
         
-            // Remove button
             JButton removeButton = createActionButton("Remove", REMOVE_RED);
             removeButton.addActionListener(e -> {
                 BookingDB.deleteBookingById(bookingId);
                 refresh();
             });
         
-            // Tambahkan SUCCESS label dan Remove button ke panel actions
             actions.add(successLabel);
             actions.add(removeButton);
         }
@@ -300,57 +281,19 @@ public class BookingConfirm {
         Image resizedImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         return new ImageIcon(resizedImg);
     }
-
-    private ImageIcon resizeIcon(ImageIcon icon, int width) {
-        Image img = icon.getImage();
-        int height = (int) ((double) img.getHeight(null) / img.getWidth(null) * width); // Menyesuaikan tinggi agar proporsional
-        Image resizedImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        return new ImageIcon(resizedImg);
-    }
     
-    private class LoadImageWorker extends SwingWorker<ImageIcon, Void> {
-        private final String imagePath;
-        private final JLabel label;
-
-        public LoadImageWorker(String imagePath, JLabel label) {
-            this.imagePath = imagePath;
-            this.label = label;
-        }
-
-        @Override
-        protected ImageIcon doInBackground() throws Exception {
-            // Pemuatan gambar di latar belakang
-            ImageIcon icon = new ImageIcon(imagePath);
-            int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;  // Ambil lebar layar
-            return resizeIcon(icon, screenWidth); // Resize gambar sesuai lebar layar
-        }
-
-        @Override
-        protected void done() {
-            try {
-                // Setelah gambar selesai dimuat, perbarui label dengan gambar baru
-                ImageIcon icon = get();
-                label.setIcon(icon);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private JPanel createFooterPanel() {
         JPanel footer = new JPanel(new BorderLayout());
+        footer.setPreferredSize(new Dimension(0, 200));  
         footer.setBackground(Color.WHITE);
     
-        // Label untuk footer yang akan diubah setelah gambar dimuat
-        JLabel footerImageLabel = new JLabel();
-        footer.add(footerImageLabel, BorderLayout.CENTER);
-    
-        // Menjalankan SwingWorker untuk memuat gambar footer di latar belakang
-        new LoadImageWorker("asset/Footer.png", footerImageLabel).execute();
+        JLabel footerImage = new JLabel();
+        footerImage.setHorizontalAlignment(SwingConstants.CENTER);
+        footerImage.setIcon(resizeIcon(new ImageIcon("asset/Footer.png"), Toolkit.getDefaultToolkit().getScreenSize().width, 200));
+        footer.add(footerImage, BorderLayout.CENTER);
     
         return footer;
     }
-    
     
     private void refresh() {
         SwingUtilities.invokeLater(BookingConfirm::showBooking);

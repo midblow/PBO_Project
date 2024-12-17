@@ -46,7 +46,7 @@ public class CalendarApp extends JPanel {
         add(navigationPanel, BorderLayout.NORTH);
 
         calendarPanel = new JPanel();
-        calendarPanel.setLayout(new GridLayout(0, 7, 5, 5)); // 7 kolom untuk hari dalam seminggu
+        calendarPanel.setLayout(new GridLayout(0, 7, 5, 5)); 
         calendarPanel.setBackground(Color.LIGHT_GRAY);
         add(calendarPanel, BorderLayout.CENTER);
 
@@ -89,7 +89,6 @@ public class CalendarApp extends JPanel {
             calendarPanel.add(label);
         }
     
-        // Kalender
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.MONTH, currentMonth - 1);
         calendar.set(Calendar.YEAR, currentYear);
@@ -98,12 +97,10 @@ public class CalendarApp extends JPanel {
         int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
         int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     
-        // Kosongkan grid sebelum hari pertama bulan
         for (int i = 0; i < firstDayOfWeek; i++) {
             calendarPanel.add(new JLabel());
         }
     
-        // Isi grid dengan tanggal
         for (int day = 1; day <= daysInMonth; day++) {
             LocalDate date = LocalDate.of(currentYear, currentMonth, day);
     
@@ -123,12 +120,12 @@ public class CalendarApp extends JPanel {
             if (!date.isBefore(booking.getStartDate()) && !date.isAfter(booking.getEndDate())) {
                 if (booking.getUserId() == currentUserId) {
                     if ("waiting".equalsIgnoreCase(booking.getStatus())) {
-                        return Color.YELLOW; // Waiting (User saat ini)
+                        return Color.YELLOW; 
                     } else if ("confirmed".equalsIgnoreCase(booking.getStatus())) {
-                        return Color.GREEN; // Confirmed (User saat ini)
+                        return Color.GREEN; 
                     }
                 } else if ("confirmed".equalsIgnoreCase(booking.getStatus())) {
-                    return Color.RED; // Confirmed (User lain)
+                    return Color.RED; 
                 }
             }
         }

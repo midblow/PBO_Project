@@ -8,71 +8,57 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class AddVenue {
-    // Add static reference to navbarPanel to fix the setActivePage method
     private static JPanel navbarPanel;
     private static String selectedImagePath = null;
     private static JFrame frame;
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            // Frame Utama
             frame = new JFrame("Add Venue");
             frame.setSize(1200, 800);
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setLocationRelativeTo(null);
 
-            // Panel Utama untuk Header dan Navbar
             JPanel mainContainerPanel = new JPanel();
-            mainContainerPanel.setLayout(new BorderLayout()); // Untuk tata letak header dan navbar
+            mainContainerPanel.setLayout(new BorderLayout()); 
 
-            // Header Panel
             JPanel headerPanel = new JPanel();
             createHeader(headerPanel);
 
-            // Navbar Panel
-            navbarPanel = createNavbar(frame); // Assign to static reference
+            navbarPanel = createNavbar(frame); 
 
-            // Tambahkan Header dan Navbar ke mainContainerPanel
             mainContainerPanel.add(headerPanel, BorderLayout.NORTH);
             mainContainerPanel.add(navbarPanel, BorderLayout.CENTER);
 
-            // Panel Form Utama
             JPanel mainPanel = new JPanel();
             mainPanel.setLayout(new GridBagLayout());
             mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
-            mainPanel.setBackground(new Color(245, 245, 245)); // Background warna abu
+            mainPanel.setBackground(new Color(245, 245, 245)); 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(10, 10, 10, 10);
             gbc.gridwidth = GridBagConstraints.REMAINDER;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.weightx = 1.0;
 
-            // Styling for form labels
             Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
             Color labelColor = new Color(45, 55, 72);
 
-            // Nama Venue
             JLabel namaVenueLabel = createFormLabel("Nama Venue", labelFont, labelColor);
             JTextField namaVenueField = createTextField(20);
 
-            // Deskripsi dan Fasilitas
             JLabel deskripsiLabel = createFormLabel("Deskripsi dan Fasilitas", labelFont, labelColor);
             JTextArea deskripsiArea = createTextArea(5, 40);
             JScrollPane deskripsiScroll = new JScrollPane(deskripsiArea);
 
-            // Alamat
             JLabel alamatLabel = createFormLabel("Alamat", labelFont, labelColor);
             JTextField alamatField = createTextField(20);
 
-            // Kota
             JLabel kotaLabel = createFormLabel("Kota", labelFont, labelColor);
             JTextField kotaField = createTextField(20);
 
-            // Nama Penanggung Jawab
             JLabel penanggungJawabLabel = createFormLabel("Nama Penanggung Jawab", labelFont, labelColor);
             JTextField penanggungJawabField = createTextField(20);
 
-            // Kapasitas dan Harga Panel
             JLabel kapasitasLabel = createFormLabel("Kapasitas", labelFont, labelColor);
             JTextField kapasitasField = createTextField(10);
             JLabel hargaLabel = createFormLabel("Harga Rp.", labelFont, labelColor);
@@ -84,10 +70,8 @@ public class AddVenue {
             kapasitasHargaPanel.add(hargaLabel);
             kapasitasHargaPanel.add(hargaField);
 
-            // Tambahkan Foto Label
             JLabel tambahFotoLabel = createFotoLabel();
 
-            // Tipe Venue
             JLabel tipeVenueLabel = createFormLabel("Tipe Venue", labelFont, labelColor);
             JRadioButton pemerintahButton = new JRadioButton("Pemerintah");
             JRadioButton swastaButton = new JRadioButton("Swasta");
@@ -105,16 +89,13 @@ public class AddVenue {
             tipeVenuePanel.add(pemerintahButton);
             tipeVenuePanel.add(swastaButton);
 
-            // Checkbox Main Venue
             JCheckBox mainVenueCheckbox = new JCheckBox("Jadikan Sebagai Main Venue");
             mainVenueCheckbox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-            // Submit Button
             JButton submitButton = createSubmitButton(namaVenueField, deskripsiArea, alamatField, kotaField, 
             penanggungJawabField, kapasitasField, hargaField, 
             tipeVenueGroup, mainVenueCheckbox);
 
-            // Add components to main panel with GridBagLayout
             mainPanel.add(namaVenueLabel, gbc);
             mainPanel.add(namaVenueField, gbc);
             mainPanel.add(deskripsiLabel, gbc);
@@ -131,14 +112,12 @@ public class AddVenue {
             mainPanel.add(tipeVenuePanel, gbc);
             mainPanel.add(mainVenueCheckbox, gbc);
 
-            // Set special constraints for submit button to add more bottom margin
             GridBagConstraints submitGbc = (GridBagConstraints) gbc.clone();
-            submitGbc.insets = new Insets(10, 10, 50, 10); // Increased bottom inset to 50 pixels
+            submitGbc.insets = new Insets(10, 10, 50, 10); 
             mainPanel.add(submitButton, submitGbc);
 
-            // Tambahkan mainContainerPanel (Header + Navbar) dan mainPanel ke Frame
             frame.setLayout(new BorderLayout());
-            frame.add(mainContainerPanel, BorderLayout.NORTH); // Header dan Navbar di bagian atas
+            frame.add(mainContainerPanel, BorderLayout.NORTH); 
             frame.add(new JScrollPane(mainPanel), BorderLayout.CENTER);
 
             frame.setVisible(true);
@@ -158,7 +137,6 @@ public class AddVenue {
 
         button.addActionListener(e -> {
             try {
-                // Ambil nilai dari field input
                 String namaVenue = namaVenueField.getText();
                 String deskripsi = deskripsiArea.getText();
                 String alamat = alamatField.getText();
@@ -166,18 +144,15 @@ public class AddVenue {
                 String penanggungJawab = penanggungJawabField.getText();
                 boolean isMain = mainVenueCheckbox.isSelected();
 
-                // Validasi input wajib
                 if (namaVenue.isEmpty() || deskripsi.isEmpty() || alamat.isEmpty() || kota.isEmpty() ||
                     penanggungJawab.isEmpty() || tipeVenueGroup.getSelection() == null) {
                     JOptionPane.showMessageDialog(null, "Semua field harus diisi!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                // Validasi kapasitas
                 int kapasitas = Integer.parseInt(kapasitasField.getText());
                 int harga = Integer.parseInt(hargaField.getText());
 
-                // Ambil tipe venue
                 String tipeVenue = tipeVenueGroup.getSelection().getActionCommand();
 
                 if (selectedImagePath == null || selectedImagePath.isEmpty()) {
@@ -209,24 +184,20 @@ public class AddVenue {
         return button;
     }
 
-    // Header setup
     public static void createHeader(JPanel headerPanel) {
         headerPanel.setLayout(new BorderLayout());
-        headerPanel.setBackground(new Color(24, 49, 83)); // Blue-900 background
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16)); // Padding
-        headerPanel.setPreferredSize(new Dimension(1000, 80)); // Height of the header
+        headerPanel.setBackground(new Color(24, 49, 83)); 
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16)); 
+        headerPanel.setPreferredSize(new Dimension(1000, 80)); 
 
-        // Panel for Logo and Revenue
         JPanel logoRevenuePanel = new JPanel();
         logoRevenuePanel.setBackground(new Color(24, 49, 83));
         logoRevenuePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
 
-        // Logo
         JLabel logoLabel = new JLabel();
         try {
             ImageIcon originalIcon = new ImageIcon("asset/logo.png");
             if (originalIcon.getIconWidth() != -1) {
-                // Resize logo to a smaller, fixed size (e.g., 40x40 pixels)
                 Image resizedImage = originalIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
                 ImageIcon resizedIcon = new ImageIcon(resizedImage);
                 logoLabel.setIcon(resizedIcon);
@@ -239,16 +210,13 @@ public class AddVenue {
             logoLabel.setForeground(Color.WHITE);
         }
 
-        // Revenue Text
         JLabel revenueLabel = new JLabel("REVENUE");
         revenueLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
         revenueLabel.setForeground(Color.WHITE);
 
-        // Add Logo and Revenue to logoRevenuePanel
         logoRevenuePanel.add(logoLabel);
         logoRevenuePanel.add(revenueLabel);
 
-        // Add logoRevenuePanel to the header
         headerPanel.add(logoRevenuePanel, BorderLayout.WEST);
     }
 
@@ -261,7 +229,6 @@ public class AddVenue {
         JLabel bookingConfirmationLabel = createNavLink("Booking Confirmation");
         JLabel profileLabel = createNavLink("Profile");
     
-        // Add mouse listeners for navigation
         addNavbarLinkMouseListeners(myVenueLabel, "Home", navbarPanel);
         addNavbarLinkMouseListeners(bookingConfirmationLabel, "Booking Confirmation", navbarPanel);
         addNavbarLinkMouseListeners(profileLabel, "Profile", navbarPanel);
@@ -276,8 +243,8 @@ public class AddVenue {
     private static JLabel createNavLink(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        label.setForeground(new Color(255, 120, 45)); // Orange color when not hovered
-        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Change cursor to hand on hover
+        label.setForeground(new Color(255, 120, 45)); 
+        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); 
         return label;
     }
 
@@ -285,28 +252,27 @@ public class AddVenue {
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                label.setForeground(new Color(66, 133, 244)); // Dark blue on hover
+                label.setForeground(new Color(66, 133, 244)); 
                 label.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(66, 133, 244))); // Underline on hover
             }
     
             @Override
             public void mouseExited(MouseEvent e) {
                 if (!page.equals(activePage)) {
-                    label.setForeground(new Color(255, 120, 45)); // Orange for inactive links
-                    label.setBorder(BorderFactory.createEmptyBorder()); // Remove underline
+                    label.setForeground(new Color(255, 120, 45)); 
+                    label.setBorder(BorderFactory.createEmptyBorder()); 
                 }
             }
     
             @Override
             public void mouseClicked(MouseEvent e) {
-                setActivePage(page, navbarPanel); // Highlight active page
+                setActivePage(page, navbarPanel); 
                 frame.dispose(); 
     
-                // Navigasi berdasarkan halaman
                 if (page.equals("Home")) {
-                    HomeProvider.main(new String[]{}); // Navigasi ke HomeProvider
+                    HomeProvider.main(new String[]{}); 
                 } else if (page.equals("Profile")) {
-                    PProfilePage.main(new String[]{}); // Navigasi ke ProfilePage
+                    PProfilePage.main(new String[]{}); 
                 } else if (page.equals("Booking Confirmation")) {
                     BookingConfirm.showBooking();
                 }
@@ -314,21 +280,19 @@ public class AddVenue {
         });
     }
 
-    private static String activePage = "Home"; // Default active page
+    private static String activePage = "Home"; 
 
-    // Method to set active page and update navbar state
     private static void setActivePage(String page, JPanel navbarPanel) {
         activePage = page;
-        // Update navbar link states
         for (Component comp : navbarPanel.getComponents()) {
             if (comp instanceof JLabel) {
                 JLabel label = (JLabel) comp;
                 if (label.getText().equals(page)) {
-                    label.setForeground(new Color(66, 133, 244)); // Dark blue for active page
+                    label.setForeground(new Color(66, 133, 244)); 
                     label.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(66, 133, 244))); // Underline
                 } else {
-                    label.setForeground(new Color(255, 120, 45)); // Orange color for inactive links
-                    label.setBorder(BorderFactory.createEmptyBorder()); // Remove underline
+                    label.setForeground(new Color(255, 120, 45)); 
+                    label.setBorder(BorderFactory.createEmptyBorder()); 
                 }
             }
         }
@@ -371,7 +335,7 @@ public class AddVenue {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     java.io.File selectedFile = fileChooser.getSelectedFile();
                     tambahFotoLabel.setText("Foto Dipilih: " + selectedFile.getName());
-                    selectedImagePath = selectedFile.getAbsolutePath(); // Simpan path gambar
+                    selectedImagePath = selectedFile.getAbsolutePath(); 
                 }
             }
         });

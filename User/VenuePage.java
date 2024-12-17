@@ -55,7 +55,6 @@ public class VenuePage {
         profile.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Ganti dengan halaman Profile View
                 JOptionPane.showMessageDialog(frame, "Profile View");
             }
         });
@@ -105,7 +104,7 @@ public class VenuePage {
         venuePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(12, 34, 64)));
         navPanel.add(venuePanel);
 
-        JButton profileButton = createNavButton("Profile", new Color(255, 140, 0));
+        JButton profileButton = createNavButton("Profil", new Color(255, 140, 0));
         navPanel.add(profileButton);
         profileButton.addActionListener(e -> {
             frame.dispose();
@@ -129,7 +128,7 @@ public class VenuePage {
         JPanel venueTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         venueTitlePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel venueTitle = new JLabel("Temukan venue terbaik untuk event anda");
+        JLabel venueTitle = new JLabel("Temukan venue terbaik untuk acara anda");
         venueTitle.setFont(new Font("Poppins", Font.BOLD, 25));
         venueTitle.setHorizontalAlignment(SwingConstants.LEFT);
         venueTitlePanel.add(venueTitle);
@@ -154,10 +153,8 @@ public class VenuePage {
         card.setPreferredSize(new Dimension(300, 300));
         card.setBackground(Color.WHITE); 
         
-        // Padding pada seluruh card
         card.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         
-        // Gambar venue
         JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         imagePanel.setBackground(Color.WHITE); 
         
@@ -174,7 +171,6 @@ public class VenuePage {
         imagePanel.add(image);
         card.add(imagePanel, BorderLayout.CENTER);
         
-        // Nama venue
         JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         namePanel.setBackground(Color.WHITE); 
         namePanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -187,7 +183,6 @@ public class VenuePage {
         namePanel.add(nameLabel);
         card.add(namePanel, BorderLayout.NORTH);
         
-        // Lokasi venue
         JPanel locationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         locationPanel.setBackground(Color.WHITE);
         locationPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
